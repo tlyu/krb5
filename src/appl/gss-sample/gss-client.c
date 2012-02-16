@@ -85,7 +85,8 @@ usage()
     fprintf(stderr, " [-threads num]");
 #endif
     fprintf(stderr, "\n");
-    fprintf(stderr, "       [-f] [-q] [-ccount count] [-mcount count]\n");
+    fprintf(stderr, "       [-f] [-q] [-ccount count] [-mcount count] "
+            "[-snt service_name_type]\n");
     fprintf(stderr, "       [-v1] [-na] [-nw] [-nx] [-nm] host service msg\n");
     exit(1);
 }
@@ -153,12 +154,13 @@ connect_to_server(char *host, u_short port)
  *
  * Arguments:
  *
- *      s                   (r) an established TCP connection to the service
- *      service_name(r) the ASCII service name of the service
+ *      s               (r) an established TCP connection to the service
+ *      service_name    (r) the ASCII service name of the service
+ *      service_name_oid(r) OID for the service name type
  *      gss_flags       (r) GSS-API delegation flag (if any)
  *      auth_flag       (r) whether to actually do authentication
- *  v1_format   (r) whether the v1 sample protocol should be used
- *      oid                 (r) OID of the mechanism to use
+ *      v1_format       (r) whether the v1 sample protocol should be used
+ *      mech_oid        (r) OID of the mechanism to use
  *      context         (w) the established GSS-API context
  *      ret_flags       (w) the returned flags from init_sec_context
  *
@@ -166,20 +168,21 @@ connect_to_server(char *host, u_short port)
  *
  * Effects:
  *
- * service_name is imported as a GSS-API name and a GSS-API context is
- * established with the corresponding service; the service should be
- * listening on the TCP connection s.  The default GSS-API mechanism
- * is used, and mutual authentication and replay detection are
- * requested.
+ * service_name is imported as a GSS-API name using service_name_oid.
+ * If service_name_oid is GSSS_C_NO_OID, gss_nt_service_name is used.
+ * A GSS-API context is established with the corresponding service;
+ * the service should be listening on the TCP connection s.  The
+ * GSS-API mechanism specified by mech_oid is used, and mutual authentication
+ * and replay detection are requested if specified in gss_flags.
  *
  * If successful, the context handle is returned in context.  If
  * unsuccessful, the GSS-API error messages are displayed on stderr
  * and -1 is returned.
  */
 static int
-client_establish_context(int s, char *service_name, OM_uint32 gss_flags,
-                         int auth_flag, int v1_format, gss_OID oid,
-                         char *username, char *password,
+client_establish_context(int s, char *service_name, gss_OID service_name_oid,
+                         OM_uint32 gss_flags, int auth_flag, int v1_format,
+                         gss_OID mech_oid, char *username, char *password,
                          gss_ctx_id_t *gss_context, OM_uint32 *ret_flags)
 {
     if (auth_flag) {
@@ -195,8 +198,8 @@ client_establish_context(int s, char *service_name, OM_uint32 gss_flags,
             mechs.elements = &gss_spnego_mechanism_oid_desc;
             mechs.count = 1;
             mechsp = &mechs;
-        } else if (oid != GSS_C_NO_OID) {
-            mechs.elements = oid;
+        } else if (mech_oid != GSS_C_NO_OID) {
+            mechs.elements = mech_oid;
             mechs.count = 1;
             mechsp = &mechs;
         } else {
@@ -240,10 +243,10 @@ client_establish_context(int s, char *service_name, OM_uint32 gss_flags,
             gss_release_name(&min_stat, &gss_username);
             return -1;
         }
-        if (spnego && oid != GSS_C_NO_OID) {
+        if (spnego && mech_oid != GSS_C_NO_OID) {
             gss_OID_set_desc neg_mechs;
 
-            neg_mechs.elements = oid;
+            neg_mechs.elements = mech_oid;
             neg_mechs.count = 1;
 
             maj_stat = gss_set_neg_mechs(&min_stat, cred, &neg_mechs);
@@ -262,8 +265,10 @@ client_establish_context(int s, char *service_name, OM_uint32 gss_flags,
          */
         send_tok.value = service_name;
         send_tok.length = strlen(service_name);
+        if (service_name_oid == GSS_C_NO_OID)
+            service_name_oid = gss_nt_service_name;
         maj_stat = gss_import_name(&min_stat, &send_tok,
-                                   (gss_OID) gss_nt_service_name,
+                                   service_name_oid,
                                    &target_name);
         if (maj_stat != GSS_S_COMPLETE) {
             display_status("parsing name", maj_stat, min_stat);
@@ -409,7 +414,9 @@ read_file(file_name, in_buf)
  *
  *      host            (r) the host providing the service
  *      port            (r) the port to connect to on host
+ *      mech_oid        (r) GSS-API mechanism oid
  *      service_name    (r) the GSS-API service name to authenticate to
+ *      service_name_oid(r) the service name type oid
  *      gss_flags       (r) GSS-API delegation flag (if any)
  *      auth_flag       (r) whether to do authentication
  *      wrap_flag       (r) whether to do message wrapping at all
@@ -430,13 +437,14 @@ read_file(file_name, in_buf)
  * verifies it with gss_verify.  -1 is returned if any step fails,
  * otherwise 0 is returned.  */
 static int
-call_server(host, port, oid, service_name, gss_flags, auth_flag,
-            wrap_flag, encrypt_flag, mic_flag, v1_format, msg, use_file,
-            mcount, username, password)
+call_server(host, port, mech_oid, service_name, service_name_oid, gss_flags,
+            auth_flag, wrap_flag, encrypt_flag, mic_flag, v1_format, msg,
+            use_file, mcount, username, password)
     char   *host;
     u_short port;
-    gss_OID oid;
+    gss_OID mech_oid;
     char   *service_name;
+    gss_OID service_name_oid;
     OM_uint32 gss_flags;
     int     auth_flag, wrap_flag, encrypt_flag, mic_flag;
     int     v1_format;
@@ -469,9 +477,9 @@ call_server(host, port, oid, service_name, gss_flags, auth_flag,
         return -1;
 
     /* Establish context */
-    if (client_establish_context(s, service_name, gss_flags, auth_flag,
-                                 v1_format, oid, username, password,
-                                 &context, &ret_flags) < 0) {
+    if (client_establish_context(s, service_name, service_name_oid, gss_flags,
+                                 auth_flag, v1_format, mech_oid, username,
+                                 password, &context, &ret_flags) < 0) {
         (void) closesocket(s);
         return -1;
     }
@@ -747,12 +755,12 @@ DecrementAndSignalThreadCounter(void)
 #endif
 
 static char *service_name, *server_host, *msg;
-static char *mechanism = 0;
+static char *mechanism = 0, *service_name_type = 0;
 static u_short port = 4444;
 static int use_file = 0;
 static OM_uint32 gss_flags = GSS_C_MUTUAL_FLAG | GSS_C_REPLAY_FLAG;
 static OM_uint32 min_stat;
-static gss_OID oid = GSS_C_NULL_OID;
+static gss_OID mech_oid = GSS_C_NO_OID, service_name_oid = GSS_C_NO_OID;
 static int mcount = 1, ccount = 1;
 static int auth_flag, wrap_flag, encrypt_flag, mic_flag, v1_format;
 static char *username = NULL;
@@ -761,9 +769,10 @@ static char *password = NULL;
 static void
 worker_bee(void *unused)
 {
-    if (call_server(server_host, port, oid, service_name,
-                    gss_flags, auth_flag, wrap_flag, encrypt_flag, mic_flag,
-                    v1_format, msg, use_file, mcount, username, password) < 0)
+    if (call_server(server_host, port, mech_oid, service_name,
+                    service_name_oid, gss_flags, auth_flag, wrap_flag,
+                    encrypt_flag, mic_flag, v1_format, msg, use_file, mcount,
+                    username, password) < 0)
         exit(1);
 
 #ifdef _WIN32
@@ -799,6 +808,12 @@ main(argc, argv)
             if (!argc)
                 usage();
             mechanism = *argv;
+        } else if (strcmp(*argv, "-snt") == 0) {
+            argc--;
+            argv++;
+            if (!argc)
+                usage();
+            service_name_type = *argv;
         } else if (strcmp(*argv, "-user") == 0) {
             argc--;
             argv++;
@@ -885,7 +900,10 @@ main(argc, argv)
     msg = *argv++;
 
     if (mechanism)
-        parse_oid(mechanism, &oid);
+        parse_oid(mechanism, &mech_oid);
+
+    if (service_name_type)
+        parse_oid(service_name_type, &service_name_oid);
 
     if (max_threads == 1) {
         for (i = 0; i < ccount; i++) {
@@ -909,8 +927,11 @@ main(argc, argv)
 #endif
     }
 
-    if (oid != GSS_C_NULL_OID)
-        (void) gss_release_oid(&min_stat, &oid);
+    if (mech_oid != GSS_C_NO_OID)
+        (void) gss_release_oid(&min_stat, &mech_oid);
+
+    if (service_name_oid != GSS_C_NO_OID)
+        (void) gss_release_oid(&min_stat, &service_name_oid);
 
 #ifdef _WIN32
     CleanupHandles();
