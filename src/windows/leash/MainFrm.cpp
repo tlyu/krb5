@@ -33,8 +33,8 @@ static char THIS_FILE[] = __FILE__;
 #define MIN_RIGHT	  530
 #define MIN_BOTTOM	  280
 
-CStatusBar CMainFrame::m_wndStatusBar;
-CToolBar   CMainFrame::m_wndToolBar;
+CMFCStatusBar CMainFrame::m_wndStatusBar;
+CMFCToolBar   CMainFrame::m_wndToolBar;
 CImageList CMainFrame::m_imageList;
 CImageList CMainFrame::m_disabledImageList;
 BOOL	   CMainFrame::m_isMinimum;
@@ -123,7 +123,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         TRACE0("Failed to create toolbar\n");
 		return -1;      // fail to create
 	}
-
+/*
     // Create an image list of Icons so that we can use the best color
     // depth available on the system and then assign this new list to
     // be used instead of the single bitmap file assigned to the toolbar
@@ -184,7 +184,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         m_disabledImageList.Add(hIcon[n]);
     }
     toolBar.SetDisabledImageList(&m_disabledImageList);
-
+*/
 	if (!m_wndStatusBar.Create(this) ||
 		!m_wndStatusBar.SetIndicators(indicators,
 		  (CLeashApp::m_hAfsDLL ? 4 : 3)))
@@ -196,13 +196,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// TODO: Remove this if you don't want tool tips or a resizeable toolbar
-	m_wndToolBar.SetBarStyle(m_wndToolBar.GetBarStyle() |
+	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() |
 		                     CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
 
 	// TODO: Delete these three lines if you don't want the toolbar to
 	//  be dockable
-	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
-	EnableDocking(CBRS_ALIGN_ANY);
+//	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+//	EnableDocking(CBRS_ALIGN_ANY);
 	//DockControlBar(&m_wndToolBar);
 
 	return 0;
