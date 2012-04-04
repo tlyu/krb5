@@ -777,9 +777,9 @@ VOID CLeashView::OnDestroyTicket()
                                      MB_ICONEXCLAMATION|MB_YESNO, 0);
         else
             whatToDo = AfxMessageBox("You are about to destroy your ticket(s)/token(s)!",
-                                     MB_OKCANCEL, 0);
+                                     MB_ICONEXCLAMATION|MB_YESNO, 0);
 
-        if (whatToDo == IDOK)
+        if (whatToDo == IDYES)
         {
             pLeash_kdestroy();
             ResetTreeNodes();
@@ -1337,73 +1337,55 @@ VOID CLeashView::OnActivateView(BOOL bActivate, CView* pActivateView,
     } else {
         return;
     }
-    if( m_hMenu == NULL )
-    {
-        AfxMessageBox("There is a problem finding the Leash main menu!",
-                   MB_OK|MB_ICONSTOP);
-        return;
-    }
-    if (!m_largeIcons)
-        check = CheckMenuItem(m_hMenu, ID_LARGE_ICONS, MF_CHECKED);
-    else
-        check = CheckMenuItem(m_hMenu, ID_LARGE_ICONS, MF_UNCHECKED);
 
-    if( check != MF_CHECKED || check != MF_UNCHECKED )
-    {
-        m_debugStartUp = 1;
-    }
+    if (m_hMenu) {
+        if (!m_largeIcons)
+            check = CheckMenuItem(m_hMenu, ID_LARGE_ICONS, MF_CHECKED);
+        else
+            check = CheckMenuItem(m_hMenu, ID_LARGE_ICONS, MF_UNCHECKED);
 
-    if (!m_destroyTicketsOnExit)
-        check = CheckMenuItem(m_hMenu, ID_KILL_TIX_ONEXIT, MF_UNCHECKED);
-    else
-        check = CheckMenuItem(m_hMenu, ID_KILL_TIX_ONEXIT, MF_CHECKED);
+        if( check != MF_CHECKED || check != MF_UNCHECKED )
+        {
+            m_debugStartUp = 1;
+        }
 
-    if (!m_upperCaseRealm)
-        check = CheckMenuItem(m_hMenu, ID_UPPERCASE_REALM, MF_UNCHECKED);
-    else
-        check = CheckMenuItem(m_hMenu, ID_UPPERCASE_REALM, MF_CHECKED);
+        if (!m_destroyTicketsOnExit)
+            check = CheckMenuItem(m_hMenu, ID_KILL_TIX_ONEXIT, MF_UNCHECKED);
+        else
+            check = CheckMenuItem(m_hMenu, ID_KILL_TIX_ONEXIT, MF_CHECKED);
 
-    CheckMenuItem(m_hMenu, ID_SHOW_TICKET_FLAGS,
-                  m_showTicketFlags ? MF_CHECKED : MF_UNCHECKED);
+        if (!m_upperCaseRealm)
+            check = CheckMenuItem(m_hMenu, ID_UPPERCASE_REALM, MF_UNCHECKED);
+        else
+            check = CheckMenuItem(m_hMenu, ID_UPPERCASE_REALM, MF_CHECKED);
 
-    CheckMenuItem(m_hMenu, ID_RENEWABLE_UNTIL,
-                  m_showRenewableUntil ? MF_CHECKED : MF_UNCHECKED);
+        CheckMenuItem(m_hMenu, ID_SHOW_TICKET_FLAGS,
+                      m_showTicketFlags ? MF_CHECKED : MF_UNCHECKED);
 
-    CheckMenuItem(m_hMenu, ID_TIME_ISSUED,
-                  m_showTimeIssued ? MF_CHECKED : MF_UNCHECKED);
+        CheckMenuItem(m_hMenu, ID_RENEWABLE_UNTIL,
+                      m_showRenewableUntil ? MF_CHECKED : MF_UNCHECKED);
+
+        CheckMenuItem(m_hMenu, ID_TIME_ISSUED,
+                      m_showTimeIssued ? MF_CHECKED : MF_UNCHECKED);
 
 
-    if (!m_lowTicketAlarm)
-    {
-        m_lowTicketAlarmSound = FALSE;
-
-        if (m_hMenu)
+        if (!m_lowTicketAlarm)
             CheckMenuItem(m_hMenu, ID_LOW_TICKET_ALARM, MF_UNCHECKED);
-    }
-    else
-    {
-        m_lowTicketAlarmSound = TRUE;
-        if (m_hMenu)
+        else
             CheckMenuItem(m_hMenu, ID_LOW_TICKET_ALARM, MF_CHECKED);
-    }
 
-    if (!m_autoRenewTickets)
-    {
-        if (m_hMenu)
+        if (!m_autoRenewTickets)
             CheckMenuItem(m_hMenu, ID_AUTO_RENEW, MF_UNCHECKED);
-    }
-    else
-    {
-        if (m_hMenu)
+        else
             CheckMenuItem(m_hMenu, ID_AUTO_RENEW, MF_CHECKED);
+
+        m_debugWindow = m_pApp->GetProfileInt("Settings", "DebugWindow", 0);
+        if (!m_debugWindow)
+            check = CheckMenuItem(m_hMenu, ID_DEBUG_MODE, MF_UNCHECKED);
+        else
+            check = CheckMenuItem(m_hMenu, ID_DEBUG_MODE, MF_CHECKED);
     }
-
-    m_debugWindow = m_pApp->GetProfileInt("Settings", "DebugWindow", 0);
-    if (!m_debugWindow)
-        check = CheckMenuItem(m_hMenu, ID_DEBUG_MODE, MF_UNCHECKED);
-    else
-        check = CheckMenuItem(m_hMenu, ID_DEBUG_MODE, MF_CHECKED);
-
+    m_lowTicketAlarmSound = !!m_lowTicketAlarm;
     m_alreadyPlayed = TRUE;
     if (m_pApp)
     {
