@@ -130,9 +130,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 #endif
 */
-
-	if (!m_wndToolBar.Create(this) ||
-		!m_wndToolBar.LoadToolBar(IDR_MAINFRAME))
+    if ((!CLeashApp::m_useRibbon) &&
+        (!m_wndToolBar.Create(this) ||
+         !m_wndToolBar.LoadToolBar(IDR_MAINFRAME)))
 	{
 		MessageBox("There is problem creating the Leash Toolbar!",
                    "Error", MB_OK);
@@ -217,9 +217,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// TODO: Delete these three lines if you don't want the toolbar to
 	//  be dockable
-//	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
-//	EnableDocking(CBRS_ALIGN_ANY);
-	//DockControlBar(&m_wndToolBar);
+    if (!CLeashApp::m_useRibbon) {
+        m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
+        EnableDocking(CBRS_ALIGN_ANY);
+        DockPane(&m_wndToolBar);
+        //DockControlBar(&m_wndToolBar);
+    }
 
 	return 0;
 }
