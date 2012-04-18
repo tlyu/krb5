@@ -172,7 +172,7 @@ void krb5TimestampToLocalizedString(krb5_timestamp t, LPTSTR *outStr)
     GetLocaleInfo(LOCALE_SYSTEM_DEFAULT,
                     LOCALE_STIMEFORMAT,
                     format,
-                    sizeof(format) / sizeof(WCHAR));
+                    sizeof(format) / sizeof(format[0]));
 
     int size = GetTimeFormat(LOCALE_SYSTEM_DEFAULT,
                                0,
