@@ -58,6 +58,8 @@ void FAR Leash_load_com_err_callback(FARPROC,FARPROC,FARPROC);
 #endif
 #include <ntsecapi.h>
 
+#include <krb5.h>
+
 #ifndef NO_KRB4
 extern HINSTANCE hKrb4;
 #endif
@@ -79,6 +81,9 @@ typedef struct TicketList
     struct TicketList* next;
     char* tktEncType;
     char* keyEncType;
+    krb5_timestamp issued;
+    krb5_timestamp valid_until;
+    krb5_timestamp renew_until;
     int   addrCount;
     char ** addrList;
     char * name;

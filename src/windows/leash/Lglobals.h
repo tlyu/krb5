@@ -22,6 +22,7 @@
 ////#include <loadfuncs-krb.h>
 #include <loadfuncs-profile.h>
 #include <loadfuncs-leash.h>
+#include <krb5.h>
 
 typedef struct TicketList
 {
@@ -29,6 +30,9 @@ typedef struct TicketList
     TicketList* next;
     char* tktEncType;
     char* keyEncType;
+    krb5_timestamp issued;
+    krb5_timestamp valid_until;
+    krb5_timestamp renew_until;
     int   addrCount;
     char ** addrList;
     char * name;
