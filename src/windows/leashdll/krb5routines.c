@@ -344,8 +344,6 @@ CredToTicketList(
     char			*ClientName = NULL;
     char			*sServerName = NULL;
     char			Buffer[256];
-    char			temp[128];
-    char			*sPtr;
     char            *ticketFlag;
     char            *functionName = NULL;
     TicketList      *list = NULL;
@@ -359,12 +357,6 @@ CredToTicketList(
 
     if (!KRBv5Credentials.times.starttime)
         KRBv5Credentials.times.starttime = KRBv5Credentials.times.authtime;
-
-    memset(temp, '\0', sizeof(temp));
-    strcpy(temp, ClientName);
-
-    if (!strcmp(ClientName, PrincipalName))
-        memset(temp, '\0', sizeof(temp));
 
     memset(Buffer, '\0', sizeof(Buffer));
 
@@ -395,7 +387,7 @@ CredToTicketList(
         list->renew_until = 0;
 
     if ( !pkrb5_decode_ticket(&KRBv5Credentials.ticket, &tkt)) {
-        wsprintf(Buffer, "Ticket Encryption Type: %s", etype_string(tkt->enc_part.enctype));
+        wsprintf(Buffer, "Ticket: %s", etype_string(tkt->enc_part.enctype));
         list->tktEncType = (char*) calloc(1, strlen(Buffer)+1);
         if (!list->tktEncType) {
             functionName = "calloc()";
@@ -410,7 +402,7 @@ CredToTicketList(
         list->tktEncType = NULL;
     }
 
-    wsprintf(Buffer, "Session Key Type: %s", etype_string(KRBv5Credentials.keyblock.enctype));
+    wsprintf(Buffer, "Session Key: %s", etype_string(KRBv5Credentials.keyblock.enctype));
     list->keyEncType = (char*) calloc(1, strlen(Buffer)+1);
     if (!list->keyEncType) {
         functionName = "calloc()";
