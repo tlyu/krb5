@@ -160,6 +160,44 @@ void krb5TimestampToFileTime(krb5_timestamp t, LPFILETIME pft)
     pft->dwHighDateTime = ll >> 32;
 }
 
+// allocate outstr
+void krb5TimestampToLocalizedString(krb5_timestamp t, LPTSTR *outStr)
+{
+    FILETIME ft, lft;
+    SYSTEMTIME st;
+    krb5TimestampToFileTime(t, &ft);
+    FileTimeToLocalFileTime(&ft, &lft);
+    FileTimeToSystemTime(&lft, &st);
+    TCHAR format[80]; // 80 is max required for LOCALE_STIMEFORMAT
+    GetLocaleInfo(LOCALE_SYSTEM_DEFAULT,
+                    LOCALE_STIMEFORMAT,
+                    format,
+                    sizeof(format) / sizeof(WCHAR));
+
+    int size = GetTimeFormat(LOCALE_SYSTEM_DEFAULT,
+                               0,
+                               &st,
+                               format,
+                               NULL,
+                               0);
+    if (*outStr)
+        free(*outStr);
+
+    LPTSTR str = (LPTSTR) malloc(size * sizeof(TCHAR));
+    if (!str) {
+        // LeashWarn allocation failure
+        *outStr = NULL;
+        return;
+    }
+    GetTimeFormat(LOCALE_SYSTEM_DEFAULT,
+                    0,
+                    &st,
+                    format,
+                    str,
+                    size);
+    *outStr = str;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CLeashView construction/destruction
 
@@ -490,7 +528,7 @@ UINT CLeashView::InitTicket(void * hWnd)
     ldi.size = sizeof(ldi);
     ldi.dlgtype = DLGTYPE_PASSWD;
     ldi.title = ldi.in.title;
-    strcpy(ldi.in.title,"Initialize Ticket");
+    strcpy(ldi.in.title,"Get Ticket");
     ldi.username = ldi.in.username;
     strcpy(ldi.in.username,username);
     ldi.realm = ldi.in.realm;
@@ -917,8 +955,6 @@ VOID CLeashView::OnUpdateDisplay()
         return;
     }
 
-    TV_INSERTSTRUCT m_tvinsert;
-
 #ifndef NO_KRB4
     INT ticketIconStatusKrb4;
     INT ticketIconStatus_SelectedKrb4;
@@ -1081,192 +1117,66 @@ VOID CLeashView::OnUpdateDisplay()
         iconStatusAfs = TICKET_NOT_INSTALLED;
     }
 
-    m_tvinsert.hParent = NULL;
-    m_tvinsert.hInsertAfter = TVI_LAST;
-    m_tvinsert.item.mask = TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-    m_tvinsert.item.hItem = NULL;
-    m_tvinsert.item.state = 0;
-    m_tvinsert.item.stateMask = 0; //TVIS_EXPANDED;
-    m_tvinsert.item.cchTextMax = 6;
-
+    int trayIcon = NONE_PARENT_NODE;
     if (CLeashApp::m_hKrb5DLL && m_listKrb5) {
-        m_tvinsert.item.pszText = ticketinfo.Krb5.principal;
-        m_tvinsert.item.mask |= TVIF_TEXT;
         switch ( iconStatusKrb5 ) {
         case ACTIVE_TICKET:
-            m_tvinsert.item.iSelectedImage = ACTIVE_PARENT_NODE;
+            trayIcon = ACTIVE_PARENT_NODE;
             break;
         case LOW_TICKET:
-            m_tvinsert.item.iSelectedImage = LOW_PARENT_NODE;
+            trayIcon = LOW_PARENT_NODE;
             break;
         case EXPIRED_TICKET:
-            m_tvinsert.item.iSelectedImage = EXPIRED_PARENT_NODE;
+            trayIcon = EXPIRED_PARENT_NODE;
             break;
         }
-////
-#ifndef NO_KRB4
-    } else if (CLeashApp::m_hKrb4DLL && m_listKrb4) {
-        m_tvinsert.item.pszText = ticketinfo.Krb4.principal;
-        m_tvinsert.item.mask |= TVIF_TEXT;
-        switch ( iconStatusKrb4 ) {
-        case ACTIVE_TICKET:
-            m_tvinsert.item.iSelectedImage = ACTIVE_PARENT_NODE;
-            break;
-        case LOW_TICKET:
-            m_tvinsert.item.iSelectedImage = LOW_PARENT_NODE;
-            break;
-        case EXPIRED_TICKET:
-            m_tvinsert.item.iSelectedImage = EXPIRED_PARENT_NODE;
-            break;
-        }
-#endif
-    } else {
-        m_tvinsert.item.iSelectedImage = NONE_PARENT_NODE;
-        m_tvinsert.item.pszText = NULL;
     }
-    m_tvinsert.item.iImage = m_tvinsert.item.iSelectedImage;
-    m_tvinsert.item.cChildren = 0;
-    m_tvinsert.item.lParam = 0;
-    m_tvinsert.hParent = NULL;
+    SetTrayIcon(NIM_MODIFY, trayIcon);
 
-    SetTrayIcon(NIM_MODIFY, m_tvinsert.item.iImage);
-
-    // Krb5
-    m_tvinsert.hParent = m_hPrincipal;
-
-    if (CLeashApp::m_hKrb5DLL)
-    {
-        // kerb5 installed
-        m_tvinsert.item.pszText = "Kerberos Five Tickets";
-        m_tvinsert.item.iImage = iconStatusKrb5;
-        m_tvinsert.item.iSelectedImage = iconStatusKrb5;
-    }
-    else
-    {
-        // kerb5 not installed
-        ticketinfo.Krb5.btickets = NO_TICKETS;
-        m_tvinsert.item.pszText = "Kerberos Five Tickets (Not Available)";
-        m_tvinsert.item.iImage = TICKET_NOT_INSTALLED;
-        m_tvinsert.item.iSelectedImage = TICKET_NOT_INSTALLED;
-    }
-
-    TicketList* tempList = m_listKrb5, *killList;
+    TicketList* tempList = m_listKrb5;
+    int iItem = 0;
+    TCHAR* localTimeStr=NULL;
     while (tempList)
     {
-        m_tvinsert.hParent = m_hKerb5;
-        m_tvinsert.item.iImage = ticketIconStatusKrb5;
-        m_tvinsert.item.iSelectedImage = ticketIconStatus_SelectedKrb5;
-        m_tvinsert.item.pszText = tempList->theTicket;
+        list.InsertItem(iItem, tempList->theTicket);
 
-        if ( tempList->tktEncType ) {
-            m_tvinsert.hParent = m_hk5tkt;
-            m_tvinsert.item.iImage = TKT_ENCRYPTION;
-            m_tvinsert.item.iSelectedImage = TKT_ENCRYPTION;
-            m_tvinsert.item.pszText = tempList->tktEncType;
+        int iSubItem = 1;
+        if (sm_viewColumns[TIME_ISSUED].m_enabled) {
+            krb5TimestampToLocalizedString(tempList->issued, &localTimeStr);
+            list.SetItemText(iItem, iSubItem++, localTimeStr);
         }
-        if ( tempList->keyEncType ) {
-            m_tvinsert.hParent = m_hk5tkt;
-            m_tvinsert.item.iImage = TKT_SESSION;
-            m_tvinsert.item.iSelectedImage = TKT_SESSION;
-            m_tvinsert.item.pszText = tempList->keyEncType;
-        }
-
-        if ( tempList->addrCount && tempList->addrList ) {
-            for ( int n=0; n<tempList->addrCount; n++ ) {
-                m_tvinsert.hParent = m_hk5tkt;
-                m_tvinsert.item.iImage = TKT_ADDRESS;
-                m_tvinsert.item.iSelectedImage = TKT_ADDRESS;
-                m_tvinsert.item.pszText = tempList->addrList[n];
-//                m_pTree->InsertItem(&m_tvinsert);
+        if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
+            if (tempList->renew_until) {
+                krb5TimestampToLocalizedString(tempList->renew_until, &localTimeStr);
+                list.SetItemText(iItem, iSubItem++, localTimeStr);
+            } else {
+                list.SetItemText(iItem, iSubItem++, "not renewable");
             }
         }
+        if (sm_viewColumns[VALID_UNTIL].m_enabled) {
+            krb5TimestampToLocalizedString(tempList->valid_until, &localTimeStr);
+            list.SetItemText(iItem, iSubItem++, localTimeStr);
+        }
+        if (sm_viewColumns[ENCRYPTION_TYPE].m_enabled) {
+            // @TODO: tktEncType as well...
+            list.SetItemText(iItem, iSubItem++, tempList->keyEncType);
+        }
+        if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
+            list.SetItemText(iItem, iSubItem++, "ticket flags here");
+        }
+
         tempList = tempList->next;
     }
+    if (localTimeStr)
+        free(localTimeStr);
 
     pLeashFreeTicketList(&m_listKrb5);
 
-//    if (m_hKerb5State == NODE_IS_EXPANDED)
-//        m_pTree->Expand(m_hKerb5, TVE_EXPAND);
-
-    // Krb4
-    m_tvinsert.hParent = m_hPrincipal;
-
-#ifndef NO_KRB4
-    if (CLeashApp::m_hKrb4DLL)
-    {
-        m_tvinsert.item.pszText = "Kerberos Four Tickets";
-        m_tvinsert.item.iImage = iconStatusKrb4;
-        m_tvinsert.item.iSelectedImage = iconStatusKrb4;
-    }
-    else
-    {
-#endif
-////Can this be removed altogether?
-        ticketinfo.Krb4.btickets = NO_TICKETS;
-        m_tvinsert.item.pszText = "Kerberos Four Tickets (Not Available)";
-        m_tvinsert.item.iImage = TICKET_NOT_INSTALLED;
-        m_tvinsert.item.iSelectedImage = TICKET_NOT_INSTALLED;
-#ifndef NO_KRB4
-    }
-#endif
-
-#ifndef NO_KRB4
-    m_hKerb4 = m_pTree ->InsertItem(&m_tvinsert);
-
-    if (m_hPrincipalState == NODE_IS_EXPANDED)
-        m_pTree->Expand(m_hPrincipal, TVE_EXPAND);
-
-    m_tvinsert.hParent = m_hKerb4;
-    m_tvinsert.item.iImage = ticketIconStatusKrb4;
-    m_tvinsert.item.iSelectedImage = ticketIconStatus_SelectedKrb4;
-
-
-////What does the original do?
-    tempList = m_listKrb4, *killList;
-    while (tempList)
-    {
-        m_tvinsert.item.pszText = tempList->theTicket;
-        m_pTree->InsertItem(&m_tvinsert);
-        tempList = tempList->next;
-    }
-
-    pLeashFreeTicketList(&m_listKrb4);
-
-    if (m_hKerb4State == NODE_IS_EXPANDED)
-        m_pTree->Expand(m_hKerb4, TVE_EXPAND);
-#endif
-
-    // AFS
-    m_tvinsert.hParent = m_hPrincipal;
-
-    if (!CLeashApp::m_hAfsDLL)
-    { // AFS service not started or just no tickets
-        m_tvinsert.item.pszText = "AFS Tokens (Not Available)";
-        m_tvinsert.item.iImage = TICKET_NOT_INSTALLED;
-        m_tvinsert.item.iSelectedImage = TICKET_NOT_INSTALLED;
-    }
-
-    if (!afsError && CLeashApp::m_hAfsDLL && m_tvinsert.item.pszText)
+    // @TODO: AFS-specific here
+    if (!afsError && CLeashApp::m_hAfsDLL)
     { // AFS installed
 
-        if (AfsEnabled)
-        {
-            m_tvinsert.item.pszText = "AFS Tokens";
-            m_tvinsert.item.iImage = iconStatusAfs;
-            m_tvinsert.item.iSelectedImage = iconStatusAfs;
-        }
-	else
-        {
-            m_tvinsert.item.pszText = "AFS Tokens (Disabled)";
-            m_tvinsert.item.iImage = TICKET_NOT_INSTALLED;
-            m_tvinsert.item.iSelectedImage = TICKET_NOT_INSTALLED;
-        }
-
-        m_tvinsert.hParent = m_hAFS;
-        m_tvinsert.item.iImage = ticketIconStatusAfs;
-        m_tvinsert.item.iSelectedImage = ticketIconStatus_SelectedAfs;
-
-        tempList = m_listAfs, *killList;
+        tempList = m_listAfs;
         while (tempList)
         {
             m_tvinsert.item.pszText = tempList->theTicket;
@@ -1275,73 +1185,12 @@ VOID CLeashView::OnUpdateDisplay()
 
         pLeashFreeTicketList(&m_listAfs);
     }
-    else if (!afsError && CLeashApp::m_hAfsDLL && !m_tvinsert.item.pszText)
-    {
-        m_tvinsert.item.pszText = "AFS Tokens";
-        m_tvinsert.item.iImage = EXPIRED_TICKET;;
-        m_tvinsert.item.iSelectedImage = EXPIRED_TICKET;
-    }
 
+    // KILL THIS?!
     if (m_startup)
     {
         //m_startup = FALSE;
         UpdateTicketTime(ticketinfo.Krb4);
-    }
-
-    CString sPrincipal = ticketinfo.Krb5.principal;
-    if (sPrincipal.IsEmpty())
-        sPrincipal = ticketinfo.Krb4.principal;
-
-	// if no tickets
-	if (!ticketinfo.Krb4.btickets && !ticketinfo.Krb5.btickets)
-		sPrincipal = " No Tickets ";
-
-	// if no tickets and tokens
-    if (!ticketinfo.Krb4.btickets && !ticketinfo.Krb5.btickets && !ticketinfo.Afs.btickets) //&& sPrincipal.IsEmpty())
-    {
-        // No tickets
-        m_tvinsert.hParent = NULL;
-        m_tvinsert.item.pszText = " No Tickets/Tokens ";
-        m_tvinsert.item.iImage = NONE_PARENT_NODE;
-        m_tvinsert.item.iSelectedImage = NONE_PARENT_NODE;
-
-/*        if (CMainFrame::m_wndToolBar)
-        {
-            CToolBarCtrl *_toolBar = NULL;
-            CToolBarCtrl& toolBar = CMainFrame::m_wndToolBar.GetToolBarCtrl();
-            _toolBar = &toolBar;
-            if (_toolBar)
-            {
-                toolBar.SetState(ID_DESTROY_TICKET, TBSTATE_INDETERMINATE);
-            }
-            else
-            {
-                AfxMessageBox("There is a problem with the Leash Toolbar!",
-                           MB_OK|MB_ICONSTOP);
-            }
-        }
-*/
-    }
-    else
-    {
-        // We have some tickets
-//        m_pTree->SetItemText(m_hPrincipal, sPrincipal);
-/*
-        if (CMainFrame::m_wndToolBar)
-        {
-            CToolBarCtrl *_toolBar = NULL;
-            CToolBarCtrl& toolBar = CMainFrame::m_wndToolBar.GetToolBarCtrl();
-            _toolBar = &toolBar;
-            if (_toolBar)
-            {
-                toolBar.SetState(ID_DESTROY_TICKET, TBSTATE_ENABLED);
-            }
-            else
-            {
-                AfxMessageBox("There is a problem with the Leash Toolbar!", MB_OK|MB_ICONSTOP);
-            }
-        }
-*/
     }
     ReleaseMutex(ticketinfo.lockObj);
 }
@@ -2375,9 +2224,6 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
             }
             else
             {
-#endif
-////Should this be removed altogether?
-                // not installed
                 ticketStatusKrb4.Format("Kerb-4: Not Available");
 
                 if (CMainFrame::m_wndStatusBar)
@@ -2385,7 +2231,6 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
                     CMainFrame::m_wndStatusBar.SetPaneInfo(2, 111111, SBPS_NORMAL, 130);
                     CMainFrame::m_wndStatusBar.SetPaneText(2, ticketStatusKrb4, SBT_POPOUT);
                 }
-#ifndef NO_KRB4
             }
             // KRB4
 #endif
@@ -2788,7 +2633,7 @@ CLeashView::OnObtainTGTWithParam(WPARAM wParam, LPARAM lParam)
 	if ( *param )
 	    strcpy(ldi.in.ccache,param);
     } else {
-        strcpy(ldi.in.title,"Initialize Ticket");
+        strcpy(ldi.in.title,"Get Ticket");
     }
 
     res = pLeash_kinit_dlg_ex(m_hWnd, &ldi);

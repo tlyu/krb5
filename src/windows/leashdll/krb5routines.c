@@ -341,23 +341,9 @@ CredToTicketList(
 {
     krb5_error_code code = 0;
     krb5_ticket    *tkt=NULL;
-    int				StartMonth;
-    int				EndMonth;
-    int             RenewMonth;
-    int				StartDay;
-    int				EndDay;
-    int             RenewDay;
-    char			StartTimeString[256];
-    char			EndTimeString[256];
-    char            RenewTimeString[256];
-    char			fill;
     char			*ClientName = NULL;
     char			*sServerName = NULL;
     char			Buffer[256];
-    static const char Months[12][4] = {"Jan\0", "Feb\0", "Mar\0", "Apr\0", "May\0", "Jun\0", "Jul\0", "Aug\0", "Sep\0", "Oct\0", "Nov\0", "Dec\0"};
-    char			StartTime[16];
-    char			EndTime[16];
-    char            RenewTime[16];
     char			temp[128];
     char			*sPtr;
     char            *ticketFlag;
@@ -374,74 +360,6 @@ CredToTicketList(
     if (!KRBv5Credentials.times.starttime)
         KRBv5Credentials.times.starttime = KRBv5Credentials.times.authtime;
 
-    fill = ' ';
-    memset(StartTimeString, '\0', sizeof(StartTimeString));
-    memset(EndTimeString, '\0', sizeof(EndTimeString));
-    memset(RenewTimeString, '\0', sizeof(RenewTimeString));
-    (*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.starttime, StartTimeString, 17, &fill);
-    (*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.endtime, EndTimeString, 17, &fill);
-	if (KRBv5Credentials.times.renew_till >= 0)
-		(*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.renew_till, RenewTimeString, 17, &fill);
-    memset(temp, '\0', sizeof(temp));
-    memcpy(temp, StartTimeString, 2);
-    StartDay = atoi(temp);
-    memset(temp, (int)'\0', (size_t)sizeof(temp));
-    memcpy(temp, EndTimeString, 2);
-    EndDay = atoi(temp);
-    memset(temp, (int)'\0', (size_t)sizeof(temp));
-    memcpy(temp, RenewTimeString, 2);
-    RenewDay = atoi(temp);
-
-    memset(temp, '\0', sizeof(temp));
-    memcpy(temp, &StartTimeString[3], 2);
-    StartMonth = atoi(temp);
-    memset(temp, '\0', sizeof(temp));
-    memcpy(temp, &EndTimeString[3], 2);
-    EndMonth = atoi(temp);
-    memset(temp, '\0', sizeof(temp));
-    memcpy(temp, &RenewTimeString[3], 2);
-    RenewMonth = atoi(temp);
-
-    while (1)
-    {
-        if ((sPtr = strrchr(StartTimeString, ' ')) == NULL)
-            break;
-
-        if (strlen(sPtr) != 1)
-            break;
-
-        (*sPtr) = 0;
-    }
-
-    while (1)
-    {
-        if ((sPtr = strrchr(EndTimeString, ' ')) == NULL)
-            break;
-
-        if (strlen(sPtr) != 1)
-            break;
-
-        (*sPtr) = 0;
-    }
-
-    while (1)
-    {
-        if ((sPtr = strrchr(RenewTimeString, ' ')) == NULL)
-            break;
-
-        if (strlen(sPtr) != 1)
-            break;
-
-        (*sPtr) = 0;
-    }
-
-    memset(StartTime, '\0', sizeof(StartTime));
-    memcpy(StartTime, &StartTimeString[strlen(StartTimeString) - 5], 5);
-    memset(EndTime, '\0', sizeof(EndTime));
-    memcpy(EndTime, &EndTimeString[strlen(EndTimeString) - 5], 5);
-    memset(RenewTime, '\0', sizeof(RenewTime));
-    memcpy(RenewTime, &RenewTimeString[strlen(RenewTimeString) - 5], 5);
-
     memset(temp, '\0', sizeof(temp));
     strcpy(temp, ClientName);
 
@@ -452,20 +370,7 @@ CredToTicketList(
 
     ticketFlag = GetTicketFlag(&KRBv5Credentials);
 
-    if (KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE) {
-        wsprintf(Buffer,"%s %02d %s     %s %02d %s     [%s %02d %s]     %s %s       %s",
-                    Months[StartMonth - 1], StartDay, StartTime,
-                    Months[EndMonth - 1], EndDay, EndTime,
-                    Months[RenewMonth - 1], RenewDay, RenewTime,
-                    sServerName,
-                    temp, ticketFlag);
-    } else {
-        wsprintf(Buffer,"%s %02d %s     %s %02d %s     %s %s       %s",
-                Months[StartMonth - 1], StartDay, StartTime,
-                Months[EndMonth - 1], EndDay, EndTime,
-                sServerName,
-                temp, ticketFlag);
-    }
+    wsprintf(Buffer, "%s %s", ClientName, sServerName);
     list = calloc(1, sizeof(TicketList));
     if (!list) {
         code = ENOMEM;
@@ -482,6 +387,12 @@ CredToTicketList(
     list->name = NULL;
     list->inst = NULL;
     list->realm = NULL;
+    list->issued = KRBv5Credentials.times.starttime;
+    list->valid_until = KRBv5Credentials.times.endtime;
+    if (KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE)
+        list->renew_until = KRBv5Credentials.times.renew_till;
+    else
+        list->renew_until = 0;
 
     if ( !pkrb5_decode_ticket(&KRBv5Credentials.ticket, &tkt)) {
         wsprintf(Buffer, "Ticket Encryption Type: %s", etype_string(tkt->enc_part.enctype));
