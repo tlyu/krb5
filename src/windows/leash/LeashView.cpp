@@ -168,33 +168,53 @@ void krb5TimestampToLocalizedString(krb5_timestamp t, LPTSTR *outStr)
     krb5TimestampToFileTime(t, &ft);
     FileTimeToLocalFileTime(&ft, &lft);
     FileTimeToSystemTime(&lft, &st);
-    TCHAR format[80]; // 80 is max required for LOCALE_STIMEFORMAT
+    TCHAR timeFormat[80]; // 80 is max required for LOCALE_STIMEFORMAT
     GetLocaleInfo(LOCALE_SYSTEM_DEFAULT,
-                    LOCALE_STIMEFORMAT,
-                    format,
-                    sizeof(format) / sizeof(format[0]));
+                  LOCALE_STIMEFORMAT,
+                  timeFormat,
+                  sizeof(timeFormat) / sizeof(timeFormat[0]));
 
-    int size = GetTimeFormat(LOCALE_SYSTEM_DEFAULT,
-                               0,
-                               &st,
-                               format,
-                               NULL,
-                               0);
+    int timeSize = GetTimeFormat(LOCALE_SYSTEM_DEFAULT,
+                                 TIME_NOSECONDS,
+                                 &st,
+                                 timeFormat,
+                                 NULL,
+                                 0);
+    // Using dateFormat prevents localization of Month/day order,
+    // but there is no other way AFAICT to suppress the year
+    TCHAR * dateFormat = "MMM dd'  '";
+    int dateSize = GetDateFormat(LOCALE_SYSTEM_DEFAULT,
+        0, // flags
+        &st,
+        dateFormat, // format
+        NULL, // date string
+        0);
+
     if (*outStr)
         free(*outStr);
 
-    LPTSTR str = (LPTSTR) malloc(size * sizeof(TCHAR));
+    // Allocate string for combined date and time,
+    // but only need one terminating NULL
+    LPTSTR str = (LPTSTR) malloc((dateSize + timeSize - 1) *
+                 sizeof(TCHAR));
     if (!str) {
         // LeashWarn allocation failure
         *outStr = NULL;
         return;
     }
+    GetDateFormat(LOCALE_SYSTEM_DEFAULT,
+        0, // flags
+        &st,
+        dateFormat, // format
+        &str[0],
+        dateSize);
+
     GetTimeFormat(LOCALE_SYSTEM_DEFAULT,
-                    0,
+                    TIME_NOSECONDS,
                     &st,
-                    format,
-                    str,
-                    size);
+                    timeFormat,
+                    &str[dateSize - 1],
+                    timeSize);
     *outStr = str;
 }
 
@@ -1158,8 +1178,7 @@ VOID CLeashView::OnUpdateDisplay()
             list.SetItemText(iItem, iSubItem++, localTimeStr);
         }
         if (sm_viewColumns[ENCRYPTION_TYPE].m_enabled) {
-            // @TODO: tktEncType as well...
-            list.SetItemText(iItem, iSubItem++, tempList->keyEncType);
+            list.SetItemText(iItem, iSubItem++, tempList->encTypes);
         }
         if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
             list.SetItemText(iItem, iSubItem++, "ticket flags here");

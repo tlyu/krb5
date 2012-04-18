@@ -387,29 +387,24 @@ CredToTicketList(
         list->renew_until = 0;
 
     if ( !pkrb5_decode_ticket(&KRBv5Credentials.ticket, &tkt)) {
-        wsprintf(Buffer, "Ticket: %s", etype_string(tkt->enc_part.enctype));
-        list->tktEncType = (char*) calloc(1, strlen(Buffer)+1);
-        if (!list->tktEncType) {
-            functionName = "calloc()";
-            code = ENOMEM;
-            goto cleanup;
-        }
-        strcpy(list->tktEncType, Buffer);
+        wsprintf(Buffer, "Session Key: %s  Ticket: %s",
+            etype_string(KRBv5Credentials.keyblock.enctype),
+            etype_string(tkt->enc_part.enctype));
 
         pkrb5_free_ticket(ctx, tkt);
         tkt = NULL;
     } else {
-        list->tktEncType = NULL;
+        wsprintf(Buffer, "Session Key: %s",
+            etype_string(KRBv5Credentials.keyblock.enctype));
     }
 
-    wsprintf(Buffer, "Session Key: %s", etype_string(KRBv5Credentials.keyblock.enctype));
-    list->keyEncType = (char*) calloc(1, strlen(Buffer)+1);
-    if (!list->keyEncType) {
+    list->encTypes = (char*) calloc(1, strlen(Buffer)+1);
+    if (!list->encTypes) {
         functionName = "calloc()";
         code = ENOMEM;
         goto cleanup;
     }
-    strcpy(list->keyEncType, Buffer);
+    strcpy(list->encTypes, Buffer);
 
     if ( KRBv5Credentials.addresses && KRBv5Credentials.addresses[0] ) {
         int n = 0;
