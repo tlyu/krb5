@@ -868,10 +868,8 @@ not_an_API_LeashFreeTicketList(TicketList** ticketList)
 
         tempList = (TicketList*)tempList->next;
         free(killList->theTicket);
-        if (killList->tktEncType)
-            free(killList->tktEncType);
-        if (killList->keyEncType)
-            free(killList->keyEncType);
+        if (killList->encTypes)
+            free(killList->encTypes);
         if (killList->addrCount) {
             int n;
             for ( n=0; n<killList->addrCount; n++) {

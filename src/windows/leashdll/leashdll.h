@@ -79,8 +79,7 @@ typedef struct TicketList
 {
     char* theTicket;
     struct TicketList* next;
-    char* tktEncType;
-    char* keyEncType;
+    char* encTypes;
     krb5_timestamp issued;
     krb5_timestamp valid_until;
     krb5_timestamp renew_until;
