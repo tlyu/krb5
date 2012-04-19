@@ -97,7 +97,6 @@ private:
     TicketList*         m_listAfs;
     CLeashDebugWindow*	m_pDebugWindow;
 	CImageList			m_imageList;
-	CImageList			*m_pImageList;
 	CWinApp*			m_pApp;
 	HTREEITEM			m_hPrincipal;
 ////@#+Remove
