@@ -256,7 +256,6 @@ CLeashView::CLeashView()
     ResetTreeNodes();
     m_hMenu = NULL;
     m_pApp = NULL;
-    m_pImageList = NULL;
     m_forwardableTicket = 0;
     m_proxiableTicket = 0;
     m_renewableTicket = 0;
@@ -965,14 +964,6 @@ VOID CLeashView::OnUpdateDisplay()
                 info.m_columnWidth,
                 itemIndex++);
         }
-    }
-
-    m_pImageList = &m_imageList;
-    if (!m_pImageList)
-    {
-        AfxMessageBox("There is a problem finding images for the Ticket Tree!",
-                   MB_OK|MB_ICONSTOP);
-        return;
     }
 
 #ifndef NO_KRB4
