@@ -952,6 +952,8 @@ VOID CLeashView::OnUpdateDisplay()
     // Delete all of the columns.
     while (list.DeleteColumn(0));
 
+    list.SetImageList(&m_imageList, LVSIL_SMALL);
+
     // Reconstruct based on current options
     int columnIndex = 0;
     int itemIndex = 0;
@@ -1149,7 +1151,7 @@ VOID CLeashView::OnUpdateDisplay()
     TCHAR* localTimeStr=NULL;
     while (tempList)
     {
-        list.InsertItem(iItem, tempList->theTicket);
+        list.InsertItem(iItem, tempList->theTicket, 0);
 
         int iSubItem = 1;
         if (sm_viewColumns[TIME_ISSUED].m_enabled) {
