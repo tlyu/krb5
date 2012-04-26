@@ -2028,11 +2028,9 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
         try {
         if (InterlockedDecrement(&m_timerMsgNotInProgress) == 0) {
 
-            CString ticketStatusKrb4 = TCHAR(NOT_INSTALLED);
             CString ticketStatusKrb5 = TCHAR(NOT_INSTALLED);
             CString ticketStatusAfs  = TCHAR(NOT_INSTALLED);
             CString strTimeDate;
-            CString lowTicketWarningKrb4;
             CString lowTicketWarningKrb5;
             CString lowTicketWarningAfs;
 
@@ -2129,82 +2127,6 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
             }
             //KRB5
 
-#ifndef NO_KRB4
-            if (CLeashApp::m_hKrb4DLL)
-            {
-                // KRB4
-                UpdateTicketTime(ticketinfo.Krb4);
-                if (!ticketinfo.Krb4.btickets)
-                {
-                    ticketStatusKrb4 = "Kerb-4: No Tickets";
-                }
-                else if (EXPIRED_TICKETS == ticketinfo.Krb4.btickets)
-                {
-#ifndef NO_KRB5
-                    if (ticketinfo.Krb5.btickets &&
-                         EXPIRED_TICKETS != ticketinfo.Krb5.btickets &&
-                         m_autoRenewTickets &&
-                         !m_autoRenewalAttempted &&
-                         ticketinfo.Krb5.renew_till &&
-                         (ticketinfo.Krb5.issue_date + ticketinfo.Krb5.renew_till -LeashTime() > 20 * 60) &&
-                         pLeash_get_default_use_krb4()
-                         )
-                    {
-                        m_autoRenewalAttempted = 1;
-                        ReleaseMutex(ticketinfo.lockObj);
-                        AfxBeginThread(RenewTicket,m_hWnd);
-                        goto timer_start;
-                    }
-#endif /* NO_KRB5 */
-                    ticketStatusKrb4 = "Kerb-4: Expired Tickets";
-                    lowTicketWarningKrb4 = "Your Kerberos Four ticket(s) have expired";
-                    if (!m_warningOfTicketTimeLeftLockKrb4)
-                        m_warningOfTicketTimeLeftKrb4 = 0;
-                    m_warningOfTicketTimeLeftLockKrb4 = ZERO_MINUTES_LEFT;
-                    m_ticketTimeLeft = 0;
-                }
-
-                if (CMainFrame::m_isMinimum)
-                {
-                    // minimized dispay
-                    ticketStatusKrb4.Format("Kerb-4: %02d:%02d Left",
-                                             (m_ticketTimeLeft / 60L / 60L),
-                                             (m_ticketTimeLeft / 60L % 60L));
-                }
-                else
-                {
-                    // normal display
-                    if (GOOD_TICKETS == ticketinfo.Krb4.btickets ||
-                         TICKETS_LOW == ticketinfo.Krb4.btickets)
-                    {
-                        if ( m_ticketTimeLeft >= 60 ) {
-                            ticketStatusKrb4.Format("Kerb-4 Ticket Life: %02d:%02d",
-                                                     (m_ticketTimeLeft / 60L / 60L),
-                                                     (m_ticketTimeLeft / 60L % 60L));
-                        } else {
-                            ticketStatusKrb4.Format("Kerb-4 Ticket Life: < 1 min");
-                        }
-                    }
-
-                    if (CMainFrame::m_wndStatusBar)
-                    {
-                        CMainFrame::m_wndStatusBar.SetPaneInfo(2, 111111, SBPS_NORMAL, 130);
-                        CMainFrame::m_wndStatusBar.SetPaneText(2, ticketStatusKrb4, SBT_POPOUT);
-                    }
-                }
-            }
-            else
-            {
-                ticketStatusKrb4.Format("Kerb-4: Not Available");
-
-                if (CMainFrame::m_wndStatusBar)
-                {
-                    CMainFrame::m_wndStatusBar.SetPaneInfo(2, 111111, SBPS_NORMAL, 130);
-                    CMainFrame::m_wndStatusBar.SetPaneText(2, ticketStatusKrb4, SBT_POPOUT);
-                }
-            }
-            // KRB4
-#endif
 
             if (CLeashApp::m_hAfsDLL)
             {
@@ -2308,20 +2230,6 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
                     }
                 }
             }
-#ifdef COMMENT
-            // we do not set this field because the field does not exist when AfsDLL is NULL
-            else
-            {
-                // not installed
-                ticketStatusAfs.Format("AFS: Not Available");
-
-                if (CMainFrame::m_wndStatusBar)
-                {
-                    CMainFrame::m_wndStatusBar.SetPaneInfo(3, 111113, SBPS_NORMAL, 130);
-                    CMainFrame::m_wndStatusBar.SetPaneText(3, ticketStatusAfs, SBT_POPOUT);
-                }
-            }
-#endif /* COMMENT */
             // AFS
 
 #ifndef NO_KRB5
@@ -2339,15 +2247,12 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
             BOOL warningKrb5 = m_ticketStatusKrb5 > NO_TICKETS &&
                 m_ticketStatusKrb5 < TWENTY_MINUTES_LEFT &&
                     !m_warningOfTicketTimeLeftKrb5;
-            BOOL warningKrb4 = m_ticketStatusKrb4 > NO_TICKETS &&
-                m_ticketStatusKrb4 < TWENTY_MINUTES_LEFT &&
-                    !m_warningOfTicketTimeLeftKrb4;
             BOOL warningAfs = m_ticketStatusAfs > NO_TICKETS &&
                 m_ticketStatusAfs < TWENTY_MINUTES_LEFT &&
                     !m_warningOfTicketTimeLeftAfs;
 
             // Play warning message only once per each case statement above
-            if (warningKrb4 || warningKrb5 || warningAfs)
+            if (warningKrb5 || warningAfs)
             {
 
                 CString lowTicketWarning = "";
@@ -2356,13 +2261,6 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
                 if (warningKrb5) {
                     lowTicketWarning += lowTicketWarningKrb5;
                     m_warningOfTicketTimeLeftKrb5 = ON;
-                    warnings++;
-                }
-                if (warningKrb4) {
-                    if ( warnings )
-                        lowTicketWarning += "\n";
-                    lowTicketWarning += lowTicketWarningKrb4;
-                    m_warningOfTicketTimeLeftKrb4 = ON;
                     warnings++;
                 }
                 if (warningAfs) {
@@ -2387,14 +2285,12 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
                 if ( CLeashApp::m_hAfsDLL )
                     strTimeDate = ( "Leash - "
                                     "[" + ticketStatusKrb5 + "] - " +
-                                    "[" + ticketStatusKrb4 + "] - " +
                                     "[" + ticketStatusAfs + "] - " +
                                     "[" + ticketinfo.Krb5.principal + "]" + " - " +
                                     tTimeDate.Format("%A, %B %d, %Y  %H:%M "));
                 else
                     strTimeDate = ( "Leash - "
                                     "[" + ticketStatusKrb5 + "] - " +
-                                    "[" + ticketStatusKrb4 + "] - " +
                                     "[" + ticketinfo.Krb5.principal + "]" + " - " +
                                     tTimeDate.Format("%A, %B %d, %Y  %H:%M "));
             }
