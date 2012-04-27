@@ -632,6 +632,9 @@ not_an_API_LeashKRB5GetTickets(
     if ( ticketinfo ) {
         ticketinfo->btickets = NO_TICKETS;
         ticketinfo->principal = NULL;
+        ticketinfo->ccache_name = NULL;
+        ticketinfo->next = NULL;
+        ticketinfo->ticket_list = NULL;
 
         if ((code = pkrb5_cc_default(ctx, &cache)))
             goto cleanup;
