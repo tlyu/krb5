@@ -86,6 +86,33 @@ enum eViewColumn {
     NUM_VIEW_COLUMNS
 };
 
+class CCacheDisplayData
+{
+public:
+    CCacheDisplayData(const char * ccache_name) :
+      m_next(NULL),
+      m_ccacheName(strdup(ccache_name)),
+      m_index(-1),
+      m_focus(-1),
+      m_expanded(0),
+      m_selected(0)
+    {
+    }
+
+    ~CCacheDisplayData()
+    {
+        if (m_ccacheName)
+            free(m_ccacheName);
+    }
+
+    CCacheDisplayData *m_next;
+    char *m_ccacheName;
+    int m_index;               // item index in list view
+    int m_focus;               // sub-item with focus
+    unsigned int m_expanded; // if set, display each individual ticket
+    unsigned int m_selected;
+};
+
 class CLeashView : public CListView
 {
 private:
@@ -96,6 +123,7 @@ private:
     TicketList*         m_listKrb5;
     TicketList*         m_listAfs;
     CLeashDebugWindow*	m_pDebugWindow;
+    CCacheDisplayData*  m_ccacheDisplay;
 	CImageList			m_imageList;
 	CWinApp*			m_pApp;
 	HTREEITEM			m_hPrincipal;
@@ -290,6 +318,10 @@ protected:
     afx_msg void OnItemChanged(NMHDR* pNmHdr, LRESULT* pResult);
     //}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+    afx_msg void OnLvnItemchanging(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 /*

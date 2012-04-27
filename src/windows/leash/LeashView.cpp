@@ -109,6 +109,9 @@ BEGIN_MESSAGE_MAP(CLeashView, CListView)
     ON_NOTIFY(HDN_ITEMCHANGED, 0, OnItemChanged)
 	//}}AFX_MSG_MAP
 
+    ON_NOTIFY_REFLECT(LVN_ITEMCHANGING, &CLeashView::OnLvnItemchanging)
+    ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, &CLeashView::OnLvnItemActivate)
+    ON_NOTIFY_REFLECT(LVN_KEYDOWN, &CLeashView::OnLvnKeydown)
 END_MESSAGE_MAP()
 
 
@@ -256,6 +259,7 @@ CLeashView::CLeashView()
     ResetTreeNodes();
     m_hMenu = NULL;
     m_pApp = NULL;
+    m_ccacheDisplay = NULL;
     m_forwardableTicket = 0;
     m_proxiableTicket = 0;
     m_renewableTicket = 0;
@@ -932,11 +936,36 @@ VOID CLeashView::OnChangePassword()
     }
 }
 
+static CCacheDisplayData **
+FindCCacheDisplayData(const char * ccacheName, CCacheDisplayData **pList)
+{
+    CCacheDisplayData *elem;
+    while ((elem = *pList)) {
+        if (strcmp(ccacheName, elem->m_ccacheName)==0)
+            return pList;
+        pList = &elem->m_next;
+    }
+    return NULL;
+}
+
 VOID CLeashView::OnUpdateDisplay()
 {
     BOOL AfsEnabled = m_pApp->GetProfileInt("Settings", "AfsStatus", 1);
 
     CListCtrl& list = GetListCtrl();
+    // Determine currently focused item
+    int focusItem = list.GetNextItem(-1, LVNI_FOCUSED);
+    CCacheDisplayData *elem = m_ccacheDisplay;
+    while (elem) {
+        if (focusItem >= elem->m_index) {
+            elem->m_focus = focusItem - elem->m_index;
+            focusItem = -1;
+        } else {
+            elem->m_focus = -1;
+        }
+        elem = elem->m_next;
+    }
+
     list.DeleteAllItems();
     ModifyStyle(LVS_TYPEMASK, LVS_REPORT);
 	UpdateWindow();
@@ -1135,16 +1164,39 @@ VOID CLeashView::OnUpdateDisplay()
     }
     SetTrayIcon(NIM_MODIFY, trayIcon);
 
+    CCacheDisplayData* prevCCacheDisplay = m_ccacheDisplay;
+    m_ccacheDisplay = NULL;
+
     TICKETINFO *principallist = ticketinfo.Krb5.next;
     int iItem = 0;
     TicketList* tempList;
     TCHAR* localTimeStr=NULL;
     while (principallist) {
+        CCacheDisplayData **pOldElem = FindCCacheDisplayData(principallist->ccache_name, &prevCCacheDisplay);
+        if (pOldElem) {
+            // remove from old list
+            elem = *pOldElem;
+            *pOldElem = elem->m_next;
+            elem->m_next = NULL;
+        } else {
+            elem = new CCacheDisplayData(principallist->ccache_name);
+        }
+        elem->m_next = m_ccacheDisplay;
+        m_ccacheDisplay = elem;
+        elem->m_index = iItem;
+
         tempList = principallist->ticket_list;
         principallist = principallist->next;
-        while (tempList)
-        {
-            list.InsertItem(iItem, tempList->theTicket, 0);
+        while (tempList) {
+            int imageIndex;
+            if (iItem != elem->m_index)
+                imageIndex = -1;
+            else if (elem->m_expanded)
+                imageIndex = 0;
+            else
+                imageIndex = 2;
+
+            list.InsertItem(iItem, tempList->theTicket, imageIndex);
 
             int iSubItem = 1;
             if (sm_viewColumns[TIME_ISSUED].m_enabled) {
@@ -1169,12 +1221,25 @@ VOID CLeashView::OnUpdateDisplay()
             if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
                 list.SetItemText(iItem, iSubItem++, "ticket flags here");
             }
-
-            tempList = tempList->next;
+            iItem++;
+            tempList = elem->m_expanded ? tempList->next : NULL;
         }
+        if ((elem->m_focus >= 0) &&
+            (iItem > elem->m_index + elem->m_focus)) {
+            list.SetItemState(elem->m_index + elem->m_focus, LVIS_FOCUSED, LVIS_FOCUSED);
+        }
+        if (elem->m_selected)
+            list.SetItemState(elem->m_index, LVIS_SELECTED, LVIS_SELECTED);
     }
     if (localTimeStr)
         free(localTimeStr);
+
+    // delete ccache items that no longer exist
+    while (prevCCacheDisplay) {
+        CCacheDisplayData *next = prevCCacheDisplay->m_next;
+        delete prevCCacheDisplay;
+        prevCCacheDisplay = next;
+    }
 
     pLeashKRB5FreeTickets(&ticketinfo.Krb5);
 
@@ -2500,4 +2565,88 @@ CLeashView::OnObtainTGTWithParam(WPARAM wParam, LPARAM lParam)
     GlobalUnlock((HGLOBAL) lParam);
     ::SendMessage(m_hWnd, WM_COMMAND, ID_UPDATE_DISPLAY, 0);
     return res;
+}
+
+
+// find the CCacheDisplayData corresponding to the specified ite, if it exists
+static CCacheDisplayData *
+FindCCacheDisplayData(int item, CCacheDisplayData *elem)
+{
+    while (elem) {
+        if (elem->m_index == item)
+            break;
+        elem = elem->m_next;
+    }
+    return elem;
+}
+
+
+void CLeashView::OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    LPNMITEMACTIVATE pNMIA = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+    // TODO: Add your control notification handler code here
+    CCacheDisplayData *elem = FindCCacheDisplayData(pNMIA->iItem, m_ccacheDisplay);
+    if (elem) {
+        elem->m_expanded = !elem->m_expanded;
+        OnUpdateDisplay();
+    }
+    *pResult = 0;
+}
+
+
+void CLeashView::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    LPNMLVKEYDOWN pLVKeyDow = reinterpret_cast<LPNMLVKEYDOWN>(pNMHDR);
+    int expand = -1; // -1 = unchanged; 0 = collapse; 1 = expand
+    switch (pLVKeyDow->wVKey) {
+    case VK_RIGHT:
+        // expand focus item
+        expand = 1;
+        break;
+    case VK_LEFT:
+        // collapse focus item
+        expand = 0;
+        break;
+    default:
+        break;
+    }
+    if (expand >= 0) {
+        int focusedItem = GetListCtrl().GetNextItem(-1, LVNI_FOCUSED);
+        if (focusedItem >= 0) {
+            CCacheDisplayData *elem = FindCCacheDisplayData(focusedItem, m_ccacheDisplay);
+            if (elem) {
+                if (elem->m_expanded != expand) {
+                    elem->m_expanded = expand;
+                    OnUpdateDisplay();
+                }
+            }
+        }
+    }
+    *pResult = 0;
+}
+
+void CLeashView::OnLvnItemchanging(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    CCacheDisplayData *elem;
+    LRESULT result = 0;
+    LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+    // TODO: Add your control notification handler code here
+    if ((pNMLV->uNewState ^ pNMLV->uOldState) & LVIS_SELECTED) {
+        // selection state changing
+        elem = FindCCacheDisplayData(pNMLV->iItem, m_ccacheDisplay);
+        if (!elem) {
+            // this is an individual ticket, not a cache, so prevent selection
+            if (pNMLV->uNewState & LVIS_SELECTED) {
+                unsigned int newState =  pNMLV->uNewState & ~LVIS_SELECTED;
+                result = 1; // suppress changes
+                if (newState != pNMLV->uOldState) {
+                    // but need to make other remaining changes still
+                    GetListCtrl().SetItemState(pNMLV->iItem, newState, newState ^ pNMLV->uOldState);
+                }
+            }
+        } else {
+            elem->m_selected = (pNMLV->uNewState & LVIS_SELECTED) ? 1 : 0;
+        }
+    }
+    *pResult = result;
 }
