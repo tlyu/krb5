@@ -867,24 +867,9 @@ not_an_API_LeashFreeTicketList(TicketList** ticketList)
         killList = tempList;
 
         tempList = (TicketList*)tempList->next;
-        free(killList->theTicket);
+        free(killList->service);
         if (killList->encTypes)
             free(killList->encTypes);
-        if (killList->addrCount) {
-            int n;
-            for ( n=0; n<killList->addrCount; n++) {
-                if (killList->addrList[n])
-                    free(killList->addrList[n]);
-            }
-        }
-        if (killList->addrList)
-            free(killList->addrList);
-        if (killList->name)
-            free(killList->name);
-        if (killList->inst)
-            free(killList->inst);
-        if (killList->realm)
-            free(killList->realm);
         free(killList);
     }
 

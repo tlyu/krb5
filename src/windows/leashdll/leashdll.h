@@ -75,21 +75,6 @@ extern HINSTANCE hProfile;
 #define LEASH_PRIORITY_LOW  0
 #define LEASH_PRIORITY_HIGH 1
 
-typedef struct TicketList
-{
-    char* theTicket;
-    struct TicketList* next;
-    char* encTypes;
-    krb5_timestamp issued;
-    krb5_timestamp valid_until;
-    krb5_timestamp renew_until;
-    int   addrCount;
-    char ** addrList;
-    char * name;
-    char * inst;
-    char * realm;
-} TicketList;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef _WIN64

@@ -321,12 +321,12 @@ CredToTicketInfo(
     TICKETINFO *ticketinfo
     )
 {
-    ticketinfo->issue_date = KRBv5Credentials.times.starttime;
-    ticketinfo->lifetime = KRBv5Credentials.times.endtime - KRBv5Credentials.times.starttime;
-    ticketinfo->renew_till = KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE ?
+    ticketinfo->issued = KRBv5Credentials.times.starttime;
+    ticketinfo->valid_until = KRBv5Credentials.times.endtime;
+    ticketinfo->renew_until = KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE ?
         KRBv5Credentials.times.renew_till : 0;
     _tzset();
-    if ( ticketinfo->issue_date + ticketinfo->lifetime - time(0) <= 0L )
+    if ( ticketinfo->valid_until - time(0) <= 0L )
         ticketinfo->btickets = EXPD_TICKETS;
     else
         ticketinfo->btickets = GOOD_TICKETS;
@@ -341,7 +341,6 @@ CredToTicketList(
 {
     krb5_error_code code = 0;
     krb5_ticket    *tkt=NULL;
-    char			*ClientName = NULL;
     char			*sServerName = NULL;
     char			Buffer[256];
     char            *ticketFlag;
@@ -349,9 +348,6 @@ CredToTicketList(
     TicketList      *list = NULL;
 
     functionName = "krb5_unparse_name()";
-    if ((code = (*pkrb5_unparse_name)(ctx, KRBv5Credentials.client, &ClientName)))
-        goto cleanup;
-
     if ((code = (*pkrb5_unparse_name)(ctx, KRBv5Credentials.server, &sServerName)))
         goto cleanup;
 
@@ -362,23 +358,19 @@ CredToTicketList(
 
     ticketFlag = GetTicketFlag(&KRBv5Credentials);
 
-    wsprintf(Buffer, "%s %s", ClientName, sServerName);
+    // @fixme: calloc for ptr init
     list = calloc(1, sizeof(TicketList));
     if (!list) {
         code = ENOMEM;
         functionName = "calloc()";
         goto cleanup;
     }
-    list->theTicket = (char*) calloc(1, strlen(Buffer)+1);
-    if (!list->theTicket) {
+    list->service = strdup(sServerName);
+    if (!list->service) {
         code = ENOMEM;
         functionName = "calloc()";
         goto cleanup;
     }
-    strcpy(list->theTicket, Buffer);
-    list->name = NULL;
-    list->inst = NULL;
-    list->realm = NULL;
     list->issued = KRBv5Credentials.times.starttime;
     list->valid_until = KRBv5Credentials.times.endtime;
     if (KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE)
@@ -406,45 +398,17 @@ CredToTicketList(
     }
     strcpy(list->encTypes, Buffer);
 
-    if ( KRBv5Credentials.addresses && KRBv5Credentials.addresses[0] ) {
-        int n = 0;
-        while ( KRBv5Credentials.addresses[n] )
-			n++;
-        list->addrList = calloc(1, n * sizeof(char *));
-        if (!list->addrList) {
-            functionName = "calloc()";
-            code = ENOMEM;
-            goto cleanup;
-        }
-        list->addrCount = n;
-        for ( n=0; n<list->addrCount; n++ ) {
-            wsprintf(Buffer, "Address: %s", one_addr(KRBv5Credentials.addresses[n]));
-            list->addrList[n] = (char*) calloc(1, strlen(Buffer)+1);
-            if (!list->addrList[n])
-            {
-                functionName = "calloc()";
-                code = ENOMEM;
-                goto cleanup;
-            }
-            strcpy(list->addrList[n], Buffer);
-        }
-    }
 cleanup:
     if (code) {
         Leash_krb5_error(code, functionName, 0, &ctx, NULL);
         if (list) {
-            if (list->theTicket)
-                free(list->theTicket);
-            free(list);
+            not_an_API_LeashFreeTicketList(&list);
         }
     } else {
         **ticketListTail = list;
         *ticketListTail = &list->next;
     }
         
-    if (ClientName != NULL)
-        (*pkrb5_free_unparsed_name)(ctx, ClientName);
-
     if (sServerName != NULL)
         (*pkrb5_free_unparsed_name)(ctx, sServerName);
 

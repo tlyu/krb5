@@ -196,6 +196,15 @@ private:
     static VOID	UpdateTicketTime(TICKETINFO& ticketinfo);
     static INT	GetLowTicketStatus(int);
     static time_t	LeashTime();
+    static VOID AddDisplayItem(CListCtrl &list,
+                                CCacheDisplayData *elem,
+                                int iItem,
+                                char *principal,
+                                long issued,
+                                long valid_until,
+                                long renew_until,
+                                char *encTypes,
+                                unsigned long flags);
 
     void   SetTrayIcon(int nim, int state=0);
     void   SetTrayText(int nim, CString tip);
