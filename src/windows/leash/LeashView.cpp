@@ -387,14 +387,12 @@ INT CLeashView::GetLowTicketStatus(int ver)
 
 VOID CLeashView::UpdateTicketTime(TICKETINFO& ti)
 {
-    if (!ti.btickets)
-    {
+    if (!ti.btickets) {
         m_ticketTimeLeft = 0L;
         return;
     }
 
-    m_ticketTimeLeft = ti.issue_date + ti.lifetime -
-        LeashTime();
+    m_ticketTimeLeft = ti.valid_until - LeashTime();
 
     if (m_ticketTimeLeft <= 0L)
         ti.btickets = EXPIRED_TICKETS;
@@ -948,6 +946,54 @@ FindCCacheDisplayData(const char * ccacheName, CCacheDisplayData **pList)
     return NULL;
 }
 
+void CLeashView::AddDisplayItem(CListCtrl &list,
+                                CCacheDisplayData *elem,
+                                int iItem,
+                                char *principal,
+                                long issued,
+                                long valid_until,
+                                long renew_until,
+                                char *encTypes,
+                                unsigned long flags)
+{
+    TCHAR* localTimeStr=NULL;
+    int imageIndex;
+    if (iItem != elem->m_index)
+        imageIndex = -1;
+    else if (elem->m_expanded)
+        imageIndex = 0;
+    else
+        imageIndex = 2;
+
+    list.InsertItem(iItem, principal, imageIndex);
+
+    int iSubItem = 1;
+    if (sm_viewColumns[TIME_ISSUED].m_enabled) {
+        krb5TimestampToLocalizedString(issued, &localTimeStr);
+        list.SetItemText(iItem, iSubItem++, localTimeStr);
+    }
+    if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
+        if (renew_until) {
+            krb5TimestampToLocalizedString(renew_until, &localTimeStr);
+            list.SetItemText(iItem, iSubItem++, localTimeStr);
+        } else {
+            list.SetItemText(iItem, iSubItem++, "not renewable");
+        }
+    }
+    if (sm_viewColumns[VALID_UNTIL].m_enabled) {
+        krb5TimestampToLocalizedString(valid_until, &localTimeStr);
+        list.SetItemText(iItem, iSubItem++, localTimeStr);
+    }
+    if (sm_viewColumns[ENCRYPTION_TYPE].m_enabled) {
+        list.SetItemText(iItem, iSubItem++, encTypes);
+    }
+    if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
+        list.SetItemText(iItem, iSubItem++, "ticket flags here");
+    }
+    if (localTimeStr)
+        free(localTimeStr);
+}
+
 VOID CLeashView::OnUpdateDisplay()
 {
     BOOL AfsEnabled = m_pApp->GetProfileInt("Settings", "AfsStatus", 1);
@@ -1170,7 +1216,6 @@ VOID CLeashView::OnUpdateDisplay()
     TICKETINFO *principallist = ticketinfo.Krb5.next;
     int iItem = 0;
     TicketList* tempList;
-    TCHAR* localTimeStr=NULL;
     while (principallist) {
         CCacheDisplayData **pOldElem = FindCCacheDisplayData(principallist->ccache_name, &prevCCacheDisplay);
         if (pOldElem) {
@@ -1185,44 +1230,29 @@ VOID CLeashView::OnUpdateDisplay()
         m_ccacheDisplay = elem;
         elem->m_index = iItem;
 
-        tempList = principallist->ticket_list;
-        principallist = principallist->next;
-        while (tempList) {
-            int imageIndex;
-            if (iItem != elem->m_index)
-                imageIndex = -1;
-            else if (elem->m_expanded)
-                imageIndex = 0;
-            else
-                imageIndex = 2;
-
-            list.InsertItem(iItem, tempList->theTicket, imageIndex);
-
-            int iSubItem = 1;
-            if (sm_viewColumns[TIME_ISSUED].m_enabled) {
-                krb5TimestampToLocalizedString(tempList->issued, &localTimeStr);
-                list.SetItemText(iItem, iSubItem++, localTimeStr);
+        AddDisplayItem(list,
+                       elem,
+                       iItem++,
+                       principallist->principal,
+                       principallist->issued,
+                       principallist->valid_until,
+                       principallist->renew_until,
+                       "",
+                       principallist->flags);
+        if (elem->m_expanded) {
+            tempList = principallist->ticket_list;
+            while (tempList) {
+                AddDisplayItem(list,
+                               elem,
+                               iItem++,
+                               tempList->service,
+                               tempList->issued,
+                               tempList->valid_until,
+                               tempList->renew_until,
+                               tempList->encTypes,
+                               tempList->flags);
+                tempList = elem->m_expanded ? tempList->next : NULL;
             }
-            if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
-                if (tempList->renew_until) {
-                    krb5TimestampToLocalizedString(tempList->renew_until, &localTimeStr);
-                    list.SetItemText(iItem, iSubItem++, localTimeStr);
-                } else {
-                    list.SetItemText(iItem, iSubItem++, "not renewable");
-                }
-            }
-            if (sm_viewColumns[VALID_UNTIL].m_enabled) {
-                krb5TimestampToLocalizedString(tempList->valid_until, &localTimeStr);
-                list.SetItemText(iItem, iSubItem++, localTimeStr);
-            }
-            if (sm_viewColumns[ENCRYPTION_TYPE].m_enabled) {
-                list.SetItemText(iItem, iSubItem++, tempList->encTypes);
-            }
-            if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
-                list.SetItemText(iItem, iSubItem++, "ticket flags here");
-            }
-            iItem++;
-            tempList = elem->m_expanded ? tempList->next : NULL;
         }
         if ((elem->m_focus >= 0) &&
             (iItem > elem->m_index + elem->m_focus)) {
@@ -1230,9 +1260,9 @@ VOID CLeashView::OnUpdateDisplay()
         }
         if (elem->m_selected)
             list.SetItemState(elem->m_index, LVIS_SELECTED, LVIS_SELECTED);
+
+        principallist = principallist->next;
     }
-    if (localTimeStr)
-        free(localTimeStr);
 
     // delete ccache items that no longer exist
     while (prevCCacheDisplay) {
@@ -1244,6 +1274,7 @@ VOID CLeashView::OnUpdateDisplay()
     pLeashKRB5FreeTickets(&ticketinfo.Krb5);
 
     // @TODO: AFS-specific here
+#ifndef NO_AFS
     if (!afsError && CLeashApp::m_hAfsDLL)
     { // AFS installed
 
@@ -1256,6 +1287,7 @@ VOID CLeashView::OnUpdateDisplay()
 
         pLeashFreeTicketList(&m_listAfs);
     }
+#endif
 
     ReleaseMutex(ticketinfo.lockObj);
 }
@@ -2212,8 +2244,8 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
                          EXPIRED_TICKETS != ticketinfo.Krb5.btickets &&
                          m_autoRenewTickets &&
                          !m_autoRenewalAttempted &&
-                         ticketinfo.Krb5.renew_till &&
-                         (ticketinfo.Krb5.issue_date + ticketinfo.Krb5.renew_till -LeashTime() > 20 * 60) &&
+                         ticketinfo.Krb5.renew_until &&
+                         (ticketinfo.Krb5.issued + ticketinfo.Krb5.renew_until -LeashTime() > 20 * 60) &&
                          !stricmp(ticketinfo.Krb5.principal,ticketinfo.Afs.principal)
                          )
                     {
@@ -2299,8 +2331,8 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
 
 #ifndef NO_KRB5
             if ( m_ticketStatusKrb5 == TWENTY_MINUTES_LEFT &&
-                 m_autoRenewTickets && !m_autoRenewalAttempted && ticketinfo.Krb5.renew_till &&
-                 (ticketinfo.Krb5.issue_date + ticketinfo.Krb5.renew_till - LeashTime() > 20 * 60))
+                 m_autoRenewTickets && !m_autoRenewalAttempted && ticketinfo.Krb5.renew_until &&
+                 (ticketinfo.Krb5.issued + ticketinfo.Krb5.renew_until - LeashTime() > 20 * 60))
             {
                 m_autoRenewalAttempted = 1;
                 ReleaseMutex(ticketinfo.lockObj);

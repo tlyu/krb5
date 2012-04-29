@@ -104,18 +104,27 @@ typedef struct {
 #endif /* NETIDMGR */
 
 typedef struct TicketList TicketList;
+typedef struct TicketList {
+    TicketList *next;
+    char *service;
+    char *encTypes;
+    krb5_timestamp issued;
+    krb5_timestamp valid_until;
+    krb5_timestamp renew_until;
+    unsigned long flags;
+} TicketList;
+
 typedef struct TICKETINFO TICKETINFO;
 typedef struct TICKETINFO {
     TICKETINFO *next;
-    char   *principal;                /* Principal name/instance/realm */
+    char   *principal;                /* Principal name/instance@realm */
     char   *ccache_name;
     TicketList *ticket_list;
     int     btickets;                 /* Do we have tickets? */
-    long    lifetime;                 /* Lifetime -- needs to have
-                                         room for 255 5-minute
-                                         periods * 5 * 60 */
-    long    issue_date;               /* The issue time */
-    long    renew_till;               /* The Renew time (k5 only) */
+    long    issued;                   /* The issue time */
+    long    valid_until;              /* */
+    long    renew_until;              /* The Renew time (k5 only) */
+    unsigned long flags;
 } TICKETINFO;
 
 int FAR Leash_kinit_dlg(HWND hParent, LPLSH_DLGINFO lpdlginfo);

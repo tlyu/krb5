@@ -24,21 +24,6 @@
 #include <loadfuncs-leash.h>
 #include <krb5.h>
 
-typedef struct TicketList
-{
-    char* theTicket;
-    TicketList* next;
-    char* encTypes;
-    krb5_timestamp issued;
-    krb5_timestamp valid_until;
-    krb5_timestamp renew_until;
-    int   addrCount;
-    char ** addrList;
-    char * name;
-    char * inst;
-    char * realm;
-} TicketList;
-
 // toolhelp functions
 TYPEDEF_FUNC(
     HANDLE,
