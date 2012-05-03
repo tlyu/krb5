@@ -463,6 +463,11 @@ do_ccache(krb5_context ctx,
         goto cleanup;
     }
     ticketinfo->ccache_name = strdup(pkrb5_cc_get_name(ctx, cache));
+    if (ticketinfo->ccache_name == NULL) {
+        functionName = "strdup";
+        code = ENOMEM;
+        goto cleanup;
+    }
     **ticketInfoTail = ticketinfo;
     *ticketInfoTail = &ticketinfo->next;
     ticketListTail = &ticketinfo->ticket_list;
@@ -602,13 +607,18 @@ not_an_API_LeashKRB5GetTickets(
 
         if ((code = pkrb5_cc_default(ctx, &cache)))
             goto cleanup;
-        if ((code = pkrb5_cc_get_principal(ctx, cache, &me)))
+        ticketinfo->ccache_name = strdup(pkrb5_cc_get_name(ctx, cache));
+        if (ticketinfo->ccache_name == NULL) {
+            code = ENOMEM;
             goto cleanup;
-        if ((code = (*pkrb5_unparse_name)(ctx, me, &PrincipalName)))
-            goto cleanup;
-        if (PrincipalName) {
-            ticketinfo->principal = strdup(PrincipalName);
-            pkrb5_free_unparsed_name(ctx, PrincipalName);
+        }
+        if (!pkrb5_cc_get_principal(ctx, cache, &me)) {
+            if ((code = (*pkrb5_unparse_name)(ctx, me, &PrincipalName)))
+                goto cleanup;
+            if (PrincipalName) {
+                ticketinfo->principal = strdup(PrincipalName);
+                pkrb5_free_unparsed_name(ctx, PrincipalName);
+            }
         }
     }
 
@@ -616,6 +626,8 @@ not_an_API_LeashKRB5GetTickets(
     // @TEMP aggregate ticket info here?
 
 cleanup:
+    if (code)
+        not_an_API_LeashKRB5FreeTickets(ticketinfo);
     if (cache)
         pkrb5_cc_close(ctx, cache);
     if (me)
