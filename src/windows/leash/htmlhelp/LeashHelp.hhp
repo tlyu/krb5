@@ -1,0 +1,47 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=LeashHelp.chm
+Contents file=TOC.hhc
+Default Window=Leash Help
+Default topic=Html\Getting_Started.htm
+Display compile progress=No
+Full text search stop list file=stoplist.stp
+Full-text search=Yes
+Language=0x409 English (United States)
+
+[WINDOWS]
+Leash Help=,"TOC.hhc",,,,,,,,0x62420,,0x100e,[0,0,800,800],,,,,,,0
+
+
+[FILES]
+Html\Getting_Started.htm
+Html\Change_Password.htm
+Html\Forget_Password.htm
+Html\Kerberos.htm
+Html\Password_Tips.htm
+Html\Passwords.htm
+Html\Using_Leash_Menus.htm
+Html\Tickets.htm
+Html\Destroy_Tickets.htm
+Html\Get_Tickets.htm
+Html\Import_Tickets.htm
+Html\Renew_Tickets.htm
+Html\Ticket_Settings.htm
+Html\View_Tickets.htm
+Leash.css
+HTML\FAQ.htm
+HTML\Options_Menu.htm
+HTML\Command_Line.htm
+HTML\MS2MIT.htm
+HTML\KDESTROY.htm
+HTML\KLIST.htm
+HTML\KINIT.htm
+HTML\Troubleshooting.htm
+HTML\How_Kerberos_Works.htm
+HTML\How_Use_Kerberos.htm
+HTML\Kerberos_Terminology.htm
+HTML\Report_Bugs.htm
+HTML\Encryption_Types.htm
+
+[INFOTYPES]
+

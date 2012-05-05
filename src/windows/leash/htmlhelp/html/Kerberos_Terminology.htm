@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<link rel="stylesheet" type="text/css" href="Leash.css" />
+<Title>Kerberos Terminology</Title>
+</HEAD>
+<BODY>
+<H1> Kerberos Terminology</H1>
+<p>
+It is helpful to understand three terms when using Kerberos; realms, principals, and tickets.</p>
+<p>
+<table>
+<tr>
+<th>Realm</th>
+</tr>
+<tr>
+<td>  
+ A Kerberos <i>realm</i>  is the group of network resources that you gain access to when you log on with a Kerberos username and password. For example, a university might have a Kerberos realm that includes all of the servers that students are allowed to access. <br>
+Realms are usually named after the DNS domain they corrospond to, but useing all upper case letters. By definition, each network resource in a Kerberos realm uses the same Kerberos installation  for authentication.  <br>
+ Some companies or universities might  maintain more than one realm, potentially overlapping them. If you have access to more than one realm, you must log on to each one separately. <br>
+</td>
+</tr>
+<tr>
+<th>Principal</th>
+</tr>
+<tr>
+<td>  
+ A Kerberos <i>principal</i>  is the unique identity (username) you use to log on with Kerberos. Some people will have more than one principal. For example, an administrator might have a regular principal and a seperate one with administrative rights or root access.  <br>
+Because Kerberos provides <em>mututal</em> authentication, the network resources that use Keberos also have unique principals. However, you do not need to know a service's principal to access it.
+</td>
+</tr>
+<tr>
+<th>Tickets</th>
+</tr>
+<tr>
+<td>  
+Kerberos uses the concept of <i>tickets </i> to keep passwords from being transmitted in the clear and to provide users the convenience of a single log-on to access multiple services and hosts.  <br>
+Once a you provide a valid principal and password, Kerberos  issues you a ticket with a limited lifetime. This ticket is an encrypted block of data that provides authentication for the user and.   In most cases the ticket allows you to access all of the appropriate network resources in the realm you use, for the lifetime of the ticket, without having to take any further action. <br>
+ When you access one of these resources, Leash passes your initial Kerberos ticket to the service. The service verifies the ticket and then issues a separate ticket that allows access to that service.  You don't have to worry about obtaining or managing these new service tickets; they are automatically issued. Service tickets can be viewed with Leash but cannot be directly obtained or destroyed through it.
+</td>
+</tr>
+</table>
+</BODY>
+</HTML>

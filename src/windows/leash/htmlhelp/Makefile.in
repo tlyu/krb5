@@ -2,22 +2,18 @@ BUILDTOP=..\..\..
 
 TARGETTYPE=NONE
 
+HHCOUT=LeashHelp.chm
 TARGET=leash.chm
-HHK=leash32.hhk
-HHP=leash32.hhp
+HHP=LeashHelp.hhp
 ERR=leash.log
 
-all:: $(TARGET) rename
+all:: $(TARGET)
 
 clean::
 	@if exist $(TARGET) del $(TARGET)
 	@if exist $(ERR) del $(ERR)
 
-rename:
-	@if exist $(TARGET) ren $(TARGET) $(TARGET)
-	@if exist $(ERR) ren $(ERR) $(ERR)
-
-# We rename the file to get a lower-case file.
-# It looks like the silly help compiler gives us uppercase.
-$(TARGET): $(HHK) $(HHP)
+$(TARGET): $(HHP)
    - hhc $(HHP)
+   @if exist $(TARGET) del $(TARGET)
+   @ren $(HHCOUT) $(TARGET)

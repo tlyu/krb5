@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<link rel="stylesheet" type="text/css" href="Leash.css" />
+<Title>How Kerberos Works</Title>
+</HEAD>
+<BODY>
+<H1> How Does Kerberos Work?</H1>
+<p>
+Kerberos uses secret-key cryptography to allow the user and the service the user is accessing to prove their identities to each other and then to encrypt the rest of their communications. This mutual authentication and subsequent encryption maintain privacy and data integrity for both user and service. </p>
+<p>
+You do not need to know the inner workings of the encryption and authentication to use Kerberos. However, for the curious a summary is provided below, along with a link to a scholarly paper written in part by a member of the team that designed and implemented the original phase of Keberos. </p>
+<p> 
+Each network resource in a Kerberos realm uses the same Kerberos installation for authentication. Each user, service, and host in the realm has a unique principal (for the user, this is a username). Each principal has a long-term key (for the user, this is a password). </p>
+<p>
+Users must obtain Kerberos tickets to access the resources in the Kerberos realm. Tickets are granted through the Key Distribution Center (KDC) of the realm and then used to access services in the following way. Notice that the user's password is never sent unencrypted over the network.</p>
+<ol>
+<li>The user enters a username (principal) and password in the Get Ticket window and clicks OK. </li>
+<li>Leash sends an authentication request for the principal  to the Authenication server (AS) in the KDC. </li>
+<li> The AS sends back a  time stamped, limited lifetime Ticket Granting Ticket (TGT). The AS does not actually verify that the user is who he or she claims to be since no password was included in the request; instead, the TGT is encrypted with the user's password. This is possible because the KDC has a database that includes a list of all valid principals and matching passwords.</li>
+<li>As part of the login process, the TGT is decrypted with the password provided by the user. If the password is incorrect, the login fails at this point and no ticket is actually provided to the user. If the password is correct, the user has a valid ticket and can use any local resources that are part of the Kerberos realm. </li>
+<li>When the user connects to another resource on the network, Leash forwards the TGT and a service ticket request to the resource.  </li>
+<li>The resource uses a Ticket Granting Server (TGS) to verify that the TGT is valid and, if so, issues a service ticket to Leash. </li>
+<li> Leash sends the service ticket to the service server and the user is allowed access.</li>
+</ol>
+
+
+
+
+</BODY>
+</HTML>
