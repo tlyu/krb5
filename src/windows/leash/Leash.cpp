@@ -162,6 +162,7 @@ BOOL CLeashApp::InitInstance()
     // NOTE: Not used at this time
     /// Set LEASH_DLL to the path where the Leash.exe is
     char modulePath[MAX_PATH];
+    krb5_error_code code;
     DWORD result = GetModuleFileName(AfxGetInstanceHandle(), modulePath, MAX_PATH);
     ASSERT(result);
 
@@ -181,6 +182,10 @@ BOOL CLeashApp::InitInstance()
     HWND hMsg = GetForegroundWindow();
     if (!InitDLLs())
         return FALSE; //exit program, can't load LEASHDLL
+    if (code = pkrb5_init_context(&m_krbv5_context)) {
+        // @TODO: report error
+        return FALSE;
+    }
 
     // Check for args (switches)
     LPCTSTR exeFile		= __targv[0];
@@ -202,8 +207,7 @@ BOOL CLeashApp::InitInstance()
                 if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
                     throw("Unable to lock ticketinfo");
 
-                pLeashKRB5GetTickets(&ticketinfo.Krb5,
-                                      &CLeashApp::m_krbv5_context);
+                LeashKRB5ListDefaultTickets(&ticketinfo.Krb5);
 
                 if ( ticketinfo.Krb5.btickets && ticketinfo.Krb5.principal ) {
                     for (; ticketinfo.Krb5.principal[i] && ticketinfo.Krb5.principal[i] != '@'; i++)
@@ -220,7 +224,7 @@ BOOL CLeashApp::InitInstance()
                     realm[j] = '\0';
                 }
 
-                pLeashKRB5FreeTickets(&ticketinfo.Krb5);
+                LeashKRB5FreeTicketInfo(&ticketinfo.Krb5);
 
                 ReleaseMutex(ticketinfo.lockObj);
 
@@ -395,9 +399,9 @@ BOOL CLeashApp::InitInstance()
     {
         if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
             throw("Unable to lock ticketinfo");
-        pLeashKRB5GetTickets(&ticketinfo.Krb5, &CLeashApp::m_krbv5_context);
+        LeashKRB5ListDefaultTickets(&ticketinfo.Krb5);
         BOOL b_autoinit = !ticketinfo.Krb5.btickets;
-        pLeashKRB5FreeTickets(&ticketinfo.Krb5);
+        LeashKRB5FreeTicketInfo(&ticketinfo.Krb5);
         ReleaseMutex(ticketinfo.lockObj);
 
         DWORD dwMsLsaImport = pLeash_get_default_mslsa_import();
@@ -478,11 +482,8 @@ BOOL CLeashApp::InitInstance()
 
 // leash functions
 DECL_FUNC_PTR(not_an_API_LeashKRB4GetTickets);
-DECL_FUNC_PTR(not_an_API_LeashKRB5GetTickets);
 DECL_FUNC_PTR(not_an_API_LeashAFSGetToken);
-DECL_FUNC_PTR(not_an_API_LeashFreeTicketList);
 DECL_FUNC_PTR(not_an_API_LeashGetTimeServerName);
-DECL_FUNC_PTR(not_an_API_LeashKRB5FreeTickets);
 DECL_FUNC_PTR(Leash_kdestroy);
 DECL_FUNC_PTR(Leash_changepwd_dlg);
 DECL_FUNC_PTR(Leash_changepwd_dlg_ex);
@@ -528,11 +529,8 @@ DECL_FUNC_PTR(Leash_reset_defaults);
 
 FUNC_INFO leash_fi[] = {
     MAKE_FUNC_INFO(not_an_API_LeashKRB4GetTickets),
-    MAKE_FUNC_INFO(not_an_API_LeashKRB5GetTickets),
     MAKE_FUNC_INFO(not_an_API_LeashAFSGetToken),
-    MAKE_FUNC_INFO(not_an_API_LeashFreeTicketList),
     MAKE_FUNC_INFO(not_an_API_LeashGetTimeServerName),
-    MAKE_FUNC_INFO(not_an_API_LeashKRB5FreeTickets),
     MAKE_FUNC_INFO(Leash_kdestroy),
     MAKE_FUNC_INFO(Leash_changepwd_dlg),
     MAKE_FUNC_INFO(Leash_changepwd_dlg_ex),
@@ -772,7 +770,7 @@ BOOL CLeashApp::InitDLLs()
 #endif
     m_hKrb5DLL = AfxLoadLibrary(KERB5DLL);
     m_hKrb5ProfileDLL = AfxLoadLibrary(KERB5_PPROFILE_DLL);
-    m_hComErr - AfxLoadLibrary(COMERR_DLL);
+    m_hComErr = AfxLoadLibrary(COMERR_DLL);
 
 #ifndef NO_AFS
     afscompat_init();
@@ -1483,9 +1481,9 @@ CLeashApp::ObtainTicketsViaUserIfNeeded(HWND hWnd)
 {
     if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
         throw("Unable to lock ticketinfo");
-    pLeashKRB5GetTickets(&ticketinfo.Krb5, &CLeashApp::m_krbv5_context);
+    LeashKRB5ListDefaultTickets(&ticketinfo.Krb5);
     int btickets = ticketinfo.Krb5.btickets;
-    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
+    LeashKRB5FreeTicketInfo(&ticketinfo.Krb5);
     ReleaseMutex(ticketinfo.lockObj);
 
     if ( !btickets ) {

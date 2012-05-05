@@ -1169,20 +1169,6 @@ VOID CLeashView::OnUpdateDisplay()
     LeashKRB5FreeTickets(&principallist);
 
     // @TODO: AFS-specific here
-#ifndef NO_AFS
-    if (!afsError && CLeashApp::m_hAfsDLL)
-    { // AFS installed
-
-        tempList = m_listAfs;
-        while (tempList)
-        {
-            m_tvinsert.item.pszText = tempList->theTicket;
-            tempList = tempList->next;
-        }
-
-        pLeashFreeTicketList(&m_listAfs);
-    }
-#endif
 
     ReleaseMutex(ticketinfo.lockObj);
 }
