@@ -70,20 +70,8 @@ TYPEDEF_FUNC(
 TYPEDEF_FUNC(
     long,
     WINAPIV,
-    not_an_API_LeashKRB5GetTickets,
-    (TICKETINFO *, krb5_context *)
-    );
-TYPEDEF_FUNC(
-    long,
-    WINAPIV,
     not_an_API_LeashAFSGetToken,
     (TICKETINFO *, TicketList **, char *)
-    );
-TYPEDEF_FUNC(
-    long,
-    WINAPIV,
-    not_an_API_LeashFreeTicketList,
-    (TicketList**)
     );
 TYPEDEF_FUNC(
     long,
@@ -91,19 +79,10 @@ TYPEDEF_FUNC(
     not_an_API_LeashGetTimeServerName,
     (char *, const char*)
     );
-TYPEDEF_FUNC(
-    long,
-    WINAPIV,
-    not_an_API_LeashKRB5FreeTickets,
-    (TICKETINFO *)
-    );
 
 extern DECL_FUNC_PTR(not_an_API_LeashKRB4GetTickets);
-extern DECL_FUNC_PTR(not_an_API_LeashKRB5GetTickets);
 extern DECL_FUNC_PTR(not_an_API_LeashAFSGetToken);
-extern DECL_FUNC_PTR(not_an_API_LeashFreeTicketList);
 extern DECL_FUNC_PTR(not_an_API_LeashGetTimeServerName);
-extern DECL_FUNC_PTR(not_an_API_LeashKRB5FreeTickets);
 extern DECL_FUNC_PTR(Leash_kdestroy);
 extern DECL_FUNC_PTR(Leash_changepwd_dlg);
 extern DECL_FUNC_PTR(Leash_changepwd_dlg_ex);
@@ -149,11 +128,8 @@ extern DECL_FUNC_PTR(Leash_reset_defaults);
 
 ////Do we still need this one?
 #define pLeashKRB4GetTickets     pnot_an_API_LeashKRB4GetTickets
-#define pLeashKRB5GetTickets     pnot_an_API_LeashKRB5GetTickets
 #define pLeashAFSGetToken        pnot_an_API_LeashAFSGetToken
-#define pLeashFreeTicketList     pnot_an_API_LeashFreeTicketList
 #define pLeashGetTimeServerName  pnot_an_API_LeashGetTimeServerName
-#define pLeashKRB5FreeTickets    pnot_an_API_LeashKRB5FreeTickets
 
 // psapi functions
 extern DECL_FUNC_PTR(GetModuleFileNameExA);
