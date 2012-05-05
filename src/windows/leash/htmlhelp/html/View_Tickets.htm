@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<link rel="stylesheet" type="text/css" href="Leash.css" />
+<Title>View Tickets</Title>
+</HEAD>
+<BODY>
+<H1>View Tickets</H1>
+<p>
+ Leash displays your tickets in the main Leash window. The tickets (if any) are organized by the <em> principal</em> who owns them. The  principal is the name you used with your Kerberos password to obtain the ticket.</p>
+<p>
+To customize the information shown for each ticket, select or de-select the options in the View section of the Home tab.  Each selected option appears in its own column. The following columns are available.</p>
+<a name="table"><table></a>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+<tr>
+<th id="th2"> Principal </th> 
+</td>
+<td> The identity that has obtained the ticket. This is your user name (e.g.,  <tt>Jsmith</tt>) plus the Kerberos realm you can access with the ticket (e.g.,<tt> @SERVER.MEGACORP.COM</tt>).  If like many users you use only one name with Kerberos and have access to only one realm, you will have only one principal.
+<p></p>
+Click the blue arrow in front of the principal name to expand the view. The expanded view shows all of the tickets issued to the principal.</td>
+</tr>
+
+<tr>
+<th id="th2"> Issued </th> 
+
+</td>
+<td>The date and time the ticket was originally obtained.</td>
+</tr>
+<tr>
+<th id="th2"> Renewable Until</th> 
+
+</td>
+<td> The date and time marking the end of each ticket's renewable lifetime.  After this time, you cannot renew the ticket and must instead get a new one. 
+<p></p>
+To renew your ticket (resetting the ticket lifetime to the length of the orginal ticket) , click the Renew Ticket button in the Home tab. To have your tickets automatically renew until the Renewable Until time is reached, select Automatic Ticket Renewal in the Options section of the Home tab.
+<p></p>
+If this column shows <em>Not Renewable</em>, the ticket was not flagged as renewable when you obtained it.</td>
+</tr>
+<tr>
+<th id="th2">  Valid Until</th> 
+
+</td>
+<td>After the time shown in this column, the ticket will expire and can no longer be used or renewed. Leash alerts you to expiring tickets with a warning in a pop up window. 
+<p></p>
+To add an audible warning, select <b>Expiration Alarm</b> in the Options section of the Home tab.
+</td>
+</tr>
+<tr>
+<th id="th2">Encryption Type</th> 
+
+</td>
+<td>Shows what type of  encryption was used to encrypt the session key and the ticket. Kerberos supports several types of encryption. The type used for your tickets depends on the configuration of your Kerberos installation and the configuration and capabilities of the particular network resources you are accessing.  <A href="HTML/Encryption_Types.htm#supported-types">Supported Encryption Types</a> </td>
+</tr>
+<tr>
+<th id="th2"> Flags</th> 
+</td>
+<td>Shows how the tickets were flagged (renewable and/or fowardable) when you obtained them. You cannot change how an existing flag is set. If you need a ticket with different flags, you must get a new ticket. 
+<p></p>
+<em> Forwardable</em> tickets can be forwarded to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications. 
+<p></p>
+<em> Renewable</em> tickets can be renewed until the time and day shown in the Renewable Until column. Each time a ticket is renewed, it resets its lifetime by the original amount. 
+</td>
+</table>
+<p>
+
+
+
+</BODY>
+</HTML>

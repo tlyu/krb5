@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<link rel="stylesheet" type="text/css" href="Leash.css" />
+<Title>Ticket Settings</Title>
+</HEAD>
+<BODY>
+<a name="top"><H1>Ticket Settings and Flags</H1></a>
+<p>When you obtain a ticket you have a chance to view and change the ticket's settings and flags. If the settings are not visible when you open the Get Ticket window, click the Show Advanced Settings button. </p>
+<p>
+Ticket settings include the following:</p>
+<ul id="helpul">
+<li> <a href="#lifetime"> Ticket Lifetime </a> </li> 
+<li><a href="#forwardable">Flag as Forwardable</a></li>
+<li><a href="#renewable"> Flag as Renewable</a></li>
+</ul>
+<p>
+<b>Note: </b> Options that you may not change are visible but appear in gray. These options are set by your administrator.</P>
+<hr>
+<p>
+<a name="lifetime"> <H2>Ticket Lifetime</H2> </a>
+<p>
+<b>Change this if: </b>You want to adjust the length of time your ticket will be valid before it expires.</p>
+<p>
+Your Kerberos ticket will expire at the end of the lifetime specified with this slider control. Move the slider left to shorten the lifetime; move the slider right to lengthen the lifetime. Longer lifetimes are more convinent but less secure. 
+</p>
+<a href="#top">Back to top</a>
+
+<a name="forwardable"> <hr></a>
+<H2>Flag as Forwardable</H2> 
+<p>
+<b>Select this if: </b>You will use Kerberized services on a remote host. </p>
+<p>
+If this checkbox is selected, the ticket will be forwardable.  You can then forward your tickets to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications, and you will not need to get new tickets to use remote services.</p>
+<p></p>
+<a href="#top">Back to top</a>
+
+
+<a name="renewable"><hr></a>
+
+
+<H2>Flag as Renewable</H2> 
+<p>
+<b>Select  this if: </b>You want a long interactive session wihout having to keep entering your password, or you plan to run a long batch job. </p>
+<p>
+A renewable ticket still has the normal lifetime, but before it expires it can be renewed.   Each renewal resets the ticket to the length of the original lifetime (e.g. 10 hours). You can renew the ticket as often as needed until the "Renewable Until" deadline is reached (e.g., 6 days). You do not need to enter your password to renew tickets. </p>
+<p>
+<b>Note: </b> If you let your ticket expire, you cannot renew it even if the ticket is still within the renewable lifetime. For convienence, you can set your tickets to automatically renew.</p>
+<p>
+You can set  the renewable lifetime of the ticket with  the Renew Until slider. Move the slider left to shorten the renewable lifetime of the ticket or move the slider right to lengthen it. </p>
+<p>
+<b>Related help</b></p>
+<ul id="helpul">
+<li><a href="HTML/Renew_Tickets.htm">Renew Tickets</a></li>
+</ul>
+
+<a href="#top">Back to top</a>
+
+<p>
+
+</BODY>
+</HTML>

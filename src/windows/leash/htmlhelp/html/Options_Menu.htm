@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<link rel="stylesheet" type="text/css" href="Leash.css" />
+<Title>Options Menu</Title>
+</HEAD>
+<BODY>
+<H1>Options </H1>
+<p>
+Use the Options section to manage general Leash options. Depending on the size of your Leash window, in the Home tab you will see either a list of options with checkboxes or an Option button. Click the Options button to reach the option checkboxes. </p>
+<p>
+A checkmark indicates that the option is currently turned on. Click an option's checkbox to turn the option on or off.
+</p>
+<H2> Options </H2>
+
+<p>
+<table>
+<tr>
+<th>
+Option</th>
+<th>
+Turn this on to...</th>
+<th>
+Details</th>
+</tr>
+<tr>
+<th id="th2">Destroy Tickets on Exit</th>
+<td> Have Leash destroy your tickets when you exit the program. </td>
+<td>Turning this option on provides greater security. However, you will need to turn this off if you want to exit Leash but  leave processes running which require your valid tickets. </td></tr>
+<tr>
+<th id="th2">
+Allow Mixed Case Realm Name</th>
+<td>If your Kerberos realm name uses any lower case letters.</td>
+<td>
+A <em>realm</em> is the area authenticated by a unique Kerberos installation. By convention, realm names use all upper case letters. This helps distinguish a realm from the DNS domain it corrosponds to. Realm names are case sensitive. So for convienince, anything you enter in the realm field of the Get Ticket window is converted to upper case, unless you turn this option on. </td></tr>
+<tr>
+<th id="th2">Automatic Ticket Renewal</th>
+<td>
+Automatically renew your Kerberos tickets for their entire renewable lifetime, without promptings or requiring a password.</td>
+<td>
+Renewing your tickets allows you to run batch jobs without interruption and to
+work through a long session without continually reentering your
+password. <br>
+<b>Note: </b>Automatic ticket renewal will not work if
+you exit Leash or if your current tickets are not renewable.
+ </td></tr>
+<tr>
+<th id="th2">Expiration Alarm</th>
+<td >Have Leash provide an audible alarm 15, 10, and 5 minutes before your tickets expire.</td>
+<td >Regardless of whether this option is on, Leash alerts you to expiring tickets at the same intervals with pop up window. However, the pop up
+window will not always be visible on a busy desktop.</td></tr>
+</table>
+<p>
+<b>Related help</b></p>
+<ul id="helpul">
+<li><a href="HTML/Renew_Tickets.htm">Renew Tickets</a></li>
+<li><a href="HTML/Destroy_Tickets.htm">Destroy Tickets</a></li>
+</ul>
+
+</BODY>
+</HTML>

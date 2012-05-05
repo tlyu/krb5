@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<link rel="stylesheet" type="text/css" href="Leash.css" />
+<Title>Encryption_Types</Title>
+</HEAD>
+<BODY>
+<H1>Encryption Types</H1>
+<p>
+Kerberos supports several types of encryption for the session key and the ticket. The type used for a particular ticket or session key depends on a combination of your operating system,  the configuration of your Kerberos installation, and the configuration and capabilities of the particular network resources you are accessing. 
+</p>
+<p>
+Some encryption types that are still supported are now considered weak and therefore undesirable. However, they are still supported to allow Kerberos to be used in a network that contains some older machines running operating systems that  do not support the newer encryption types.</p>
+<H2>View Encryption Types</H2>
+In the View section of the menu, select Encryption Type to open that column. The column will show the encryption type associated with each of your tickets and session keys.
+<a name="supported-types"><p></p></a>
+<H2>Supported Encryption Types </H2>
+<table>
+<tr>
+<th>Encryption Type </th>
+<th>Description</th>
+</tr>
+<tr>
+<th id="th2">  des-  </th>
+  <td>   The DES (Data Encryption Standard) family is a symmetric block cipher. It was designed to handle only 56-bit keys which is not enough for modern computing power.  It is now considered to be weak encryption.   <ul id="helpul">
+<li> des-cbc-crc (<b>weak</b>) </li> 
+<li>des-cbc-md5 (<b>weak</b>)  </li> 
+<li> des-cbc-md4  (<b>weak</b>) </li> 
+<li> des-cbc-raw (<b>weak</b>) </li> 
+<li> des-hmac-sha1(<b>weak</b>)  </li> 
+</ul>
+</td>
+<tr>
+<th id="th2"> des3- </th>
+   <td>  The triple DES family improves on the original DES (Data Encryption Standard) by using 3 separate 56-bit keys. Some modes of 3DES are considered weak while others are strong (if slow).  <ul id="helpul">
+<li> des3-cbc-sha1</li> 
+<li> des3-cbc-raw  (<b>weak</b>) </li>
+<li>des3-cbc-sha1</li>
+<li>des3-hmac-sha1 </li>
+<li>des3-cbc-sha1-kd </li>
+</ul>
+</td>
+ </tr>
+<tr>
+<th id="th2"> aes </th>
+     <td>The AES  Advanced Encryption Standard family, like DES and 3DES, is a symmetric block cipher and was designed to replace them.  It can use multiple key sizes. Kerberos specifies use for 256-bit and 128-bit keys.
+<ul id="helpul">
+<li> aes256-cts-hmac-sha1-96 </li>
+<li> aes128-cts-hmac-sha1-96 </li>
+</ul>
+</td>
+</tr>
+<tr>
+<th id="th2"> rc4 or <br> arcfour</th>
+<td>The RC4 (Rivest Cipher) is a symmetric stream cipher that can use multiple key sizes. The exportable variations are considered weak, but the others are strong.
+<ul id="helpul">
+<li> arcfour-hmac </li> 
+<li> rc4-hmac </li> 
+<li> arcfour-hmac-md5</li>
+<li> arcfour-hmac-exp (<b>weak</b>) </li>
+<li> rc4-hmac-exp (<b>weak</b>) </li>
+<li> arcfour-hmac-md5-exp(<b>weak</b>) </li>
+</ul>
+</td>
+</tr>
+
+   
+</table>
+</BODY>
+</HTML>
