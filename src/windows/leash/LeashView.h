@@ -158,6 +158,7 @@ private:
     CString*            m_pWarningMessage;
     BOOL                m_bIconAdded;
     BOOL                m_bIconDeleted;
+    HFONT               m_BoldFont;
 
     static ViewColumnInfo sm_viewColumns[NUM_VIEW_COLUMNS];
 
@@ -336,6 +337,7 @@ public:
     afx_msg void OnLvnItemchanging(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 /*

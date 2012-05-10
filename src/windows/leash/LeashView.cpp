@@ -114,6 +114,7 @@ BEGIN_MESSAGE_MAP(CLeashView, CListView)
     ON_NOTIFY_REFLECT(LVN_ITEMCHANGING, &CLeashView::OnLvnItemchanging)
     ON_NOTIFY_REFLECT(LVN_ITEMACTIVATE, &CLeashView::OnLvnItemActivate)
     ON_NOTIFY_REFLECT(LVN_KEYDOWN, &CLeashView::OnLvnKeydown)
+    ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, &CLeashView::OnNMCustomdraw)
 END_MESSAGE_MAP()
 
 
@@ -148,6 +149,19 @@ ViewColumnInfo CLeashView::sm_viewColumns[] =
     {"Encryption Type", false, ID_ENCRYPTION_TYPE, 100}, // ENCRYPTION_TYPE
     {"Flags", false, ID_SHOW_TICKET_FLAGS, 100},         // TICKET_FLAGS
 };
+
+
+static HFONT CreateBoldFont(HFONT font)
+{
+    // @TODO: Should probably enumerate fonts here instead since this
+    // does not actually seem to guarantee returning a new font
+    // distinguishable from the original.
+    LOGFONT fontAttributes = { 0 };
+    ::GetObject(font, sizeof(fontAttributes), &fontAttributes);
+    fontAttributes.lfWeight = FW_BOLD;
+    HFONT boldFont = ::CreateFontIndirect(&fontAttributes);
+    return boldFont;
+}
 
 
 bool change_icon_size = true;
@@ -268,6 +282,7 @@ CLeashView::CLeashView()
     m_pWarningMessage = NULL;
     m_bIconAdded = FALSE;
     m_bIconDeleted = FALSE;
+    m_BoldFont = NULL;
 }
 
 
@@ -276,6 +291,8 @@ CLeashView::~CLeashView()
     // destroys window if not already destroyed
     if (m_pDebugWindow)
         delete m_pDebugWindow;
+    if (m_BoldFont)
+        DeleteObject(m_BoldFont);
 }
 
 void CLeashView::OnItemChanged(NMHDR* pNmHdr, LRESULT* pResult)
@@ -344,6 +361,7 @@ INT CLeashView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
     if (CListView::OnCreate(lpCreateStruct) == -1)
         return -1;
+
     return 0;
 }
 
@@ -907,6 +925,9 @@ VOID CLeashView::OnUpdateDisplay()
     BOOL AfsEnabled = m_pApp->GetProfileInt("Settings", "AfsStatus", 1);
 
     CListCtrl& list = GetListCtrl();
+    // @TODO: there is probably a more sensible place to initialize this...
+    if ((m_BoldFont == NULL) && list.GetFont())
+        m_BoldFont = CreateBoldFont(*list.GetFont());
     // Determine currently focused item
     int focusItem = list.GetNextItem(-1, LVNI_FOCUSED);
     CCacheDisplayData *elem = m_ccacheDisplay;
@@ -2578,4 +2599,46 @@ void CLeashView::OnLvnItemchanging(NMHDR *pNMHDR, LRESULT *pResult)
         }
     }
     *pResult = result;
+}
+
+CCacheDisplayData *FindCCacheDisplayElem(CCacheDisplayData *pElem, int itemIndex)
+{
+    while (pElem) {
+        if (pElem->m_index == itemIndex)
+            return pElem;
+        pElem = pElem->m_next;
+    }
+}
+
+void CLeashView::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
+{
+    CCacheDisplayData *pElem;
+    *pResult = CDRF_DODEFAULT;
+    LPNMLVCUSTOMDRAW pNMLVCD = reinterpret_cast<LPNMLVCUSTOMDRAW>(pNMHDR);
+    switch (pNMLVCD->nmcd.dwDrawStage) {
+    case CDDS_PREPAINT:
+        *pResult = CDRF_NOTIFYITEMDRAW;
+        break;
+    case CDDS_ITEMPREPAINT:
+        *pResult = CDRF_NOTIFYSUBITEMDRAW;
+        break;
+    case CDDS_SUBITEM | CDDS_ITEMPREPAINT:
+        // set bold font if default princ
+        pElem = FindCCacheDisplayElem(m_ccacheDisplay, pNMLVCD->nmcd.dwItemSpec);
+        if (pElem && pElem->m_isDefault) {
+            HFONT font;
+            if (pNMLVCD->iSubItem == 0)
+                // only bold the principal name
+                font = m_BoldFont;
+            else
+                // restore normal font for other columns
+                font = *GetListCtrl().GetFont();
+            SelectObject(pNMLVCD->nmcd.hdc, font);
+            *pResult = CDRF_NEWFONT;
+        }
+        // TODO: replace expiry time w italicized 'expired' when expired
+        break;
+    default:
+        break;
+    }
 }
