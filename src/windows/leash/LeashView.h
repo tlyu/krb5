@@ -117,6 +117,12 @@ public:
     unsigned int m_isDefault;  // true when this is the default ccache
 };
 
+struct ListItemInfo
+{
+    ListItemInfo() : m_font(NULL) {}
+    HFONT m_font;
+};
+
 class CLeashView : public CListView
 {
 private:
@@ -158,7 +164,10 @@ private:
     CString*            m_pWarningMessage;
     BOOL                m_bIconAdded;
     BOOL                m_bIconDeleted;
+    HFONT               m_BaseFont;
     HFONT               m_BoldFont;
+    HFONT               m_ItalicFont;
+    ListItemInfo*       m_aListItemInfo;
 
     static ViewColumnInfo sm_viewColumns[NUM_VIEW_COLUMNS];
 
@@ -191,6 +200,7 @@ private:
     VOID UpdateBars();
     VOID GetScrollBarSizes(CSize& sizeSb);
     BOOL GetTrueClientSize(CSize& size, CSize& sizeSb);
+    HFONT GetSubItemFont(int iItem, int iSubItem);
 
     //void   GetRowWidthHeight(CDC* pDC, LPCSTR theString, int& nRowWidth,
     //                         int& nRowHeight, int& nCharWidth);
@@ -200,6 +210,8 @@ private:
     static VOID	UpdateTicketTime(TICKETINFO& ticketinfo);
     static INT	GetLowTicketStatus(int);
     static time_t	LeashTime();
+    static BOOL IsExpired(TicketList *ticket);
+    static BOOL IsExpired(TICKETINFO *info);
     static VOID AddDisplayItem(CListCtrl &list,
                                 CCacheDisplayData *elem,
                                 int iItem,
@@ -223,6 +235,8 @@ private:
     // returns TRUE if message is queued successfully.
     BOOL PostWarningMessage(const CString& message);
     afx_msg LRESULT OnWarningPopup(WPARAM wParam, LPARAM lParam);
+
+    BOOL    IsExpanded(TICKETINFO *);
 
 protected: // create from serialization only
 	DECLARE_DYNCREATE(CLeashView)
