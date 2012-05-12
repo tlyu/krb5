@@ -163,6 +163,15 @@ static HFONT CreateBoldFont(HFONT font)
     return boldFont;
 }
 
+static HFONT CreateItalicFont(HFONT font)
+{
+    LOGFONT fontAttributes = { 0 };
+    ::GetObject(font, sizeof(fontAttributes), &fontAttributes);
+    fontAttributes.lfItalic = TRUE;
+    HFONT boldFont = ::CreateFontIndirect(&fontAttributes);
+    return boldFont;
+}
+
 
 bool change_icon_size = true;
 
@@ -282,7 +291,10 @@ CLeashView::CLeashView()
     m_pWarningMessage = NULL;
     m_bIconAdded = FALSE;
     m_bIconDeleted = FALSE;
+    m_BaseFont = NULL;
     m_BoldFont = NULL;
+    m_ItalicFont = NULL;
+    m_aListItemInfo = NULL;
 }
 
 
@@ -293,6 +305,10 @@ CLeashView::~CLeashView()
         delete m_pDebugWindow;
     if (m_BoldFont)
         DeleteObject(m_BoldFont);
+    if (m_ItalicFont)
+        DeleteObject(m_ItalicFont);
+    if (m_aListItemInfo)
+        delete[] m_aListItemInfo;
 }
 
 void CLeashView::OnItemChanged(NMHDR* pNmHdr, LRESULT* pResult)
@@ -899,17 +915,24 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
         list.SetItemText(iItem, iSubItem++, localTimeStr);
     }
     if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
-        if (renew_until) {
+        if (valid_until < LeashTime()) {
+            list.SetItemText(iItem, iSubItem++, "Expired");
+        } else if (renew_until) {
             krb5TimestampToLocalizedString(renew_until, &localTimeStr);
             list.SetItemText(iItem, iSubItem++, localTimeStr);
         } else {
-            list.SetItemText(iItem, iSubItem++, "not renewable");
+            list.SetItemText(iItem, iSubItem++, "Not renewable");
         }
     }
     if (sm_viewColumns[VALID_UNTIL].m_enabled) {
-        krb5TimestampToLocalizedString(valid_until, &localTimeStr);
-        list.SetItemText(iItem, iSubItem++, localTimeStr);
+        if (valid_until < LeashTime()) {
+            list.SetItemText(iItem, iSubItem++, "Expired");
+        } else {
+            krb5TimestampToLocalizedString(valid_until, &localTimeStr);
+            list.SetItemText(iItem, iSubItem++, localTimeStr);
+        }
     }
+
     if (sm_viewColumns[ENCRYPTION_TYPE].m_enabled) {
         list.SetItemText(iItem, iSubItem++, encTypes);
     }
@@ -920,14 +943,34 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
         free(localTimeStr);
 }
 
+BOOL CLeashView::IsExpanded(TICKETINFO *info)
+{
+    CCacheDisplayData **pElem = FindCCacheDisplayData(info->ccache_name,
+                                                      &m_ccacheDisplay);
+    return (pElem && (*pElem)->m_expanded) ? TRUE : FALSE;
+}
+
+BOOL CLeashView::IsExpired(TICKETINFO *info)
+{
+    return LeashTime() > info->valid_until ? TRUE : FALSE;
+}
+
+BOOL CLeashView::IsExpired(TicketList *ticket)
+{
+    return LeashTime() > ticket->valid_until ? TRUE : FALSE;
+}
+
 VOID CLeashView::OnUpdateDisplay()
 {
     BOOL AfsEnabled = m_pApp->GetProfileInt("Settings", "AfsStatus", 1);
 
     CListCtrl& list = GetListCtrl();
-    // @TODO: there is probably a more sensible place to initialize this...
-    if ((m_BoldFont == NULL) && list.GetFont())
-        m_BoldFont = CreateBoldFont(*list.GetFont());
+    // @TODO: there is probably a more sensible place to initialize these...
+    if ((m_BaseFont == NULL) && (list.GetFont())) {
+        m_BaseFont = *list.GetFont();
+        m_BoldFont = CreateBoldFont(m_BaseFont);
+        m_ItalicFont = CreateItalicFont(m_BaseFont);
+    }
     // Determine currently focused item
     int focusItem = list.GetNextItem(-1, LVNI_FOCUSED);
     CCacheDisplayData *elem = m_ccacheDisplay;
@@ -1143,19 +1186,22 @@ VOID CLeashView::OnUpdateDisplay()
     LeashKRB5ListAllTickets(&principallist);
     int iItem = 0;
     TicketList* tempList;
-    while (principallist) {
-        CCacheDisplayData **pOldElem = FindCCacheDisplayData(principallist->ccache_name, &prevCCacheDisplay);
+    TICKETINFO *principal = principallist;
+    while (principal) {
+        CCacheDisplayData **pOldElem;
+        pOldElem = FindCCacheDisplayData(principal->ccache_name,
+                                         &prevCCacheDisplay);
         if (pOldElem) {
             // remove from old list
             elem = *pOldElem;
             *pOldElem = elem->m_next;
             elem->m_next = NULL;
         } else {
-            elem = new CCacheDisplayData(principallist->ccache_name);
+            elem = new CCacheDisplayData(principal->ccache_name);
         }
         elem->m_isDefault = def_ccache_name &&
                             (strcmp(def_ccache_name, elem->m_ccacheName) == 0);
-        elem->m_isRenewable = principallist->renew_until != 0;
+        elem->m_isRenewable = principal->renew_until != 0;
 
         elem->m_next = m_ccacheDisplay;
         m_ccacheDisplay = elem;
@@ -1164,15 +1210,16 @@ VOID CLeashView::OnUpdateDisplay()
         AddDisplayItem(list,
                        elem,
                        iItem++,
-                       principallist->principal,
-                       principallist->issued,
-                       principallist->valid_until,
-                       principallist->renew_until,
+                       principal->principal,
+                       principal->issued,
+                       principal->valid_until,
+                       principal->renew_until,
                        "",
-                       principallist->flags);
+                       principal->flags);
         if (elem->m_expanded) {
-            tempList = principallist->ticket_list;
-            while (tempList) {
+            for (tempList = principal->ticket_list;
+                 tempList;
+                 tempList = tempList->next) {
                 AddDisplayItem(list,
                                elem,
                                iItem++,
@@ -1182,7 +1229,6 @@ VOID CLeashView::OnUpdateDisplay()
                                tempList->renew_until,
                                tempList->encTypes,
                                tempList->flags);
-                tempList = elem->m_expanded ? tempList->next : NULL;
             }
         }
         if ((elem->m_focus >= 0) &&
@@ -1192,7 +1238,25 @@ VOID CLeashView::OnUpdateDisplay()
         if (elem->m_selected)
             list.SetItemState(elem->m_index, LVIS_SELECTED, LVIS_SELECTED);
 
-        principallist = principallist->next;
+        principal = principal->next;
+    }
+    // create list item font data array
+    if (m_aListItemInfo)
+        delete[] m_aListItemInfo;
+    m_aListItemInfo = new ListItemInfo[iItem];
+    iItem = 0;
+    for (principal = principallist; principal; principal = principal->next) {
+        //
+        HFONT font = IsExpired(principal) ? m_ItalicFont : m_BoldFont;
+        m_aListItemInfo[iItem++].m_font = font;
+        if (IsExpanded(principal)) {
+            for (TicketList *ticket = principal->ticket_list;
+                 ticket;
+                 ticket = ticket->next) {
+                HFONT font = IsExpired(ticket) ? m_ItalicFont : m_BoldFont;
+                m_aListItemInfo[iItem++].m_font = font;
+            }
+        }
     }
 
     // delete ccache items that no longer exist
@@ -2518,7 +2582,7 @@ CLeashView::OnObtainTGTWithParam(WPARAM wParam, LPARAM lParam)
 }
 
 
-// find the CCacheDisplayData corresponding to the specified ite, if it exists
+// Find the CCacheDisplayData corresponding to the specified item, if it exists
 static CCacheDisplayData *
 FindCCacheDisplayData(int item, CCacheDisplayData *elem)
 {
@@ -2563,7 +2627,8 @@ void CLeashView::OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult)
     if (expand >= 0) {
         int focusedItem = GetListCtrl().GetNextItem(-1, LVNI_FOCUSED);
         if (focusedItem >= 0) {
-            CCacheDisplayData *elem = FindCCacheDisplayData(focusedItem, m_ccacheDisplay);
+            CCacheDisplayData *elem = FindCCacheDisplayData(focusedItem,
+                                                            m_ccacheDisplay);
             if (elem) {
                 if (elem->m_expanded != expand) {
                     elem->m_expanded = expand;
@@ -2601,17 +2666,42 @@ void CLeashView::OnLvnItemchanging(NMHDR *pNMHDR, LRESULT *pResult)
     *pResult = result;
 }
 
-CCacheDisplayData *FindCCacheDisplayElem(CCacheDisplayData *pElem, int itemIndex)
+CCacheDisplayData *
+FindCCacheDisplayElem(CCacheDisplayData *pElem, int itemIndex)
 {
     while (pElem) {
         if (pElem->m_index == itemIndex)
             return pElem;
         pElem = pElem->m_next;
     }
+    return NULL;
+}
+
+HFONT CLeashView::GetSubItemFont(int iItem, int iSubItem)
+{
+    HFONT retval = m_BaseFont;
+    int iColumn, columnSubItem = 0;
+    for (iColumn = 0; iColumn < NUM_VIEW_COLUMNS; iColumn++) {
+        if (sm_viewColumns[iColumn].m_enabled) {
+            if (columnSubItem == iSubItem)
+                break;
+            else
+                columnSubItem++;
+        }
+    }
+    switch (iColumn) {
+    case RENEWABLE_UNTIL:
+    case VALID_UNTIL:
+        retval = m_aListItemInfo[iItem].m_font;
+    default:
+        break;
+    }
+    return retval;
 }
 
 void CLeashView::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 {
+    HFONT font;
     CCacheDisplayData *pElem;
     *pResult = CDRF_DODEFAULT;
     LPNMLVCUSTOMDRAW pNMLVCD = reinterpret_cast<LPNMLVCUSTOMDRAW>(pNMHDR);
@@ -2623,20 +2713,22 @@ void CLeashView::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
         *pResult = CDRF_NOTIFYSUBITEMDRAW;
         break;
     case CDDS_SUBITEM | CDDS_ITEMPREPAINT:
-        // set bold font if default princ
-        pElem = FindCCacheDisplayElem(m_ccacheDisplay, pNMLVCD->nmcd.dwItemSpec);
-        if (pElem && pElem->m_isDefault) {
-            HFONT font;
-            if (pNMLVCD->iSubItem == 0)
-                // only bold the principal name
+        pElem = FindCCacheDisplayElem(m_ccacheDisplay,
+                                      pNMLVCD->nmcd.dwItemSpec);
+        if (pNMLVCD->iSubItem == 0) {
+            // set bold font if default princ
+            if (pElem && pElem->m_isDefault) {
                 font = m_BoldFont;
-            else
-                // restore normal font for other columns
-                font = *GetListCtrl().GetFont();
-            SelectObject(pNMLVCD->nmcd.hdc, font);
-            *pResult = CDRF_NEWFONT;
+            } else {
+                font = m_BaseFont;
+            }
+        } else {
+            // set italic font for 'valid until' and 'renewable until'
+            // columns if expired ticket
+            font = GetSubItemFont(pNMLVCD->nmcd.dwItemSpec, pNMLVCD->iSubItem);
         }
-        // TODO: replace expiry time w italicized 'expired' when expired
+        SelectObject(pNMLVCD->nmcd.hdc, font);
+        *pResult = CDRF_NEWFONT;
         break;
     default:
         break;
