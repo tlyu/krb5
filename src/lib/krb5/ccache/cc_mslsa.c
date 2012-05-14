@@ -175,6 +175,8 @@ is_windows_vista (void)
 static BOOL
 is_process_uac_limited (void)
 {
+    return FALSE;
+#if 0
     static BOOL fChecked = FALSE;
     static BOOL fIsUAC = FALSE;
 
@@ -200,7 +202,7 @@ is_process_uac_limited (void)
         fChecked = TRUE;
     }
     return fIsUAC;
-
+#endif
 }
 
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
