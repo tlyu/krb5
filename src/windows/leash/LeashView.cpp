@@ -1247,13 +1247,13 @@ VOID CLeashView::OnUpdateDisplay()
     iItem = 0;
     for (principal = principallist; principal; principal = principal->next) {
         //
-        HFONT font = IsExpired(principal) ? m_ItalicFont : m_BoldFont;
+        HFONT font = IsExpired(principal) ? m_ItalicFont : m_BaseFont;
         m_aListItemInfo[iItem++].m_font = font;
         if (IsExpanded(principal)) {
             for (TicketList *ticket = principal->ticket_list;
                  ticket;
                  ticket = ticket->next) {
-                HFONT font = IsExpired(ticket) ? m_ItalicFont : m_BoldFont;
+                HFONT font = IsExpired(ticket) ? m_ItalicFont : m_BaseFont;
                 m_aListItemInfo[iItem++].m_font = font;
             }
         }
@@ -2681,6 +2681,8 @@ HFONT CLeashView::GetSubItemFont(int iItem, int iSubItem)
 {
     HFONT retval = m_BaseFont;
     int iColumn, columnSubItem = 0;
+
+    // Translate subitem to column index
     for (iColumn = 0; iColumn < NUM_VIEW_COLUMNS; iColumn++) {
         if (sm_viewColumns[iColumn].m_enabled) {
             if (columnSubItem == iSubItem)
