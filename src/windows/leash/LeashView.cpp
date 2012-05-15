@@ -243,6 +243,56 @@ void krb5TimestampToLocalizedString(krb5_timestamp t, LPTSTR *outStr)
     *outStr = str;
 }
 
+#define SECONDS_PER_MINUTE (60)
+#define SECONDS_PER_HOUR (60 * SECONDS_PER_MINUTE)
+#define SECONDS_PER_DAY (24 * SECONDS_PER_HOUR)
+#define MAX_DURATION_STR 255
+// convert time in seconds to string
+void DurationToString(long delta, LPTSTR *outStr)
+{
+    int days;
+    int hours;
+    int minutes;
+    TCHAR minutesStr[MAX_DURATION_STR+1];
+    TCHAR hoursStr[MAX_DURATION_STR+1];
+
+    if (*outStr)
+        free(*outStr);
+    *outStr = (TCHAR *)malloc((MAX_DURATION_STR + 1)* sizeof(TCHAR));
+    if (!(*outStr))
+        return;
+
+    days = delta / SECONDS_PER_DAY;
+    delta -= days * SECONDS_PER_DAY;
+    hours = delta / SECONDS_PER_HOUR;
+    delta -= hours * SECONDS_PER_HOUR;
+    minutes = delta / SECONDS_PER_MINUTE;
+
+    if (minutes != 1)
+        _snprintf(minutesStr, MAX_DURATION_STR, "%d minutes", minutes);
+    else
+        _snprintf(minutesStr, MAX_DURATION_STR, "1 minute");
+    minutesStr[MAX_DURATION_STR] = 0;
+
+    if (hours != 1)
+        _snprintf(hoursStr, MAX_DURATION_STR, "%d hours", hours);
+    else
+        _snprintf(hoursStr, MAX_DURATION_STR, "1 hour");
+    hoursStr[MAX_DURATION_STR] = 0;
+
+    if (days > 0) {
+        if (days > 1)
+            _snprintf(*outStr, MAX_DURATION_STR, "(%d days, %s remaining)", days, hoursStr);
+        else
+            _snprintf(*outStr, MAX_DURATION_STR, "(1 day, %s remaining)", hoursStr);
+    } else if (hours > 0) {
+        _snprintf(*outStr, MAX_DURATION_STR, "(%s, %s remaining)", hoursStr, minutesStr);
+    } else {
+        _snprintf(*outStr, MAX_DURATION_STR, "(%s remaining)", minutesStr);
+    }
+    (*outStr)[MAX_DURATION_STR] = 0;
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CLeashView construction/destruction
 
@@ -300,6 +350,13 @@ CLeashView::CLeashView()
 
 CLeashView::~CLeashView()
 {
+    CCacheDisplayData *elem = m_ccacheDisplay;
+    while (elem) {
+        CCacheDisplayData *next = elem->m_next;
+        delete elem;
+        elem = next;
+    }
+    m_ccacheDisplay = NULL;
     // destroys window if not already destroyed
     if (m_pDebugWindow)
         delete m_pDebugWindow;
@@ -899,7 +956,10 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
                                 unsigned long flags)
 {
     TCHAR* localTimeStr=NULL;
+    TCHAR* durationStr=NULL;
+    TCHAR tempStr[MAX_DURATION_STR+1];
     int imageIndex;
+    time_t now = LeashTime();
     if (iItem != elem->m_index)
         imageIndex = -1;
     else if (elem->m_expanded)
@@ -915,21 +975,31 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
         list.SetItemText(iItem, iSubItem++, localTimeStr);
     }
     if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
-        if (valid_until < LeashTime()) {
+        if (valid_until < now) {
             list.SetItemText(iItem, iSubItem++, "Expired");
         } else if (renew_until) {
             krb5TimestampToLocalizedString(renew_until, &localTimeStr);
-            list.SetItemText(iItem, iSubItem++, localTimeStr);
+            DurationToString(renew_until - now, &durationStr);
+            if (localTimeStr && durationStr) {
+                _snprintf(tempStr, MAX_DURATION_STR, "%s %s", localTimeStr, durationStr);
+                tempStr[MAX_DURATION_STR] = 0;
+                list.SetItemText(iItem, iSubItem++, tempStr);
+            }
         } else {
             list.SetItemText(iItem, iSubItem++, "Not renewable");
         }
     }
     if (sm_viewColumns[VALID_UNTIL].m_enabled) {
-        if (valid_until < LeashTime()) {
+        if (valid_until < now) {
             list.SetItemText(iItem, iSubItem++, "Expired");
         } else {
             krb5TimestampToLocalizedString(valid_until, &localTimeStr);
-            list.SetItemText(iItem, iSubItem++, localTimeStr);
+            DurationToString(valid_until - now, &durationStr);
+            if (localTimeStr && durationStr) {
+                _snprintf(tempStr, MAX_DURATION_STR, "%s %s", localTimeStr, durationStr);
+                tempStr[MAX_DURATION_STR] = 0;
+                list.SetItemText(iItem, iSubItem++, tempStr);
+            }
         }
     }
 
@@ -941,6 +1011,8 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
     }
     if (localTimeStr)
         free(localTimeStr);
+    if (durationStr)
+        free(durationStr);
 }
 
 BOOL CLeashView::IsExpanded(TICKETINFO *info)
