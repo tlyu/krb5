@@ -971,11 +971,17 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
 
     int iSubItem = 1;
     if (sm_viewColumns[TIME_ISSUED].m_enabled) {
-        krb5TimestampToLocalizedString(issued, &localTimeStr);
-        list.SetItemText(iItem, iSubItem++, localTimeStr);
+        if (issued == 0) {
+            list.SetItemText(iItem, iSubItem++, "Unknown");
+        } else {
+            krb5TimestampToLocalizedString(issued, &localTimeStr);
+            list.SetItemText(iItem, iSubItem++, localTimeStr);
+        }
     }
     if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
-        if (valid_until < now) {
+        if (valid_until == 0) {
+            list.SetItemText(iItem, iSubItem++, "Unknown");
+        } else if (valid_until < now) {
             list.SetItemText(iItem, iSubItem++, "Expired");
         } else if (renew_until) {
             krb5TimestampToLocalizedString(renew_until, &localTimeStr);
@@ -990,7 +996,9 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
         }
     }
     if (sm_viewColumns[VALID_UNTIL].m_enabled) {
-        if (valid_until < now) {
+        if (valid_until == 0) {
+            list.SetItemText(iItem, iSubItem++, "Unknown");
+        } else if (valid_until < now) {
             list.SetItemText(iItem, iSubItem++, "Expired");
         } else {
             krb5TimestampToLocalizedString(valid_until, &localTimeStr);
