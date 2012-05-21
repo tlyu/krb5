@@ -125,7 +125,7 @@ DNSFLAGS=
 TIME_T_FLAGS=-D_USE_32BIT_TIME_T
 !endif
 
-KFWFLAGS=-DUSE_LEASH=1
+KFWFLAGS=-DUSE_LEASH=1 -DDEBUG -D_CRTDBG_MAP_ALLOC
 
 #
 # The name of the C compiler for the target
