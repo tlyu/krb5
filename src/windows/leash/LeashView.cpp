@@ -2914,4 +2914,5 @@ void CLeashView::OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CLeashView::OnForgetPrincipals()
 {
+    pLeash_autocomplete_clear_principal_list();
 }

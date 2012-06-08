@@ -541,10 +541,11 @@ extern "C" void lacAddPrincipal(char * principal)
         RegCloseKey(hKey);
 }
 
-extern "C" void lacReset()
+extern "C" void Leash_autocomplete_clear_principal_list()
 {
     // clear princs from registry
-    //RegDeleteKeyEx()
+    RegDeleteKey(HKEY_CURRENT_USER,
+                 LEASH_REGISTRY_PRINCIPALS_KEY_NAME);
 }
 
 
