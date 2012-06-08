@@ -125,6 +125,7 @@ extern DECL_FUNC_PTR(Leash_import);
 extern DECL_FUNC_PTR(Leash_importable);
 extern DECL_FUNC_PTR(Leash_renew);
 extern DECL_FUNC_PTR(Leash_reset_defaults);
+extern DECL_FUNC_PTR(Leash_autocomplete_clear_principal_list);
 
 ////Do we still need this one?
 #define pLeashKRB4GetTickets     pnot_an_API_LeashKRB4GetTickets
