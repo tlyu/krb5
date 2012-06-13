@@ -1,4 +1,5 @@
 [OPTIONS]
+Binary Index=No
 Compatibility=1.1 or later
 Compiled file=LeashHelp.chm
 Contents file=TOC.hhc
@@ -7,10 +8,11 @@ Default topic=Html\Getting_Started.htm
 Display compile progress=No
 Full text search stop list file=stoplist.stp
 Full-text search=Yes
+Index file=Index.hhk
 Language=0x409 English (United States)
 
 [WINDOWS]
-Leash Help=,"TOC.hhc",,,,,,,,0x62420,,0x100e,[0,0,800,800],,,,,,,0
+Leash Help="Kerberos for Windows Help","TOC.hhc","Index.hhk",,,,,,,0x62420,,0x100e,[0,0,800,800],,,,,,,0
 
 
 [FILES]
@@ -37,11 +39,27 @@ HTML\KDESTROY.htm
 HTML\KLIST.htm
 HTML\KINIT.htm
 HTML\Troubleshooting.htm
-HTML\How_Kerberos_Works.htm
-HTML\How_Use_Kerberos.htm
 HTML\Kerberos_Terminology.htm
 HTML\Report_Bugs.htm
 HTML\Encryption_Types.htm
+HTML\KCPYTKT.htm
+HTML\KVNO.htm
+HTML\KSWITCH.htm
+HTML\KPASSWD.htm
+HTML\Export_Tickets.htm
+HTML\View_Menu.htm
+HTML\Glossary.htm
+HTML\Button_Menu.htm
+HTML\Import_Status.htm
+HTML\Debugging.htm
+HTML\Keyboard_Shortcuts.htm
+HTML\Windows_Logon_Tickets.htm
+HTML\How_Kerberos_Works.htm
+HTML\Principals.htm
+HTML\Make_Default.htm
+HTML\Manage_Multiple_Principals.htm
+HTML\Forget_Principals.htm
+HTML\More_Menu.htm
 
 [INFOTYPES]
 

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+
+<link rel="stylesheet" type="text/css" href="Leash.css" />
+<Title>Glossary</Title>
+</HEAD>
+<BODY>
+<H1>Glossary</H1>
+<dl>
+<dt> default principal  </dt>
+<dd> Your default principal is the one whose tickets are used when an application or service asks for tickets without specifying which principal is being authenticated. If you have only one principal, that principal is always the default.  <a href="HTML/Principals.htm#default-principal">About default principals</a></dd>
+<dt> domain  </dt>
+<dd>  In Windows, realms are called domains. <a href="HTML/Kerberos_Terminology.htm#realm">Kerberos Terminology: Realm</a></dd>
+<dt> encryption key  </dt>
+<dd>  A value that a specific code or algorithm uses to makes information unreadable to anyone without a matching key. </dd>
+<dt> encryption type  </dt>
+<dd> The type of encryption used to encode your tickets and session keys.  You can show the encryption types used for your tickets and session keys by selecting that option in the  <a href="HTML/View_Menu.htm">View panel</a>.
+  </dd>
+<dt>expiration alarm   </dt>
+<dd> Optional audible alarm that warns you 15, 10, and 5 minutes before your tickets expire. Turn the alarm on or off in the <a href="HTML/Options_Menu.htm">Options panel</a>.
+  </dd>
+<dt> exportable  </dt>
+<dd>An  Import Status indicating that the tickets were obtained with the Get Ticket window. You can use the <a href="HTML/Export_Tickets.htm">Export button</a> to export the tickets to your Windows Logon session, allowing a computer that is not part of a Windows domain (or other realm)  to access that  domain (or other realm).   Show the Import Status with the <a href="HTML/View_Menu.htm">View panel</a>. </dd>
+
+<dt> exported  </dt>
+<dd>An Import Status indicating that the tickets were originally obtained with the Get Ticket window and have been exported for use in your Windows Logon session. Show the Import Status with the <a href="HTML/View_Menu.htm">View panel</a>.  </dd>
+
+
+<dt>  <a name="flags"> flag </a> </dt>
+<dd>  Properties (renewable and/or fowardable) assigned to a ticket when you obtain it. <a href="HTML/Ticket_Settings.htm">Ticket Settings and Flags help</a>.
+ </dd>
+<dt>   forwardable  </dt>
+<dd>  Tickets flagged as forwardable when you obtain them can be forwarded to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications, so you will not need to get new tickets to use remote services. <a href="HTML/Ticket_Settings.htm">Ticket Settings and Flags help</a>.
+ </dd>
+<dt>  import status </dt>
+<dd>
+This column is shown when you have Kerberos tickets obtained by logging into a Windows domain with a Windows Logon session.  Those tickets are <em> imported</em> or <em>importable</em> to Kerberos for Windows, or they are <em>protected</em> from being imported. Tickets obtained with the Get Ticket window are <em>exportable</em> or <em>exported</em> to the Windows Logon session. <br>
+ <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>  </dd>
+
+
+
+<dt> importable  </dt>
+<dd>An Import Status indicating that the tickets were originally obtained when you started a Windows Logon session by logging in to a domain. They have not been imported into Kerberos for Windows. You can import these tickets to ensure that applications that require the Kerberos for Windows interface can use them. <br>
+ <a href="HTML/Import_Tickets.htm">Import tickets help</a>  </dd>
+
+<dt> imported  </dt>
+<dd>An Import Status indicating that the tickets were originally obtained when you started a Windows Logon session by logging in to a domain, but they have been imported into Kerberos  for Windows and can now be used fully by applications that require the Kerberos for Windows interface.<br>
+ <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>  </dd>
+
+ <dt>   issued</dt>
+<dd>The date and time that your tickets were issued. Appears in the  <a href="HTML/View_Menu.htm">View panel</a>.
+   </dd>
+
+<dt> <a name="krbtgt"> krbtgt </a></dt>
+<dd> The Kerberos Ticket Granting Ticket. If you click on a principal in the main window, you will see all of that principal's tickets. The first one will be from <span class="typed">krbtgt</span> because with Kerberos you first obtain a Ticket Granting Ticket that is then used to obtain Service Tickets for each service you use.  <a href="HTML/Kerberos_Terminology.htm#ticket">Kerberos Terminology: Tickets</a> </dd>
+<dt>  principal </dt>
+<dd>  A unique identity in Kerberos. For users, it is the identity you use to log on with Kerberos. Principals are a combination of your user name and the name of the realm you belong to. <a href="HTML/Principals.htm">About principals</a>
+ </dd>
+<dt> protected  </dt>
+<dd>An Import Status indicating that the tickets were obtained when you started a Windows Logon session by logging in to a domain. They cannot currently be imported into Kerberos for Windows because User Access Control (UAC) in Windows is preventing it. You can try turning off your computer's UAC if you want to import these tickets.
+<a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>  </dd>
+<dt> realm  </dt>
+<dd>   Kerberos realms are a way of logically grouping resources and identities that use Kerberos. Your realm is the home of your Kerberos identity and your point of entry to the network resources controlled by Kerberos. In Windows, realms are called <em>domains</em>.
+<a href="HTML/Kerberos_Terminology.htm#realm">Kerberos Terminology: Realm</a>
+</dd>
+<dt> renewable until  </dt>
+<dd> The date and time after which your renewable tickets cannot be renewed any more. Appears in the  <a href="HTML/View_Menu.htm">View panel</a>.
+  </dd>
+<dt> RSA SecurID  </dt>
+<dd>A method of using two-factor authentication to control user access to network resources.  The two authentication factors are something the user knows (a secret PIN) and something the user has (an automatically generated code displayed either on a special device or on a device the user already owns, such as a phone). If your company uses RSA SecurID, you will need to enter your SecurID password after you use your Kerberos ticket to submit a Get Ticket request.   <a href="HTML/Get_Tickets.htm">How to: Get tickets</a>
+   </dd>
+<dt>  SecurID </dt>
+<dd>  See RSA SecurID </dd>
+<dt>session key   </dt>
+<dd> 
+A key used to encrypt and decrypt communications between computers. It is only used for one communication session and then discarded. View the encryption type of your session keys by selecting <a href="HTML/Encryption_Types.htm">Encryption Type</a> in the View panel. 
+
+
+  </dd>
+<dt>  ticket </dt>
+<dd> Obtain your ticket by entering your user name and password. The ticket is an encrypted block of data that authenticates you to the group of network resources using Kerberos, allowing you to access those resources for the lifetime of the ticket. <a href="HTML/Tickets.htm">About Tickets</a>
+
+  </dd>
+<dt> <a name="valid-until">valid until  </a></dt>
+<dd>  The date and time your ticket will expire. Appears in the  <a href="HTML/View_Menu.htm">View panel</a>.
+ </dd>
+</BODY>
+</HTML>
+

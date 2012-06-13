@@ -3,61 +3,139 @@
 <HEAD>
 <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
 <link rel="stylesheet" type="text/css" href="Leash.css" />
+<style type="text/css">
+td
+{
+vertical-align:top; 
+}
+</style>
 <Title>Ticket Settings</Title>
 </HEAD>
 <BODY>
 <a name="top"><H1>Ticket Settings and Flags</H1></a>
-<p>When you obtain a ticket you have a chance to view and change the ticket's settings and flags. If the settings are not visible when you open the Get Ticket window, click the Show Advanced Settings button. </p>
-<p>
-Ticket settings include the following:</p>
+<p>When you obtain a new ticket you have a chance to view and change the ticket's settings and flags in the Get Ticket window. You cannot change settings or flags on an existing ticket</p>
+
+<table>
+<tr>
+<th id="th2">Learn about...</th> <th id="th2">How to...</th> </tr>
+<tr><td >
 <ul id="helpul">
-<li> <a href="#lifetime"> Ticket Lifetime </a> </li> 
-<li><a href="#forwardable">Flag as Forwardable</a></li>
-<li><a href="#renewable"> Flag as Renewable</a></li>
+<li> <a href="#lifetime"> Ticket lifetime setting </a> </li> 
+<li><a href="#forwardable"> Forwardable & Proxiable flag</a></li>
+<li><a href="#renewable"> Renewable flag</a></li>
 </ul>
-<p>
-<b>Note: </b> Options that you may not change are visible but appear in gray. These options are set by your administrator.</P>
-<hr>
-<p>
-<a name="lifetime"> <H2>Ticket Lifetime</H2> </a>
-<p>
-<b>Change this if: </b>You want to adjust the length of time your ticket will be valid before it expires.</p>
-<p>
-Your Kerberos ticket will expire at the end of the lifetime specified with this slider control. Move the slider left to shorten the lifetime; move the slider right to lengthen the lifetime. Longer lifetimes are more convinent but less secure. 
-</p>
-<a href="#top">Back to top</a>
-
-<a name="forwardable"> <hr></a>
-<H2>Flag as Forwardable</H2> 
-<p>
-<b>Select this if: </b>You will use Kerberized services on a remote host. </p>
-<p>
-If this checkbox is selected, the ticket will be forwardable.  You can then forward your tickets to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications, and you will not need to get new tickets to use remote services.</p>
-<p></p>
-<a href="#top">Back to top</a>
-
-
-<a name="renewable"><hr></a>
-
-
-<H2>Flag as Renewable</H2> 
-<p>
-<b>Select  this if: </b>You want a long interactive session wihout having to keep entering your password, or you plan to run a long batch job. </p>
-<p>
-A renewable ticket still has the normal lifetime, but before it expires it can be renewed.   Each renewal resets the ticket to the length of the original lifetime (e.g. 10 hours). You can renew the ticket as often as needed until the "Renewable Until" deadline is reached (e.g., 6 days). You do not need to enter your password to renew tickets. </p>
-<p>
-<b>Note: </b> If you let your ticket expire, you cannot renew it even if the ticket is still within the renewable lifetime. For convienence, you can set your tickets to automatically renew.</p>
-<p>
-You can set  the renewable lifetime of the ticket with  the Renew Until slider. Move the slider left to shorten the renewable lifetime of the ticket or move the slider right to lengthen it. </p>
-<p>
-<b>Related help</b></p>
+</td>
+<td >
 <ul id="helpul">
+<li> <a href="#choose"> Choose settings and flags for new tickets </a> </li> 
+<li><a href="#view">View settings and flags for existing tickets</a></li>
+<li> <a href="#lifetime"> Adjust the ticket lifetime setting </a> </li> 
+<li><a href="#forwardable"> Flag a ticket as forwardable</a></li>
+<li><a href="#renewable"> Flag a ticket as renewable flag</li>
+</ul>
+</td>
+</tr>
+</table>
+
+<H2><a name="choose">Choose Settings and Flags</a></H2>
+<p>
+To  adjust settings for a new ticket:</p>
+<ol>
+<li>Click the Get Ticket button.</li>
+<li>In the Get Ticket window,  click the Show Advanced Settings button if the settings are not already visible. </li>
+<li>Make adjustments as necessary. Options that you may not change are visible but appear in gray. </li>
+<li>Click Okay to finish getting your ticket. </li>
+</ol>
+<p>
+<a href=#top>Back to Top</a> </p>
+<H2><a name="view">View Settings and Flags</a></H2>
+<p>
+You can view settings and flags for existing tickets in the main window. If the information you want is not visible, open the appropriate column using the checkboxes in the View panel.  <a href="HTML/View_Tickets.htm">View Tickets help</a></p>
+<ul id="helpul">
+<li><b>Ticket lifetime settings </b> appear in the "Valid Until" column. 
+<li><b>Renewable lifetime settings </b> appear in the "Renewable Until" column. 
+<li><b>"Renewable" and "Forwardable and Proxiable" flags </b> appear in the "Flags" column. 
+</ul>
+
+
+<p> 
+<a href=#top>Back to Top</a> </p>
+<p></p>
+
+
+<a name="lifetime"><h2>Ticket Lifetime </H2></a>
+<table>
+<tr>
+<th id="th2">When to change:</th>  
+<td>You want to adjust the length of time your ticket will be valid before it expires.</td></tr>
+<tr>
+<th id="th2">How to change:</th>
+<td>When you get your ticket, click the Show Advanced Settings button in the Get Ticket window. The Ticket Lifetime slider is below the Password field. Move the slider left to shorten the lifetime; move the slider right to lengthen the lifetime. </td>
+</tr>
+<tr>
+<th id="th2">More info</th>
+<td>
+Your Kerberos ticket will expire at the end of the lifetime specified with this slider control. Longer lifetimes are more convinent but less secure. To get a longer usable ticket lifetime without losing security, flag the ticket as renewable and then in the main window select the Automatic Ticket Renewal option. <a href="HTML/Tickets.htm#renewable">About renewable tickets</a>
+</td>
+</tr>
+</table>
+<p>
+<a href="#top">Back to top</a></p>
+
+
+<a name="forwardable"><h2>Flag as Forwardable and Proxiable </H2></a>
+<table>
+<tr>
+<th id="th2">When to use this flag:</th>  
+<td>You will use Kerberized services on a remote host. </td></tr>
+<tr>
+<th id="th2">How to change:</th>
+<td>When you get your ticket, click the Show Advanced Settings button in the Get Ticket window. The "Flag this ticket as" section is below the Ticket Lifetime slider. If the "forwardable and proxiable" checkbox is selected, the ticket will be forwardable.  Click  the checkbox to select or unselect it.   </td>
+</tr>
+<tr>
+<th id="th2">More info</th>
+<td>
+You can foward tickets flagged as forwardable to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications, and you will not need to get new tickets to use remote services
+</td>
+</tr>
+</table>
+<p>
+<a href="#top">Back to top</a></p>
+
+
+
+
+
+<a name="renewable"><h2>Flag as Renewable </H2></a>
+<table>
+<tr>
+<th id="th2">When to use this flag:</th>  
+<td>You want a long interactive session wihout having to keep entering your password, or you plan to run a long batch job.</td></tr>
+<tr>
+<th id="th2">How to change:</th>
+<td>When you get your ticket, click the Show Advanced Settings button in the Get Ticket window. The "Flag this ticket as" section is below the Ticket Lifetime slider. If the "renewable" checkbox is selected, the ticket will be renewable.  Click  the checkbox to select or unselect it.   <p></p>
+You can adjust  the renewable lifetime of the ticket with the Renew Until slider. Move the slider left to shorten the renewable lifetime of the ticket or move the slider right to lengthen it. </td>
+</tr>
+<tr>
+<th id="th2">More info</th>
+<td>
+A renewable ticket still has the normal lifetime, but before it expires it can be renewed.   Each renewal resets the ticket to the length of the original lifetime (e.g. 10 hours). You can renew the ticket as often as needed until the "Renewable Until" deadline is reached (e.g., 6 days). You do not need to enter your password to renew tickets. 
+<p></p>
+If you let your ticket expire, you cannot renew it even if the ticket is still within the renewable lifetime. For convienence, you can set your tickets to automatically renew.</br>
+<a href="HTML/Tickets.htm#renewable">About renewable tickets</a>
+</td>
+</tr>
+</table>
+<p>
+<a href="#top">Back to top</a></p>
+
+<H2>Related help</H2>
+<ul id="helpul">
+<li><a href="HTML/Tickets.htm">About tickets</a></li>
 <li><a href="HTML/Renew_Tickets.htm">Renew Tickets</a></li>
 </ul>
 
-<a href="#top">Back to top</a>
 
-<p>
 
 </BODY>
 </HTML>

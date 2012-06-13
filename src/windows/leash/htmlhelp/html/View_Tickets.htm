@@ -8,66 +8,113 @@
 <BODY>
 <H1>View Tickets</H1>
 <p>
- Leash displays your tickets in the main Leash window. The tickets (if any) are organized by the <em> principal</em> who owns them. The  principal is the name you used with your Kerberos password to obtain the ticket.</p>
+ Kerberos for Windows displays your tickets in the main window. The tickets (if any) are organized by the <a href="JavaScript:popup.TextPopup(popupPrincipal, popfont,9,9,-1,-1)">principal</a> who owns them.  To the right of the principal are columns with information about the tickets.
+<ul>
+<li>To show or hide information columns,  use the View panel. <a href="HTML/View_Menu.htm">Using the View Panel </a> </li>
+<li>To make a column wider or narrower, click and drag the line separating two column headings. </li>
+<li>To see information for all of a principal's tickets, click the blue arrow next to the principal name. Otherwise the information displayed applies only to the initial Ticket Granting Ticket (TGT). </li>
+</ul>
 <p>
-To customize the information shown for each ticket, select or de-select the options in the View section of the Home tab.  Each selected option appears in its own column. The following columns are available.</p>
-<a name="table"><table></a>
+ Use the table below to jump to a column description, or scroll down to view all available columns.</p>
+<p></p>
+<table>
+<tr>
+<th id="th2">Learn about...</th> 
+<td >
+<ul id="helpul">
+<li><a href=#principal> Principal</a></li>
+<li><a href=#issued> Issued</a></li>
+<li><a href=#renewable-until> Renewable Until</a></li>
+<li><a href=#valid-until> Valid Until</a></li>
+<li><a href=#encryption-type> Encryption Type</a></li>
+<li><a href=#flags> Flags (renewable and forwardable)</a></li>
+<li><a href=#import-status> Import Status</a></li>
+
+</ul>
+</td>
+</tr>
+</table>
+<a name="table"><p></p></a>
+ <table> 
 <tr>
 <th>Column</th>
 <th>Description</th>
 </tr>
-<tr>
-<th id="th2"> Principal </th> 
-</td>
-<td> The identity that has obtained the ticket. This is your user name (e.g.,  <tt>Jsmith</tt>) plus the Kerberos realm you can access with the ticket (e.g.,<tt> @SERVER.MEGACORP.COM</tt>).  If like many users you use only one name with Kerberos and have access to only one realm, you will have only one principal.
+ <tr>
+<th id="th2"> Principal   </th> 
+
+<td> <a name="principal"> The identity that has obtained the ticket. </a>This is your user name (e.g.,  <tt>Jsmith</tt>) plus the Kerberos <a href="JavaScript:popup.TextPopup(popupRealm, popfont,9,9,-1,-1)"> realm</a> (or Windows domain) you belong to  (e.g.,<tt> @SERVER.MEGACORP.COM</tt>).  If like many users you have only one Kerberos name and belong to only one realm, you will have only one principal.
 <p></p>
-Click the blue arrow in front of the principal name to expand the view. The expanded view shows all of the tickets issued to the principal.</td>
+The principal that is currently the default principal appears in bold. <a href="HTML/Principals.htm#default-principal">About default principals</a>
+<p></p>
+The information displayed in the columns to the right of the principal applies only to the principal's initial Ticket Granting Ticket (TGT).  Click the blue arrow in front of the principal name to expand the view. The expanded view shows all of the tickets and session keys issued to the principal.  The TGT is listed with a prefix of <em>krbtgt</em>. Any other tickets and session keys were automatically issued when you accessed a service through Kerberos. <br>
+<a href="HTML/Kerberos_Terminology.htm#ticket">More about tickets and session keys</a></td>
 </tr>
 
-<tr>
-<th id="th2"> Issued </th> 
+ <tr>
+<th id="th2"> <a name="issued">Issued</a> </th> 
 
-</td>
 <td>The date and time the ticket was originally obtained.</td>
 </tr>
-<tr>
-<th id="th2"> Renewable Until</th> 
+ <tr> 
+<th id="th2">  Renewable Until </th> 
 
-</td>
-<td> The date and time marking the end of each ticket's renewable lifetime.  After this time, you cannot renew the ticket and must instead get a new one. 
+<td> <a name="renewable-until">The date and time marking the end of each ticket's renewable lifetime.</a> If the column is <a href="JavaScript:popup.TextPopup(popupWideEnough, popfont,9,9,-1,-1)"> wide enough</a> you will also see the number of days and hours remaining in the ticket's renewable lifetime. After this time, you cannot renew the ticket and must instead get a new one. 
 <p></p>
-To renew your ticket (resetting the ticket lifetime to the length of the orginal ticket) , click the Renew Ticket button in the Home tab. To have your tickets automatically renew until the Renewable Until time is reached, select Automatic Ticket Renewal in the Options section of the Home tab.
+If this column shows <em>Not Renewable</em>, the ticket was not flagged as renewable when you obtained it.
 <p></p>
-If this column shows <em>Not Renewable</em>, the ticket was not flagged as renewable when you obtained it.</td>
-</tr>
-<tr>
-<th id="th2">  Valid Until</th> 
-
-</td>
-<td>After the time shown in this column, the ticket will expire and can no longer be used or renewed. Leash alerts you to expiring tickets with a warning in a pop up window. 
-<p></p>
-To add an audible warning, select <b>Expiration Alarm</b> in the Options section of the Home tab.
+<b>Related Help:</b><ul id="helpul">
+<li> <a href="HTML/Tickets.htm#renewable"> About renewable tickets</a> </li>
+<li><a href="HTML/Renew_Tickets.htm"> Renew tickets</a></li>
+</ul>
 </td>
 </tr>
-<tr>
-<th id="th2">Encryption Type</th> 
+ <tr>
+<th id="th2">  Valid Until </th> 
 
+<td> <a name="valid-until"> The date and time the ticket will expire and can no longer be used or renewed.</a> If the column is <a href="JavaScript:popup.TextPopup(popupWideEnough, popfont,9,9,-1,-1)"> wide enough</a> you will also see the number of  hours and minutes remaining before the ticket expires. Kerberos alerts you to expiring tickets with a warning in a pop up window. 
+<p></p>
+To add an audible warning, select <b>Expiration Alarm</b> in the Options panel. <br>
+<a href="HTML/Options_Menu.htm">Using the Options Panel</a>
 </td>
-<td>Shows what type of  encryption was used to encrypt the session key and the ticket. Kerberos supports several types of encryption. The type used for your tickets depends on the configuration of your Kerberos installation and the configuration and capabilities of the particular network resources you are accessing.  <A href="HTML/Encryption_Types.htm#supported-types">Supported Encryption Types</a> </td>
 </tr>
-<tr>
-<th id="th2"> Flags</th> 
-</td>
-<td>Shows how the tickets were flagged (renewable and/or fowardable) when you obtained them. You cannot change how an existing flag is set. If you need a ticket with different flags, you must get a new ticket. 
+ <tr> 
+<th id="th2"> Encryption Type </th> 
+
+<td><a name="encryption-type">Shows what type of  encryption was used to encode the session key and the ticket.</a> Kerberos supports multiple  types of encryption. The type used for a particular  ticket or session key is automatically negotiated when you request a ticket or a service.<br> 
+<A href="HTML/Encryption_Types.htm#supported-types">Learn more about Encryption Types</a> </td>
+</tr>
+<tr> 
+<th id="th2">   Flags </th> 
+<td><a name="flags">Shows how the tickets were flagged (renewable and/or fowardable) when you obtained them. </a> You cannot change how an existing flag is set. If you need a ticket with different flags, you must get a new ticket. 
 <p></p>
-<em> Forwardable</em> tickets can be forwarded to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications. 
+<em> Forwardable and Proxiable</em> tickets can be forwarded to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications. 
 <p></p>
-<em> Renewable</em> tickets can be renewed until the time and day shown in the Renewable Until column. Each time a ticket is renewed, it resets its lifetime by the original amount. 
+<em> Renewable</em> tickets can be renewed until the time and day shown in the Renewable Until column. Each time a ticket is renewed, its lifetime is extended by the length of the original ticket. 
 </td>
+</tr>
+<tr><th id="th2"> Import Status  </th> 
+<td>
+<a name="import-status">This column is only available when you have Kerberos tickets for a Windows domain obtained by starting a Windows Logon session. </a>It shows whether Kerberos for Windows was used to obtain the tickets or if they were obtained when you logged on to a  domain through a Windows Logon session, and whether the ticket has been shared with the other  application.
+<p></p>
+Tickets originally obtained through a Windows Logon session  are 'imported' or 'importable' to Kerberos for Windows, or they are 'protected' from being imported. <p></p> Tickets obtained with the Get Ticket window are either 'exported' or 'exportable' to the Windows domain. 
+<p></p>
+ <a href="HTML/Import_Status.htm">More about Import Status meanings</a>
+
+ </td>
 </table>
 <p>
 
 
+<SCRIPT Language=JavaScript> 
+popfont="Arial,.725," 
+popupRealm="Kerberos realms are a way of logically grouping resources and identities that use Kerberos. Your realm is the home of your Kerberos identity and your point of entry to the network resources controlled by Kerberos. Windows calls realms 'domains.' " 
+popupWideEnough="Click and drag the line to the right of the column heading to widen the column or make it narrower." 
+popupPrincipal="Your principal is your Kerberos identity. It is your user name combined with the Kerberos realm you are using. For example: 'jdoe@SALES.WIDGET.COM' " 
+</SCRIPT> 
 
+<OBJECT id=popup type="application/x-oleobject" 
+classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> 
+</OBJECT> 
 </BODY>
 </HTML>

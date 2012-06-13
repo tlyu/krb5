@@ -9,11 +9,7 @@ p {
 	color : black; 
 }
 
-PRE{
-	font-size:.8em;
-	background-color : white;
-	color : black; 
-	}
+
  h1 { 
  	font-family : Verdana, Geneva, sans-serif;
 	font-size : 1.5em;
@@ -28,6 +24,7 @@ PRE{
  	font-family : Verdana, Geneva, sans-serif;
 	font-size : .9 em;
 	color : black; }
+
 
 ol li {
 	font-size: .8em;
@@ -48,10 +45,11 @@ border-collapse:collapse;
 }
 
 table {
-
+padding-top: 10px;
 text-align: left; 
 width: 100%;
-
+padding-bottom: 10px;
+	table-layout: auto;
 }
 
 
@@ -59,16 +57,32 @@ th  {
 	font-family : Verdana, Arial, Helvetica, sans-serif;
 	font-size:1em;
 	background-color: #E0E5EB;
-
 	color : black; 
-	padding:8px;}
+	padding:8px;
+	width: auto;
+	vertical-align:top; 
+
+}
 
 #th2  {
 	font-family : Verdana, Arial, Helvetica, sans-serif;
 	font-size:0.825em;
 	background-color:#F0F8FF;
 	color : black; 
-	padding:8px;}
+	padding:8px; 
+	width: auto;
+	vertical-align:top; 
+}
+
+#th2small  {
+	font-family : Verdana, Arial, Helvetica, sans-serif;
+	font-size:0.6em;
+	background-color:#F0F8FF;
+	color : black; 
+	padding:6px; 
+	width: auto;
+	vertical-align:top; 
+}
 
 td {
 	font-family : Verdana, Arial, Helvetica, sans-serif;
@@ -77,6 +91,8 @@ td {
 	padding-left:5px;
 	padding-top:8px;
 	padding-bottom:8px;
+	width: auto;
+	vertical-align:top; 
  }
 
 #helpul
@@ -89,12 +105,27 @@ list-style:none;
 	padding-left: 0;
 }
 
+ol li ul li {
+Verdana, Arial, sans-serif;	
+	list-style:none;
+	position:relative;
+	left:-10px;
+	font-size : 1em;
+}
+
+#tableul {
+	Verdana, Geneva, sans-serif;	
+	font-size : 1.12em;
+}
+
 #helph2 { 
  	font-family : Verdana, Geneva, sans-serif;
 	font-size : 1.12em;
 	color : black;
 	margin-bottom: 4px;
  }
+
+
 
 #typed
 {
@@ -108,6 +139,49 @@ list-style:none;
 	Arial, Helvetica, sans-serif;
 } 
 
+.typed
+{
+	font-size: 1em;
+	font-family :"Courier New", Courier, monospace;
+} 
+.command
+{
+	font-size: 1em;
+	font-family :"Courier New", Courier, monospace;
+	 white-space: nowrap; 
+	}
+
+.noborder, .noborder tr, .noborder th, .noborder td { 
+    border: none; 
+}
+
+.smallfont {
+ 	font-family : Verdana, Geneva, sans-serif;
+	font-size:.8em;
+	font-weight:normal;
+}
+
+dl
+{
+	margin:0;
+	padding: 0;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size:0.825em;
+}
+
+dt
+{
+	margin:0;
+	padding: 0;
+	font-weight: bold;
+}
+
+ dd
+{
+	margin: 0 0 1em 0;
+	padding: 0;
+}
+
  A:link { color : blue; }
 
  A:visited { color : purple; }
@@ -115,73 +189,8 @@ list-style:none;
  A:active { color : navy; }
 
 
-Microsoft HTML Help Compiler 4.74.8702
-
-Compiling d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm
 
 
-Compile time: 0 minutes, 0 seconds
-25	Topics
-91	Local links
-0	Internet links
-0	Graphics
 
 
-Created d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm, 32,582 bytes
-Compression decreased file by 21,497 bytes.
-Microsoft HTML Help Compiler 4.74.8702
 
-Compiling d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm
-
-
-Compile time: 0 minutes, 0 seconds
-25	Topics
-91	Local links
-0	Internet links
-0	Graphics
-
-
-Created d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm, 32,786 bytes
-Compression decreased file by 21,689 bytes.
-Microsoft HTML Help Compiler 4.74.8702
-
-Compiling d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm
-
-
-Compile time: 0 minutes, 0 seconds
-25	Topics
-91	Local links
-0	Internet links
-0	Graphics
-
-
-Created d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm, 32,788 bytes
-Compression decreased file by 22,082 bytes.
-Microsoft HTML Help Compiler 4.74.8702
-
-Compiling d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm
-
-
-Compile time: 0 minutes, 0 seconds
-25	Topics
-91	Local links
-0	Internet links
-0	Graphics
-
-
-Created d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm, 31,910 bytes
-Compression decreased file by 22,269 bytes.
-Microsoft HTML Help Compiler 4.74.8702
-
-Compiling d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm
-
-
-Compile time: 0 minutes, 0 seconds
-27	Topics
-101	Local links
-1	Internet link
-0	Graphics
-
-
-Created d:\Users\Sofia\My Documents\Sof's Stuff\Work\Painless Security\LeashHelp\LeashHelp.chm, 35,830 bytes
-Compression decreased file by 23,905 bytes.
