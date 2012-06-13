@@ -3,26 +3,95 @@
 <HEAD>
 <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
 <link rel="stylesheet" type="text/css" href="Leash.css" />
-<Title>Destroy Tickets</Title>
+<Title><a name="top">Destroy Tickets</a></Title>
 </HEAD>
 <BODY>
 <H1>Destroy Tickets</H1>
 <p>
 Destroying your tickets when you no longer need them increases security.  Once the tickets are destroyed they can no longer be used by anyone. <br>
-<b>Note: </b> Your tickets are <b>not</b> destroyed when you exit Leash unless you have selected Destroy Tickets on Exit in the Options menu. </p>
-<p>
-To destroy all of the tickets on your local machine:</p>
+
+</p>
+<table>
+<tr>
+<th id="th2">How to...</th> 
+<td >
+<ul id="helpul">
+<li><a href=#destroy-once> Destroy tickets obtained with the Get Ticket window</a></li>
+<li><a href=#imported> Destroy tickets obtained with a Windows Logon session</a></li>
+<li><a href=#destroy-automatically> Destroy tickets automatically</a></li>
+
+</ul>
+</td>
+</tr>
+</table>
+
+<H2><a name="destroy-once">Destroy obtained with the Get Ticket window</a></H2>
+<p>To immediately destroy all of the tickets obtained with the Get Ticket window:</p>
 <ol>
-<li>Click the Destroy Ticket button. </li>
+<li>Click the Destroy Ticket button or use the <a href="JavaScript:popup.TextPopup(popupKeyboardShortcut, popfont,9,9,-1,-1)">keyboard shortcut</a>  [Ctrl + d].</li> </li>
 <li>Click Okay to confirm that you want to destroy the tickets. </li>
 </ol>
 <p>
-Before you access any of the services or computers that use your Kerberos password, you must get a new ticket.</p>
+<b>Note: </b> If you have tickets with an Import Status of  <em>imported</em>, <em>importable</em>, or <em>protected</em>, see the next help section: <a href="#imported">Destroy tickets obtained with a Windows Logon session </a></p>
 <p>
-<b>Related help</b> </p>
+<a href=#top>Back to Top</a> </p>
+<H2><a name="imported">Destroy tickets obtained with a Windows Logon session</a></H2>
+<p>
+Kerberos for Windows displays all of your tickets, including those obtained when you logged on to a Windows domain with a Windows Logon session. Tickets obtained with a Windows Logon session show an Import Status of <em>imported</em>, <em>importable</em>, or <em>protected.</em><br>
+ <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>
+</p>
+
+<H3>Destoy imported tickets</H3>
+<p>
+Imported tickets cannot be destroyed in Kerberos for Windows if the Automatic Import option is selected, because Kerberos would immediately re-import the destroyed ticket. However, they are automatically destroyed when you exit your Windows Logon session.  
+</p><p>
+If you do want  to immediately destroy only the imported copy:</p>
+<ol>
+<li>Unselect the Automatic Import option. <a href="HTML/Options_Menu.htm"> Using the OptionPanel </a></li>
+<li>Click the Destroy Ticket button. </li>
+</ol>
+
+
+<H3>Destoy importable or protected tickets</H3>
+<p>
+Importable and protected tickets are not controlled by Kerberos for Windows so you cannot use Kerberos for Windows to destroy them. They are  destroyed when you log out of your Windows session.</p>
+
+<p>
+<a href=#top>Back to Top</a> </p>
+
+
+<H2><a name="destroy-automatically">Destroy tickets automatically</a></H2>
+<p>
+To automatically destroy your tickets when you exit Kerberos for Windows:</p>
+<ol>
+<li>Find the Option panel. Click the Options button if the options checkboxes are not visible. </li>
+<li>Find the Destroy Tickets on Exit checkbox. If it is not already selected, click it to turn the option on. </li>
+</ol>
+<p>
+Your tickets are not affected immediately, but they  will be automatically destroyed as soon as you exit Kerberos for Windows. </p>
+<p>
+<b>Note: </b> Tickets that were obtained when you logged on to a Windows domain though a Windows Logon session are not affected by the Destroy Tickets on Exit option. They are destroyed when you exit your Windows Logon session. However, when you exit Kerberos for Windows, these tickets can no longer be used with applications that require the Kerberos for Windows interface.
+<p>
+<a href=#top>Back to Top</a> </p>
+
+
+<H2>Related help</H2>
 <ul id="helpul">
-<li><a href="HTML/Tickets.htm">Tickets</a></li>
-<li><a href="HTML/Get_Tickets.htm">Get Tickets</a></li>
+<p>
+<li><a href="HTML/Import_Status.htm"> Import Status meanings</a></li>
+<li><a href="HTML/View_Tickets.htm">View tickets </a></li>
+<li><a href="HTML/Tickets.htm">About tickets</a></li>
+<li><a href="HTML/Get_Tickets.htm">Get tickets</a></li>
 </ul>
+
+<SCRIPT Language=JavaScript> 
+popfont="Arial,.725," 
+
+popupKeyboardShortcut="To use a keyboard shortcut, hold down the [Ctrl] key on your computer keyboard and press the appropriate letter.  " 
+</SCRIPT> 
+
+<OBJECT id=popup type="application/x-oleobject" 
+classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"> 
+</OBJECT> 
 </BODY>
 </HTML>

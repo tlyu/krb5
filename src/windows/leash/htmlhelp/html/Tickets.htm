@@ -2,38 +2,136 @@
 <HTML>
 <HEAD>
 <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+
 <link rel="stylesheet" type="text/css" href="Leash.css" />
 <Title>Tickets</Title>
 </HEAD>
 <BODY>
- <H1>About Tickets</H1>
+ <H1><a name="top">About Tickets</a></H1>
 <p>
-The Leash program helps you manage your  <a href="JavaScript:popup.TextPopup(popupTicket, popfont,9,9,-1,-1)">Kerberos tickets</a>.  Kerberos tickets  allow you to securely access all of the computers and services set up to use your Kerberos password  without having to enter your password each time. </p>
+The Kerberos for Windows program helps you manage your  Kerberos tickets.  Click the Get Ticket  button and enter your principal (your Kerberos identity) and password to obtain a ticket. The ticket allows you to securely access all of the computers and services set up to authenticate you through Kerberos, until the ticket expires, without requiring you to enter your password again. <br>
+<a href="HTML/Get_Tickets.htm">How to get tickets</a>
+ </p>
 <p>
- If your Windows Logon Session uses Keberos for authentication, you can import your existing ticket into Leash instead of using Leash to get a new ticket.</p>
-
-
-<H2>Ticket expiration</H2>
-<p>Your tickets are valid for a set amount of time. The Leash window includes a <b>Valid Until</b> column. After the time listed in this column, the ticket will expire and you will no longer be able to use it to access network resources until you get a new ticket. Usually tickets are valid for around the length of a work day (e.g., 8 hours). In some configurations, you can customize the lifespan of your ticket when you obtain it, within the restrictions set up by your administrator.</p>
-
-<H2>Renewable tickets </H2>
-<p>When you get your ticket, you have the option to make the ticket renewable. You can renew these tickets without entering your password until the renewal time limit is reached.
-<p>
-However, if you let the tickets expire, you cannot renew them  even if you are still in the renewable time frame. Usually the renewable lifespan is several days, but this setting can be changed when you obtain your ticket. The Leash window can be set to display a <b>Renewable Until</b> column for your tickets to help you keep track of the ticket lifespan. </p>
-
-<H2 id="helph2">How to...</H2>
+ If you have logged on to a Windows domain, you already have a Keberos ticket. This ticket is marked in the main window with an Import Status of "imported," "importable," or "protected."
+<br>
+<a href="HTML/Tickets.htm#importable">About Windows domain tickets</a>
+</p>
+<table>
+<tr><th>On this page</th><th>On other pages</th></tr>
+<tr>
+<td ><b>Learn about...</b>
+<ul id="helpul">
+<li><a href=#expiration> Ticket Expiration </a></li>
+<li><a href=#renewable> Renewable Tickets</a></li>
+<li><a href=#forwardable> Forwardable Tickets </a></li>
+<li><a href=#importable> Importable (Windows domain) Tickets </a></li>
+</ul>
+</td>
+<td>
+<b>How to...</b>
 <ul id="helpul">
 <li><a href="HTML/Get_Tickets.htm">Get tickets</a></li>
-<li><a href="HTML/Import_Tickets.htm">Import tickets</a></li>
 <li><a href="HTML/Renew_Tickets.htm">Renew tickets</a></li>
-<li><a href="HTML/Destroy_Tickets.htm">Destroy tickets</a></li>
 <li><a href="HTML/View_Tickets.htm">View tickets</a></li>
-<li><a href="HTML/Ticket_Settings.htm">Work with ticket settings and flags</a></li>
+<li><a href="HTML/Ticket_Settings.htm">Work with ticket settings and flags</a>
+<li><a href="HTML/Destroy_Tickets.htm">Destroy tickets</a></li>
+<li><a href="HTML/Export_Tickets.htm">Export tickets</a></li>
+<li><a href="HTML/Import_Tickets.htm">Import tickets</a></li>
 </ul>
+</td>
+</tr>
+</table>
+
+<p></p>
+
+<table>
+<tr><th colspan="2"><a name="expiration">Ticket Expiration</a></th></tr>
+<tr><td colspan="2">Your tickets are valid for a set amount of time before they expire and cannot be used again.  Usually tickets are valid for around the length of a work day (e.g., 8 hours).  A pop up window warns you 15, 10, and 5 minutes before your tickets expire. To add an audible alarm at the same intervals, select Expiration Alarm in the Options panel.</td></tr>
+<tr> <th id="th2">Adjust</th><th id="th2">View</th></tr>
+<tr>
+<td>When you get your ticket, click Show Advanced Settings to view and adjust the ticket's lifetime. Note that some Kerberos configurations will not allow this.  <br> <a href="HTML/Get_Tickets.htm">Get Tickets help</a></td>
+<td>The main window includes a <b>Valid Until</b> column for each of your tickets. After the time listed in this column, the ticket will expire and you must get a new ticket to access network resources that use Kerberos. <br> <a href="HTML/View_Tickets.htm">View Tickets help</a></td>
+</tr>
+</table>
+<p>
+<a href=#top>Back to Top</a> </p>
+<p></p>
+<table>
+<tr><th colspan="2"><a name="renewable">Renewable Tickets </a> </th></tr>
+<tr><td colspan="2">When you get your ticket, you have the option of flagging the ticket as renewable. Renewable tickets allow you to run batch jobs without interruption and to work through a long session without continually reentering your password.  
+<p></p>
+<tr> <th id="th2">Renewable Ticket Expiration</th>
+<td>Renewable tickets have a normal ticket lifetime, but they also have a  renewable lifetime that is much longer (usually several days). Each time you renew your ticket, Kerberos resets the ticket lifetime to the length of the orginal ticket. You can renew the ticket as often as you need to (once at time or automatically) until the renewable lifetime is reached. Then you must obtain a new ticket.  </td></tr>
+<tr> <th id="th2">Obtain Renewable Tickets</th>
+<td>When you get your ticket, click Show Advanced Settings and  then select Renewable under "Flag this ticket as." Use the Renewable Until slider to adjust the  tickets's renewable lifetime. <br> 
+<a href="HTML/Get_Tickets.htm">Get Tickets help</a></td>
+</tr>
+<tr> <th id="th2">Renew Once</th>  
+<td> Click the Renew button. Note that you cannot renew expired tickets even if the ticket is still within its renewable lifespan.  <br> 
+ <a href="HTML/Renew_Tickets.htm#renew-once">Renew Ticket Once help</a></td></tr>
+<th id="th2">Renew Automatically</th>
+<td>Select Automatic Ticket Renewal in the Options panel. Note that  Leash must be active and running in order to renew tickets. This means that if your machine is in hibernation mode or if Leash is not running when it is time to renew your tickets, your tickets will not be renewed.  <br> 
+<a href="HTML/Renew_Tickets.htm#renew-once">Renew Tickets Automatically help</a> </td>
+</tr><tr>
+<th id="th2">View </th>
+<td>
+The View panel offers optional informational columns for your tickets. Two columns relate to renewable tickets: Renewable Until and Flags.
+<p></p>
+To see the date and  time your renewable tickets expire and can no longer be renewed, click Renewable Until in the View panel. To see which of your tickets are renewable, click Flags.
+<br>
+ <a href="HTML/View_Tickets.htm">View Tickets help</a> </td>
+</tr>
+</table>
+<p>
+<a href=#top>Back to Top</a> </p>
+<p></p>
+<table>
+<tr><th colspan="2"><a name="forwardable">Forwardable Tickets </a></th></tr>
+<tr><td colspan="2">When you get your ticket, you have the option of flagging the ticket as forwardable and proxiable. Forwardable tickets can be forwarded to the remote host when you connect via telnet, ssh, ftp, rlogin, or similar applications, so you will not need to get new tickets to use remote services.</td></tr>
+<tr> <th id="th2">Obtain Forwardable Tickets</th><th id="th2"> View</th></tr>
+<tr>
+<td>When you get your ticket, click Show Advanced Settings and  then select Forwardable and Proxiable under "Flag this ticket as."   <br> 
+<a href="HTML/Get_Tickets.htm">Get Ticket help</a></td>
+<td> The View panel offers optional informational columns for your tickets.  Select Flags to open a column indicating which of your tickets are forwardable. <br> <a href="HTML/View_Tickets.htm">View Tickets help</a> </td>
+</tr>
+</table>
+<p>
+<a href=#top>Back to Top</a> </p>
+<p></p>
+<table>
+<tr><th colspan="2"><a name="importable">Importable (Windows domain) Tickets </a> </th></tr>
+<tr><td colspan="2">Most Windows operating systems use the Kerberos protocol behind the scenes to authenticate you when you  log on to a Windows domain with a Windows Logon session. This means that if you have logged on to a Windows domain (not just to your computer), Windows probably issued you a Kerberos ticket. 
+<p></p>
+Some applications that use Kerberos accept tickets issued through a Windows Logon session. Others need to use the Kerberos for Windows interface. In most installations,  Kerberos for Windows will attempt to automatically import any tickets already issued to you. Imported tickets can take full advantage of the Kerberos for Windows interface. 
+<p></p>
+Windows domain tickets obtained through your Windows Logon session are automatically renewed until you exit your Windows Logon session.
+ </td>
+<tr> <th id="th2">Import Status</th>
+<td>If you have tickets obtained through a  Windows Logon session, the main window of Kerberos for Windows shows the Import Status for all of your tickets. You can hide or show this column with the View panel checkboxes. Tickets originally obtained through a Windows Logon session are <em> imported</em> or <em>importable</em> to Kerberos for Windows, or they are <em>protected</em> from being imported. <br> 
+<a href="HTML/Import_Status.htm">Import Status meanings</a></td>
+</td></tr>
+<tr> <th id="th2">Import/Don't Import Tickets</th>
+<td>You can turn the Automatic Import option on or off by clicking the Automatic Import checkbox in the Option panel. You can also import tickets directly by selecting Import Tickets in the More panel.  <br> 
+<a href="HTML/Import_Tickets.htm">Import Tickets help</a></td>
+</tr>
+<tr> <th id="th2">Renew Imported Tickets</th>  
+<td>  If the Automatic Import option is selected, you do not need to renew your imported tickets as they will automatically be renewed through your Windows Logon session and re-imported into Kerberos for Windows. </td></tr>
+<th id="th2">Destroy Imported Tickets</th>
+<td>If the Automatic Import option is selected, you cannot directly destroy imported tickets. They are destroyed when you exit your Windows Logon session. <br> 
+<a href="HTML/Destroy_Tickets.htm#imported">Destroy Tickets help</a> </td>
+</tr>
+</table>
+<p>
+<a href=#top>Back to Top</a> </p>
+
+ </p>
+
 
 <SCRIPT Language=JavaScript> 
 popfont="Arial,.825,," 
 popupTicket="A Kerberos ticket is actually an encrypted block of data that includes authentication for the user and an expiration time." 
+
 </SCRIPT> 
 
 <OBJECT id=popup type="application/x-oleobject" 

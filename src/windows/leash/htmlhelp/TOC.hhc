@@ -15,16 +15,28 @@
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Using Leash Menus">
-			<param name="Local" value="Html\Using_Leash_Menus.htm">
+			<param name="Name" value="Getting Started">
+			<param name="Local" value="Html\Getting_Started.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="What is Kerberos?">
+			<param name="Local" value="Html\Kerberos.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Kerberos Terminology">
+			<param name="Local" value="HTML\Kerberos_Terminology.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="How Does Kerberos Work?">
+			<param name="Local" value="HTML\How_Kerberos_Works.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="FAQ">
 			<param name="Local" value="HTML\FAQ.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Troubleshooting">
-			<param name="Local" value="HTML\Troubleshooting.htm">
+			<param name="Name" value="Glossary">
+			<param name="Local" value="HTML\Glossary.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
@@ -42,16 +54,8 @@
 			<param name="URL" value="Html\Get_Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Import Tickets">
-			<param name="Local" value="Html\Import_Tickets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Renew Tickets">
 			<param name="Local" value="Html\Renew_Tickets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Destroy Tickets">
-			<param name="Local" value="Html\Destroy_Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="View Tickets">
@@ -60,6 +64,44 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Ticket Settings &amp; Flags">
 			<param name="Local" value="Html\Ticket_Settings.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Destroy Tickets">
+			<param name="Local" value="Html\Destroy_Tickets.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Windows Domain Tickets">
+			<param name="Local" value="HTML\Windows_Logon_Tickets.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Export Tickets">
+			<param name="Local" value="HTML\Export_Tickets.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Import Tickets">
+			<param name="Local" value="Html\Import_Tickets.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Principals">
+		<param name="Local" value="HTML\Principals.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="About Principals">
+			<param name="Local" value="HTML\Principals.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Manage Multiple Principals">
+			<param name="Local" value="HTML\Manage_Multiple_Principals.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Make Default Principal">
+			<param name="Local" value="HTML\Make_Default.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Forget Saved Principals">
+			<param name="Local" value="HTML\Forget_Principals.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
@@ -80,26 +122,48 @@
 			<param name="Local" value="Html\Forget_Password.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Password Tips">
+			<param name="Name" value="Password Tips ">
 			<param name="Local" value="Html\Password_Tips.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Kerberos">
-		<param name="Local" value="Html\Kerberos.htm">
+		<param name="Name" value="Using Kerberos Menus">
+		<param name="Local" value="Html\Using_Leash_Menus.htm">
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="What is Kerberos?">
-			<param name="Local" value="Html\Kerberos.htm">
+			<param name="Name" value="Button Panel">
+			<param name="Local" value="HTML\Button_Menu.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Kerberos Terminology">
-			<param name="Local" value="HTML\Kerberos_Terminology.htm">
+			<param name="Name" value="View Panel">
+			<param name="Local" value="HTML\View_Menu.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="How Kerberos Works">
-			<param name="Local" value="HTML\How_Kerberos_Works.htm">
+			<param name="Name" value="Options Panel">
+			<param name="Local" value="HTML\Options_Menu.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="More Panel">
+			<param name="Local" value="HTML\More_Menu.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Keyboard Shortcuts">
+			<param name="Local" value="HTML\Keyboard_Shortcuts.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Troubleshooting">
+		<param name="Local" value="HTML\Troubleshooting.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Troubleshooting">
+			<param name="Local" value="HTML\Troubleshooting.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Report Bugs">
+			<param name="Local" value="HTML\Report_Bugs.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Encryption Types">
@@ -127,20 +191,22 @@
 			<param name="Name" value="MS2MIT">
 			<param name="Local" value="HTML\MS2MIT.htm">
 			</OBJECT>
-	</UL>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Using Leash Menus">
-		<param name="Local" value="Html\Using_Leash_Menus.htm">
-		</OBJECT>
-	<UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Options Menu">
-			<param name="Local" value="HTML\Options_Menu.htm">
+			<param name="Name" value="KPASSWD">
+			<param name="Local" value="HTML\KPASSWD.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="KSWITCH">
+			<param name="Local" value="HTML\KSWITCH.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="KVNO">
+			<param name="Local" value="HTML\KVNO.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="KCPYTKT">
+			<param name="Local" value="HTML\KCPYTKT.htm">
 			</OBJECT>
 	</UL>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Report Bugs">
-		<param name="Local" value="HTML\Report_Bugs.htm">
-		</OBJECT>
 </UL>
 </BODY></HTML>

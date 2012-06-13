@@ -12,13 +12,20 @@
 <tr><th id="th2"> The following information reproduces the information from UNIX man page for the KDESTROY command.</th>
 </tr>
 </table>
-<HTML>
-<BODY>
 
 <H2>SYNOPSIS</H2>
-<PRE>
-<B>kdestroy</B> [<B>-A</B>] [<B>-q</B>] [<B>-c</B> <I>cache</I><B>_</B><I>name]</I>
-</PRE>
+<table>
+<tr>
+<th id="th2">kdestroy</th>
+<td> 
+<span class="command">[<B>-A</B>]    </span>
+<span class="command"> [<B>-q</B>]  </span>
+<span class="command">   [<B>-c</B> <I>cache</I><B>_</B><I>name]</I>   </span>
+
+</td>
+</tr>
+</table>
+
 
 <H2>DESCRIPTION</H2>
 <p>
@@ -32,15 +39,15 @@ destroyed.
 <H2>OPTIONS</H2>
 <table>
 <tr>
-<th id="th2">-A</th>
+<th id="th2"><span class="command"> -A </span>  </th>
 <td>Destroys all caches in the collection, if a cache collection  is available. </td>
 <tr>
-<th id="th2">-q</th> 
+<th id="th2"><span class="command"> -q </span></th> 
 <td>Run quietly.  Normally <B>kdestroy</B> beeps if it fails to destroy the user's tickets.   The  <B>-q</B>  flag  suppresses  this behavior.
 </td>
 <tr>
-<th id="th2">-c</B=th> <I>cache</I><B>_</B><I>name</I></th>
-<td>Use  <I>cache</I><B>_</B><I>name</I> as the credentials (ticket) cache name and location; if this option is not used, the  default  cache  name  and location are used.<br>
+<th id="th2"> <span class="command"> -c</B=th> <I>cache</I><B>_</B><I>name</I></span></th>
+<td>Use  <span class="command"><I>cache</I><B>_</B><I>name</I></span> as the credentials (ticket) cache name and location; if this option is not used, the  default  cache  name  and location are used.<br>
 The  default credentials cache may vary between systems.  If the KRB5CCNAME environment variable is set, its  value  is  used  to
 name the default ticket cache.
 </td>
@@ -72,15 +79,20 @@ when you log out.
 
 
 <H2>FILES</H2>
-<p>
-<tt> /tmp/krb5cc_[uid] </tt>  default  location  of  Kerberos  5 credentials cache
- (<tt>[uid] </tt> is the decimal UID of the user).
-<p>
+<table>
+<tr>
+  <th id="th2">     <span class="command">   /tmp/krb5cc_[uid]  </span></th>
+<td>       default  location  of  Kerberos  5 credentials cache ([uid] is the decimal UID of the user). </td></tr>
+
+</table>
 
 
-<H2>SEE ALSO</H2><PRE>
-<B>kinit(1)</B>, <B>klist(1)</B>, <B>krb5(3)</B>
-</PRE>
+<H2>SEE ALSO</H2>
+<ul id="helpul">
+<li><a href="HTML/KINIT.htm"><B>kinit(1)</B></a> </li>
+<li> <a href="HTML/KLIST.htm"><B>klist(1)</B></a></li>
+<li><B>krb5(3)</B></li>
+</ul>
 
 <H2>BUGS</H2><P>
 Only the tickets in the  specified  credentials  cache  are  destroyed.

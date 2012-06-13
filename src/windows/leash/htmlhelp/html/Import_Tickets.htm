@@ -3,24 +3,86 @@
 <HEAD>
 <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
 <link rel="stylesheet" type="text/css" href="Leash.css" />
+<style type="text/css">
+td
+{
+vertical-align:top; 
+}
+</style>
 <Title>Import_Tickets</Title>
 </HEAD>
 <BODY>
-<H1>Import Tickets</H1>
+<H1><a name="top">Import Tickets</a></H1>
 <p>
-If your Windows Logon Session uses Kerberos for authentication, you can import  your existing ticket(s) into Leash instead of getting a fresh ticket. </p>
-<p>
-<b>Note: </b>Importing tickets will destroy any tickets you already have in Leash. If you have unexpired tickets when you run the Import Ticket command, Leash will warn you and give you the option to cancel the command.</p>
-<p>
-To import tickets from your Windows Logon Session:</p>
-<ol>
-<li>Click the Import Ticket button in the Home tab.</li>
-<li>Click Okay to confirm that you want to import the tickets and destroy any you already have in Leash.
-</ol>
-<p>You can now view and manage your Kerberos ticket with Leash.</p>
-<b>Related help</b> </p>
+You can import Windows domain tickets that you have already obtained through a Windows Logon session. Imported tickets can be fully used by applications that require the Kerberos for Windows interface. In most installations, Kerberos for Windows will automatically import these tickets if possible. 
+
+
+<p></p>
+<table>
+<tr><th>On this page</th><th>On other pages</th></tr>
+<tr>
+<td>
+<b>How to...</b>
 <ul id="helpul">
-<li><a href="HTML/Tickets.htm">Tickets</a></li>
+<li><a href=#auto-import>Turn Automatic Import on or off </a></li>
+<li><a href=#import-status>Read ticket Import Status </a></li>
+<li><a href=#import-button>Use the Import Ticket button </a></li>
+
+</ul>
+</td>
+<td > <b>Learn about...</b>
+<ul id="helpul">
+<li><a href="HTML/Tickets.htm#importable">Importable Tickets</a></li>
+<li><a href="HTML/Import_Status.htm">Import Status meanings</a></li>
+<li><a href="HTML/Troubleshooting.htm#Windows-session">Troubleshoot importing tickets</a></li>
+
+</ul>
+</td>
+</tr>
+</table>
+
+<H2><a name="auto-import">Turn Automatic Import on or off </a></H2>
+<p>
+In most installations, Kerberos for Windows will automatically import tickets if possible.   Click the Automatic Import checkbox in the Options panel to turn the feature on or off. <a href="HTML/Options_Menu.htm">Using the Options Panel </a>
+</p><p>
+In some cases Kerberos for Windows tries to automatically import tickets but is prevented from doing so by the Windows User Access Control (UAC) feature. If this happens the tickets are still displayed in the main window, but have the Import Status of <i>protected.</i> You can turn off UAC on your computer to allow the tickets to be imported. 
+</p>
+<p>
+<a href=#top>Back to top</a></p>
+
+<H2><a name="import-status">Read ticket Import Status</a></H2>
+<p>
+If you have tickets obtained when you  logged on to a Windows domain with a Windows Logon session, the main window of Kerberos for Windows shows the Import Status for all of your tickets. You can hide or show this column with the View panel checkboxes. <a href="HTML/View_Menu.htm">Using the View Panel </a>
+</p>
+<ul id="helpul">
+<li><b>imported</b> tickets have already been imported into Kerberos for Windows. </li>
+<li><b>importable</b> tickets have not been imported into Kerberos for Windows but can be. To import them, either turn on the Automatic Import option or click Import Tickets in the More panel.</li>
+<li><b>protected</b> tickets cannot currently be imported into Kerberos for Windows because the Windows User Access Control (UAC) is preventing this action.  You can turn off UAC on your computer to allow the tickets to be imported. </li>
+</ul><p>
+<a href="HTML/Import_Status.htm">Full list of Import Status meanings</a></p>
+<p></p>
+<p>
+<a href=#top>Back to top</a></p>
+
+<H2><a name="import-button"> Use the Import Ticket button  </a></H2>
+<p>
+If the Automatic Import option is turned off, you can still import tickets. 
+<ol>
+<li>Find the More panel at the right edge of the ribbon menu. </li>
+<li>Click the More button to see your choices and select Import Tickets. </li>
+<li>Click Okay to confirm that you want to import your tickets and destroy any that are already in Kerberos for Windows. </li>
+</ol>
+
+</p>
+<p>
+<a href=#top>Back to top</a></p>
+
+
+
+
+<H3>Related help</H3> 
+<ul id="helpul">
+<li><a href="HTML/Tickets.htm">About tickets</a></li>
 <li><a href="HTML/Destroy_Tickets.htm">Destroy Tickets</a></li>
 </ul>
 
