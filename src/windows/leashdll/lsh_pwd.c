@@ -1428,6 +1428,7 @@ AdjustOptions(HWND hDialog, int show, int hideDiff)
     ShowWindow(GetDlgItem(hDialog,IDC_CHECK_NOADDRESS),show);
     ShowWindow(GetDlgItem(hDialog,IDC_CHECK_RENEWABLE),show);
     ShowWindow(GetDlgItem(hDialog,IDC_STATIC_KRB5),show);
+    ShowWindow(GetDlgItem(hDialog,IDC_BUTTON_CLEAR_HISTORY),show);
 
     GetWindowRect( hDialog, &dlgRect );
     diff = dlgRect.top + GetSystemMetrics(SM_CYCAPTION)
@@ -1453,13 +1454,14 @@ AdjustOptions(HWND hDialog, int show, int hideDiff)
                  dlgRect.bottom-dlgRect.top+(show ? 1 : - 1) * hideDiff,
                  SWP_NOZORDER|SWP_NOMOVE);
 
-    CSetDlgItemText(hDialog, IDC_BUTTON_OPTIONS, show ? "Hide Advanced Settings" : "Show Advanced Settings");
+    CSetDlgItemText(hDialog, IDC_BUTTON_OPTIONS, show ? "Hide Advanced" : "Show Advanced");
 
 }
 
 extern void * lacInit(HWND hEditCtl);
 extern void lacTerm(void *pAutoComplete);
 extern void lacAddPrincipal(char *principal);
+extern void leash_autocomplete_clear_principal_list();
 
 /* Callback function for the Authentication Dialog box that initializes and
    renews tickets. */
@@ -1718,6 +1720,9 @@ AuthenticateProc(
 
 	    }
 	    break;
+    case IDC_BUTTON_CLEAR_HISTORY:
+        Leash_autocomplete_clear_principal_list();
+        break;
 	case IDC_CHECK_RENEWABLE:
 	    {
 		if (IsDlgButtonChecked(hDialog, IDC_CHECK_RENEWABLE)) {
