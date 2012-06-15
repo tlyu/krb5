@@ -408,12 +408,6 @@ TYPEDEF_FUNC(
     Leash_reset_defaults,
     (void)
     );
-TYPEDEF_FUNC(
-    void,
-    CALLCONV_C,
-    Leash_autocomplete_clear_principal_list,
-    (void)
-    );
 /* They are not yet all here... */
 
 #endif /* __LOADFUNCS_LEASH_H__ */

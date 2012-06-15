@@ -538,7 +538,6 @@ DECL_FUNC_PTR(Leash_import);
 DECL_FUNC_PTR(Leash_importable);
 DECL_FUNC_PTR(Leash_renew);
 DECL_FUNC_PTR(Leash_reset_defaults);
-DECL_FUNC_PTR(Leash_autocomplete_clear_principal_list);
 
 FUNC_INFO leash_fi[] = {
     MAKE_FUNC_INFO(not_an_API_LeashKRB4GetTickets),
@@ -586,7 +585,6 @@ FUNC_INFO leash_fi[] = {
     MAKE_FUNC_INFO(Leash_importable),
     MAKE_FUNC_INFO(Leash_renew),
     MAKE_FUNC_INFO(Leash_reset_defaults),
-    MAKE_FUNC_INFO(Leash_autocomplete_clear_principal_list),
     END_FUNC_INFO
 };
 

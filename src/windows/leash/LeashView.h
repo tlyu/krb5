@@ -352,7 +352,6 @@ public:
     afx_msg void OnLvnItemActivate(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnLvnKeydown(NMHDR *pNMHDR, LRESULT *pResult);
     afx_msg void OnNMCustomdraw(NMHDR *pNMHDR, LRESULT *pResult);
-    afx_msg void OnForgetPrincipals();
 };
 
 /*
