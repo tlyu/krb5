@@ -107,4 +107,3 @@ EXPORTS
 	not_an_API_LeashGetTimeServerName
     not_an_API_Leash_AcquireInitialTicketsIfNeeded
     not_an_API_LeashKRB5FreeTickets
-    Leash_autocomplete_clear_principal_list
