@@ -422,10 +422,10 @@ do_ccache(krb5_context ctx,
 {
     krb5_cc_cursor cur;
     krb5_creds creds;
-    krb5_principal princ;
+    krb5_principal princ = NULL;
     krb5_flags flags;
     krb5_error_code code;
-    char *defname;
+    char *defname = NULL;
     char *functionName = NULL;
     TicketList **ticketListTail;
     TICKETINFO *ticketinfo;
@@ -496,6 +496,8 @@ cleanup:
     if (code) {
         Leash_krb5_error(code, functionName, 0, NULL, NULL);
     }
+    if (princ)
+        pkrb5_free_principal(ctx, princ);
     if (defname)
         pkrb5_free_unparsed_name(ctx, defname);
     return code ? 1 : 0;
