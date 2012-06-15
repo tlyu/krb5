@@ -126,6 +126,11 @@ public:
 
     virtual ~DynEnumString()
     {
+        RemoveAll();
+    }
+
+    void RemoveAll()
+    {
         for (m_iter = m_aStrings.begin();
              m_iter != m_aStrings.end();
              m_iter++)
@@ -323,6 +328,7 @@ public:
         ,m_bUpperCaseRealm(bUpperCaseRealm)
         ,m_defaultRealm(NULL)
         ,m_ctx(0)
+        ,m_enumString(NULL)
         ,m_acdd(NULL)
         ,m_princStr(NULL)
     {
@@ -340,6 +346,18 @@ public:
             pkrb5_free_default_realm(m_ctx, m_defaultRealm);
         if (m_ctx)
             pkrb5_free_context(m_ctx);
+    }
+
+    void ClearHistory()
+    {
+        if (m_enumString)
+            m_enumString->RemoveAll();
+        if (m_acdd)
+            m_acdd->ResetEnumerator();
+        if (m_princStr) {
+            delete[] m_princStr;
+            m_princStr = NULL;
+        }
     }
 
 protected:
@@ -541,11 +559,13 @@ extern "C" void lacAddPrincipal(char * principal)
         RegCloseKey(hKey);
 }
 
-extern "C" void Leash_autocomplete_clear_principal_list()
+extern "C" void Leash_pec_clear_history(void *pec)
 {
     // clear princs from registry
     RegDeleteKey(HKEY_CURRENT_USER,
                  LEASH_REGISTRY_PRINCIPALS_KEY_NAME);
+    // ...and from the specified widget
+    static_cast<PrincipalEditControl *>(pec)->ClearHistory();
 }
 
 
