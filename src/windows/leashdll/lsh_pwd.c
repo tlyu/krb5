@@ -1461,7 +1461,7 @@ AdjustOptions(HWND hDialog, int show, int hideDiff)
 extern void * lacInit(HWND hEditCtl);
 extern void lacTerm(void *pAutoComplete);
 extern void lacAddPrincipal(char *principal);
-extern void leash_autocomplete_clear_principal_list();
+extern void Leash_pec_clear_history(void *pec);
 
 /* Callback function for the Authentication Dialog box that initializes and
    renews tickets. */
@@ -1721,7 +1721,7 @@ AuthenticateProc(
 	    }
 	    break;
     case IDC_BUTTON_CLEAR_HISTORY:
-        Leash_autocomplete_clear_principal_list();
+        Leash_pec_clear_history(pAutoComplete);
         break;
 	case IDC_CHECK_RENEWABLE:
 	    {
