@@ -752,6 +752,7 @@ DWORD                       publicIP
     krb5_get_init_creds_opt *   options = NULL;
     krb5_address **             addrs = NULL;
     int                         i = 0, addr_count = 0;
+    int                         cc_new = 0;
     const char *                deftype = NULL;
 
     if (!pkrb5_init_context)
@@ -788,6 +789,7 @@ DWORD                       publicIP
             code = pkrb5_cc_new_unique(ctx, deftype, NULL, &cc);
             if (code)
                 goto cleanup;
+            cc_new = 1;
         }
         pkrb5_cc_close(ctx, defcache);
     } else {
@@ -892,6 +894,11 @@ DWORD                       publicIP
     if ((!code) && (cc != defcache))
         code = pkrb5_cc_switch(ctx, cc);
  cleanup:
+    if (code && cc_new) {
+        // don't leave newly-generated empty ccache lying around on failure
+        pkrb5_cc_destroy(ctx, cc);
+        cc = NULL;
+    }
     if ( addrs ) {
         for ( i=0;i<addr_count;i++ ) {
             if ( addrs[i] ) {
