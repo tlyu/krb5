@@ -151,6 +151,47 @@ ViewColumnInfo CLeashView::sm_viewColumns[] =
     {"Flags", false, ID_SHOW_TICKET_FLAGS, 100},         // TICKET_FLAGS
 };
 
+static struct TicketFlag {
+    unsigned long m_flag;
+    const LPTSTR m_description;
+} sm_TicketFlags[] =
+{
+    {TKT_FLG_FORWARDABLE, _T("Forwardable")},
+    {TKT_FLG_FORWARDED, _T("Forwarded")},
+    {TKT_FLG_PROXIABLE, _T("Proxiable")},
+    {TKT_FLG_PROXY, _T("Proxy")},
+    {TKT_FLG_RENEWABLE, _T("Renewable")},
+};
+
+static void krb5TicketFlagsToString(unsigned long flags, LPTSTR *outStr)
+{
+    const int numFlags = sizeof(sm_TicketFlags) / sizeof(sm_TicketFlags[0]);
+    int strSize = 1;
+    LPTSTR str;
+    // pass 1: compute size
+    for (int i=0; i<numFlags; i++) {
+        if (flags & sm_TicketFlags[i].m_flag) {
+            if (strSize > 1)
+                strSize += 2;
+            strSize += strlen(sm_TicketFlags[i].m_description);
+        }
+    }
+    // allocate
+    str = (LPSTR )malloc(strSize);
+    if (str) {
+        *str = 0;
+        // pass 2: construct string
+        for (int i=0; i<numFlags; i++) {
+            if (flags & sm_TicketFlags[i].m_flag) {
+                if (str[0])
+                    _tcscat_s(str, strSize, _T(", "));
+                _tcscat_s(str, strSize, sm_TicketFlags[i].m_description);
+            }
+        }
+    }
+    *outStr = str;
+}
+
 
 static HFONT CreateBoldFont(HFONT font)
 {
@@ -1051,6 +1092,7 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
 {
     TCHAR* localTimeStr=NULL;
     TCHAR* durationStr=NULL;
+    TCHAR* flagsStr=NULL;
     TCHAR tempStr[MAX_DURATION_STR+1];
     time_t now = LeashTime();
 
@@ -1102,8 +1144,11 @@ void CLeashView::AddDisplayItem(CListCtrl &list,
         list.SetItemText(iItem, iSubItem++, encTypes);
     }
     if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
-        list.SetItemText(iItem, iSubItem++, "ticket flags here");
+        krb5TicketFlagsToString(flags, &flagsStr);
+        list.SetItemText(iItem, iSubItem++, flagsStr);
     }
+    if (flagsStr)
+        free(flagsStr);
     if (localTimeStr)
         free(localTimeStr);
     if (durationStr)
