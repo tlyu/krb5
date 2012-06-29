@@ -323,7 +323,7 @@ BOOL CLeashApp::InitInstance()
                             "'-autoinit' or '-a' to perform automatic ticket initialization\n"
                             "'-console' or '-c' to attach a console for debugging\n"
                             "'-ms2mit' or '-import' or '-m' to perform ticket importation (and exit)",
-                           "Leash Error", MB_OK);
+                           "MIT Kerberos Error", MB_OK);
                 return FALSE;
             }
         }
@@ -335,7 +335,7 @@ BOOL CLeashApp::InitInstance()
                         "'-destroy' or '-d' to perform ticket destruction (and exit)\n"
                         "'-autoinit' or '-a' to perform automatic ticket initialization\n"
                         "'-ms2mit' or '-import' or '-m' to perform ticket importation (and exit)",
-                       "Leash Error", MB_OK);
+                       "MIT Kerberos Error", MB_OK);
             return FALSE;
         }
     }
@@ -478,7 +478,7 @@ BOOL CLeashApp::InitInstance()
     VScheckVersion(m_pMainWnd->m_hWnd, AfxGetInstanceHandle());
 
     // The one and only window has been initialized, so show and update it.
-    m_pMainWnd->SetWindowText("Leash");
+    m_pMainWnd->SetWindowText("MIT Kerberos");
     m_pMainWnd->UpdateWindow();
     m_pMainWnd->ShowWindow(SW_SHOW);
     m_pMainWnd->SetForegroundWindow();
