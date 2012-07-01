@@ -1305,9 +1305,9 @@ AdjustOptions(HWND hDialog, int show, int hideDiff)
 
 }
 
-extern void * lacInit(HWND hEditCtl);
-extern void lacTerm(void *pAutoComplete);
-extern void lacAddPrincipal(char *principal);
+extern void * Leash_pec_create(HWND hEditCtl);
+extern void Leash_pec_destroy(void *pAutoComplete);
+extern void Leasch_pec_add_principal(char *principal);
 extern void Leash_pec_clear_history(void *pec);
 
 /* Callback function for the Authentication Dialog box that initializes and
@@ -1351,7 +1351,7 @@ AuthenticateProc(
 
         hEditCtrl = GetDlgItem(hDialog, IDC_EDIT_PRINCIPAL);
         if (hEditCtrl)
-            pAutoComplete = lacInit(hEditCtrl);
+            pAutoComplete = Leash_pec_create(hEditCtrl);
 	hSliderLifetime = GetDlgItem(hDialog, IDC_STATIC_LIFETIME_VALUE);
 	hSliderRenew = GetDlgItem(hDialog, IDC_STATIC_RENEW_TILL_VALUE);
 
@@ -1591,7 +1591,7 @@ AuthenticateProc(
 		memset(password,0,sizeof(password));
 		RemoveProp(hDialog, "HANDLES_HELP");
         if (pAutoComplete) {
-            lacTerm(pAutoComplete);
+            Leash_pec_destroy(pAutoComplete);
             pAutoComplete = NULL;
         }
 		EndDialog(hDialog, (int)lParam);
@@ -1716,7 +1716,7 @@ AuthenticateProc(
                     lpdi->out.realm[LEASH_REALM_SZ-1] = 0;
                 }
 */
-                lacAddPrincipal(principal);
+                Leash_pec_add_principal(principal);
 
                 CloseMe(TRUE); /* success */
                 return FALSE;
