@@ -1281,6 +1281,7 @@ AdjustOptions(HWND hDialog, int show, int hideDiff)
     ShowWindow(GetDlgItem(hDialog,IDC_CHECK_RENEWABLE),show);
     ShowWindow(GetDlgItem(hDialog,IDC_STATIC_KRB5),show);
     ShowWindow(GetDlgItem(hDialog,IDC_BUTTON_CLEAR_HISTORY),show);
+    ShowWindow(GetDlgItem(hDialog,IDC_CHECK_REMEMBER_PRINCIPAL),show);
 
     GetWindowRect( hDialog, &dlgRect );
     diff = dlgRect.top + GetSystemMetrics(SM_CYCAPTION)
@@ -1442,6 +1443,7 @@ AuthenticateProc(
 		     Leash_get_default_life_max(),
 		     lifetime );
 
+        CheckDlgButton(hDialog, IDC_CHECK_REMEMBER_PRINCIPAL, TRUE);
 	/* Set Forwardable checkbox */
 	CheckDlgButton(hDialog, IDC_CHECK_FORWARDABLE, forwardable);
 	/* Set NoAddress checkbox */
@@ -1716,7 +1718,8 @@ AuthenticateProc(
                     lpdi->out.realm[LEASH_REALM_SZ-1] = 0;
                 }
 */
-                Leash_pec_add_principal(principal);
+                if (IsDlgButtonChecked(hDialog, IDC_CHECK_REMEMBER_PRINCIPAL))
+                    Leash_pec_add_principal(principal);
 
                 CloseMe(TRUE); /* success */
                 return FALSE;
