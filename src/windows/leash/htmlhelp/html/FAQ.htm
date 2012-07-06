@@ -11,20 +11,21 @@
 
 <li> <a href="#get-tickets">How do I get tickets? </a> </li>
 <li> <a href="#expiration-warning"> Will I be warned when my tickets are about to expire? </a> </li>
-<li>  <a href="#automatic-destroy"> Are my tickets destroyed automatically when I exit Kerberos for Windows? </a> </li>
+<li>  <a href="#automatic-destroy"> Are my tickets destroyed automatically when I exit MIT Kerberos? </a> </li>
 <li> <a href="#renewable">Why should I use renewable tickets?</a> </li>
-<li> <a href="#renewable-closed"> If I set my tickets to renew automatically, will the renewals keep happening if I close Kerberos for Window?</a> </li>
+<li> <a href="#renewable-closed"> If I set my tickets to renew automatically, will the renewals keep happening if I close MIT Kerberos?</a> </li>
 <li> <a href="#forwardable">How to I forward my forwardable tickets?</a></li>
 <li> <a href="#RSA-SecurID">How do I use my RSA SecurID token with Kerberos?</a></li>
 
 <li><a href="#Command-line">Can I use Kerberos with the command line prompt? </a> </li>
 <li><a href="#properties">Where can I set Kerberos properties?  </a></li>
-<li><a href="#proxiable-flag">Why are some of my tickets flagged as proxiable when I have not chosen that flag?</a></li>
+
 </ul>
 
 <H3> <a name="get-tickets">How do I get tickets?</a> </H3>
 
 <p>Click the Get Ticket  button and enter your principal (your Kerberos identity) and password to obtain a ticket.  <a href="HTML/Get_Tickets.htm">Click for details.</a>
+<p>
  If you have logged on to a Windows domain through a Windows Logon session, you already have a Keberos ticket. This ticket is marked in the main window with an Import Status of "imported," "importable," or "protected."
 <br>
 <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>
@@ -33,13 +34,13 @@
 <a href="#top">Back to top</a></p>
 
 <H3> <a name="expiration-warning">Will I be warned when my tickets are about to expire?</a> </H3>
-<p>Yes. A pop up window warns you 15, 10, and 5 minutes before your ticket expires. If you would also like an audible alarm at these intervals, select Expiration Alarm in the Option panel. <a href="HTML/Options_Menu.htm">Options Menu help</a> </p>
+<p>Yes. A pop up window warns you 15, 10, and 5 minutes before your ticket expires. If you would also like an audible alarm at these intervals, go to the Options tab and select Expiration Alarm in the Ticket Option panel. <a href="HTML/Options_Menu.htm">Options Menu help</a> </p>
 <p>
 <a href="#top">Back to top</a></p>
 
-<H3><a name="automatic-destroy">Are my tickets destroyed automatically when I exit Kerberos for Windows?</a></H3>
+<H3><a name="automatic-destroy">Are my tickets destroyed automatically when I exit MIT Kerberos?</a></H3>
 <p>
-No, not unless Destroy Tickets on Exit is selected in the Options panel. <a href="HTML/Options_Menu.htm">Options Menu help</a> </p>
+Only if Destroy Tickets on Exit is selected in the Ticket Options panel in the Options tab. <a href="HTML/Options_Menu.htm">Options Menu help</a> </p>
 <p>
 <a href="#top">Back to top</a></p>
 
@@ -49,9 +50,9 @@ Renewable tickets add convenience, especially if you turn on the option to autom
 <p>
 <a href="#top">Back to top</a></p>
  
-<H3><a name="renewable-closed"> If I set my tickets to renew automatically, will the renewals keep happening if I exit Kerberos for Windows?</a> </H3>
+<H3><a name="renewable-closed"> If I set my tickets to renew automatically, will the renewals keep happening if I exit MIT Kerberos?</a> </H3>
 <p>
-No. Kerberos for Windows can only renew your tickets if the program is running and active. It cannot  renew your tickets if you exit the program or if your computer is turned off or in hibernation mode.</p>
+No. MIT Kerberos can only renew your tickets if the program is running and active. It cannot  renew your tickets if you exit the program or if your computer is turned off or in hibernation mode.</p>
 <p>
 <a href="#top">Back to top</a></p>
 
@@ -76,14 +77,14 @@ Yes. Click <a href="HTML/Command_Line.htm">here</a> for a list of available comm
 
 <H3><a name="properties">Where can I set Kerberos properties?  </a> </H3>
 <p>
-You cannot use the Kerberos for Windows program to set preferences such as default ticket lifetimes. Instead, edit the appropriate configuration file. For more information, visit the <a href="http://web.mit.edu/kerberos/krb5-current/doc/krb_admins/conf_files/index.html"> MIT Kerberos documentation site. </a>
+You cannot use the MIT Kerberos program to set preferences such as default ticket lifetimes. Instead, edit the appropriate configuration file. For more information, visit the <a href="http://web.mit.edu/kerberos/krb5-current/doc/krb_admins/conf_files/index.html"> MIT Kerberos documentation site. </a>
 
  </p>
 <p>
 <a href="#top">Back to top</a></p>
 
 
-<H3><a name="proxiable-flag">Why are some of my tickets flagged as proxiable when I have not chosen that flag?</a></H3>
+
 
 
 </BODY>

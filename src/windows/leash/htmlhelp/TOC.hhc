@@ -100,7 +100,7 @@
 			<param name="Local" value="HTML\Make_Default.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Forget Saved Principals">
+			<param name="Name" value="Clear Principal History">
 			<param name="Local" value="HTML\Forget_Principals.htm">
 			</OBJECT>
 	</UL>
@@ -132,20 +132,12 @@
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Button Panel">
-			<param name="Local" value="HTML\Button_Menu.htm">
+			<param name="Name" value="Home Tab">
+			<param name="Local" value="HTML\Home_Tab.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="View Panel">
-			<param name="Local" value="HTML\View_Menu.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Options Panel">
-			<param name="Local" value="HTML\Options_Menu.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="More Panel">
-			<param name="Local" value="HTML\More_Menu.htm">
+			<param name="Name" value="Options Tab">
+			<param name="Local" value="HTML\Options_Tab.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Keyboard Shortcuts">

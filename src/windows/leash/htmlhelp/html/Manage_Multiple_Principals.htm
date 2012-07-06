@@ -8,7 +8,13 @@
 <BODY>
 <H1> Manage Multiple Principals </H1>
 <p>
-If you have multiple principals, several features in Kerberos for Windows will help you manage them. You can save multiple principals after entering them in the Get Ticket window. You can then choose from the list of saved principals when you get tickets or change your password.</p>
+If you have multiple principals, several features in MIT Kerberos will help you manage them. </p>
+<ul>
+<li>You can save principals when you enter them in the Get Ticket window. You can then choose from the list of saved principals when you get tickets or change your password.</li>
+<li>The Make Default button lets you easily and quickly change the default principal.</li>
+</ul>
+
+
 <p>
 All of your principals with tickets are listed in the main window. The default principal is in bold font. 
 </p>
@@ -47,7 +53,7 @@ When you get tickets for a principal for the first time, enter the principal in 
 <tr>
 <th id="th2">Select principal before using buttons</th>
 <td>
-Select a principal in the main window by clicking it. The selected principal will now be affected by the buttons in the ribbon menu (e.g., Change Password, Export). Note that you can select multiple principals to use with the Renew Tickets button. 
+Select a principal in the main window by clicking it. The selected principal will now be affected by the buttons in the Home tab (e.g., Change Password, Export). Note that you can select multiple principals before you click the Renew Tickets button. 
 
 </td></tr>
 <tr>
@@ -62,7 +68,7 @@ To choose which principal's tickets are used by default when you access a Kerber
 </tr>
 <th id="th2">Delete saved principals</th>
 <td>
-If you have saved a principal that you will no longer use, and you do not want that principal to autocomplete or show in the saved principal list in the Get Ticket and Change Password windows, click Forget Principals in the More panel. Note that this will make Kerberos forget <em>all</em> of your saved principals.  </td></tr>
+If you have saved a principal that you will no longer use, and you do not want that principal to auto-complete or show in the saved principal list in the Get Ticket and Change Password windows, you can clear your principal history by clicking the Clear History button in the  Get Ticket window.  Note that MIT Kerberos will immediately clear <em>all</em> of your saved principals.  <a href="HTML/Forget_Principals.htm">Click for details</a></td></tr>
 </table>
 
 

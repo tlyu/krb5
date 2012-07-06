@@ -19,7 +19,7 @@
 <dd> The type of encryption used to encode your tickets and session keys.  You can show the encryption types used for your tickets and session keys by selecting that option in the  <a href="HTML/View_Menu.htm">View panel</a>.
   </dd>
 <dt>expiration alarm   </dt>
-<dd> Optional audible alarm that warns you 15, 10, and 5 minutes before your tickets expire. Turn the alarm on or off in the <a href="HTML/Options_Menu.htm">Options panel</a>.
+<dd> Optional audible alarm that warns you 15, 10, and 5 minutes before your tickets expire. Turn the alarm on or off in the <a href="HTML/Options_Menu.htm">Ticket Options panel</a> in the Options tab.
   </dd>
 <dt> exportable  </dt>
 <dd>An  Import Status indicating that the tickets were obtained with the Get Ticket window. You can use the <a href="HTML/Export_Tickets.htm">Export button</a> to export the tickets to your Windows Logon session, allowing a computer that is not part of a Windows domain (or other realm)  to access that  domain (or other realm).   Show the Import Status with the <a href="HTML/View_Menu.htm">View panel</a>. </dd>
@@ -36,17 +36,17 @@
  </dd>
 <dt>  import status </dt>
 <dd>
-This column is shown when you have Kerberos tickets obtained by logging into a Windows domain with a Windows Logon session.  Those tickets are <em> imported</em> or <em>importable</em> to Kerberos for Windows, or they are <em>protected</em> from being imported. Tickets obtained with the Get Ticket window are <em>exportable</em> or <em>exported</em> to the Windows Logon session. <br>
+This column is shown when you have Kerberos tickets obtained by logging into a Windows domain with a Windows Logon session.  Those tickets are <em> imported</em> or <em>importable</em> to MIT Kerberos, or they are <em>protected</em> from being imported. Tickets obtained with the Get Ticket window are <em>exportable</em> or <em>exported</em> to the Windows Logon session. <br>
  <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>  </dd>
 
 
 
 <dt> importable  </dt>
-<dd>An Import Status indicating that the tickets were originally obtained when you started a Windows Logon session by logging in to a domain. They have not been imported into Kerberos for Windows. You can import these tickets to ensure that applications that require the Kerberos for Windows interface can use them. <br>
+<dd>An Import Status indicating that the tickets were originally obtained when you started a Windows Logon session by logging in to a domain. They have not been imported into MIT Kerberos. You can import these tickets to ensure that applications that require the MIT Kerberos interface can use them. <br>
  <a href="HTML/Import_Tickets.htm">Import tickets help</a>  </dd>
 
 <dt> imported  </dt>
-<dd>An Import Status indicating that the tickets were originally obtained when you started a Windows Logon session by logging in to a domain, but they have been imported into Kerberos  for Windows and can now be used fully by applications that require the Kerberos for Windows interface.<br>
+<dd>An Import Status indicating that the tickets were originally obtained when you started a Windows Logon session by logging in to a domain, but they have been imported into MIT Kerberos and can now be used fully by applications that require the MIT Kerberos interface.<br>
  <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>  </dd>
 
  <dt>   issued</dt>
@@ -59,7 +59,7 @@ This column is shown when you have Kerberos tickets obtained by logging into a W
 <dd>  A unique identity in Kerberos. For users, it is the identity you use to log on with Kerberos. Principals are a combination of your user name and the name of the realm you belong to. <a href="HTML/Principals.htm">About principals</a>
  </dd>
 <dt> protected  </dt>
-<dd>An Import Status indicating that the tickets were obtained when you started a Windows Logon session by logging in to a domain. They cannot currently be imported into Kerberos for Windows because User Access Control (UAC) in Windows is preventing it. You can try turning off your computer's UAC if you want to import these tickets.
+<dd>An Import Status indicating that the tickets were obtained when you started a Windows Logon session by logging in to a domain. They cannot currently be imported into MIT Kerberos because User Access Control (UAC) in Windows is preventing it. You can try turning off your computer's UAC if you want to import these tickets.
 <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>  </dd>
 <dt> realm  </dt>
 <dd>   Kerberos realms are a way of logically grouping resources and identities that use Kerberos. Your realm is the home of your Kerberos identity and your point of entry to the network resources controlled by Kerberos. In Windows, realms are called <em>domains</em>.
