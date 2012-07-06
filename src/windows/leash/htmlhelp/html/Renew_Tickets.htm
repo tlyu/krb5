@@ -12,20 +12,22 @@ Renew a ticket to extend its useable lifetime. Each time a ticket is renewed, it
 <p></p>
 <table>
 <tr>
-<th id="th2">How to...</th> <th id="th2">Learn about...</th></tr>
+ <th id="th2">Learn about...</th><th id="th2">How to...</th></tr>
 <tr>
-<td >
-<ul id="helpul">
-<li><a href=#renew-once> Renew ticket once</a></li>
-<li><a href=#renew-automatically> Renew tickets automatically</a></li>
-</ul>
-</td>
 <td>
 <ul id="helpul">
 <li><a href=#conditions> What's necessary to renew tickets</a></li>
 <li><a href=#related-help> Related help</a></li>
 </ul>
 </td>
+<td >
+<ul id="helpul">
+<li><a href=#renew-once> Renew ticket once</a></li>
+<li><a href=#renew-automatically> Renew tickets automatically</a></li>
+<li><a href=#renewable-until>Find  how long a ticket can be renewed</li>
+</ul>
+</td>
+
 </tr>
 </table>
 
@@ -36,7 +38,7 @@ Renew a ticket to extend its useable lifetime. Each time a ticket is renewed, it
 
 <ol>
 <li>If you have more than one <a href="JavaScript:popup.TextPopup(popupPrincipal, popfont,9,9,-1,-1)">principal</a>, click to select all principals with tickets you want to renew. </li>
-<li>Click the Renew Ticket button in the main window or use the <a href="JavaScript:popup.TextPopup(popupKeyboardShortcut, popfont,9,9,-1,-1)">keyboard shortcut</a>  [Ctrl + r].</li>
+<li>Click the Renew Ticket button in the Home tab or use the <a href="JavaScript:popup.TextPopup(popupKeyboardShortcut, popfont,9,9,-1,-1)">keyboard shortcut</a>  [Ctrl + r].</li>
 </ol>
 <p>
  All renewable tickets are renewed for the selected principal(s).</p>
@@ -47,13 +49,13 @@ Renew a ticket to extend its useable lifetime. Each time a ticket is renewed, it
 <a name="renew-automatically"><p></p></a>
 <H2>Renew ticket automatically</H2>
 <ol>
-<li>Find the Options panel. If no options are visible, click the Options button.</li>
-<li>Select <b>Automatic Ticket Renewal</b> if it is not already checked.</li>
+<li>Open the Options tab in the main window.</li>
+<li> In the Ticket  Options panel, select the Automatic Ticket Renewal checkbox if it is not already checked.</li>
 </ol>
 <p>
 Your tickets flagged as renewable will automatically reset themselves before they expire, until the renewable lifetime of the tickets is reached. </p>
 <p>
-<b>Note: </b>This feature only works while Kerberos for Windows is active and running. This means that if your machine is in hibernation mode or if Kerberos is not running when it is time to renew your tickets, your tickets will not be renewed and will expire instead. </p>
+<b>Note: </b>This feature only works while MIT Kerberos is active and running. This means that if your machine is in hibernation mode or if Kerberos is not running when it is time to renew your tickets, your tickets will not be renewed and will expire instead. </p>
 <p>
 <a href=#top>Back to Top</a> </p>
 <a name="conditions"><p></p></a>
@@ -62,16 +64,18 @@ Your tickets flagged as renewable will automatically reset themselves before the
 You can renew a ticket if the following conditions are met:</p>
 <ul>
 <li> When you obtained the ticket, the Renewable flag was selected. <a href="HTML/Ticket_Settings.htm">Ticket Settings and Flags help</a></li>
-<li> The "Renewable Until" deadline has not been reached. Show or hide the Renewable Until column with the View panel. <a href="View_Menu.htm">Using the View Panel</a></li>
+<li> The "Renewable Until" deadline has not been reached. Show or hide the Renewable Until column with the View Options panel in the Options tab. <a href="View_Menu.htm">Using the View Panel</a></li>
 <li> The ticket has not already expired. </li>
-<li>Kerberos for Windows is running and your computer is not in hibernation mode.</li>
+<li>MIT Kerberos is running and your computer is not in hibernation mode.</li>
 </ul>
 <p>
 <a href=#top>Back to Top</a> </p>
 <a name="renewable-until"><p></p></a>
 <H2>Find  how long a ticket can be renewed</H2>
-<p>
-In the View panel of the ribbon menu, select the Renewable Until checkbox.</p>
+<ol>
+<li>Open the Options tab in the main window.</li>
+<li> In the View  Options panel, select the Renewable Until checkbox.</li>
+</ol>
 <p>
  The Renewable Until column will appear. You can renew your ticket repeatedly until the date and time in this column is reached. 
 </p>

@@ -11,10 +11,10 @@
 <H2>Get tickets and get to work! </H2>
 
 <p>
- Kerberos for Windows provides an easy way to manage your Kerberos tickets. Jump to one of the following starting places, scroll down to browse, or use the table of contents to the left of this page to pick a topic.
+ MIT Kerberos provides an easy way to manage your Kerberos tickets. Jump to one of the following starting places, scroll down to browse, or use the table of contents to the left of this page to pick a topic.
 <ul >
 <li> Unfamliar with Kerberos tickets?  <a href="#unfamiliar">Click here</a></li>
-<li> Familiar with Kerberos tickets but new to Kerberos for Windows? <a href="#familiar">Click here. </a></li>
+<li> Familiar with Kerberos tickets but new to MIT Kerberos? <a href="#familiar">Click here. </a></li>
 <li> Just want a quick introduction to getting tickets?<a href="#get-tickets"> Click here</a></li>
 <li> Just want a quick introduction to exporting tickets?<a href="#export-tickets"> Click here</a></li>
 <li> Want help using this help system? <a href="#help-system"> Click here</a></li>
@@ -22,7 +22,7 @@
 </p>
 <H3><a name="unfamiliar">Unfamliar with Kerberos?</a></H3>
 <p>
-Keberos is a network authentication protocol that uses the concept of  short term "tickets" to allow users to securely access services over a physically insecure network. Kerberos, or Kerberos for Windows, is also the name of this application. Kerberos for Windows provides an easy interface for managing Kerberos tickets.</p>
+Keberos is a network authentication protocol that uses the concept of  short term "tickets" to allow users to securely access services over a physically insecure network. Kerberos, or MIT Kerberos, is also the name of this application. MIT Kerberos provides an easy interface for managing Kerberos tickets.</p>
 
 <p>Click an introductory topic below to jump to the topic page. Click the back button or "Getting Started" in the table of contents to the left to return to this page.</p>
 <table>
@@ -40,16 +40,18 @@ Keberos is a network authentication protocol that uses the concept of  short ter
 <p>
 <a href=#top>Back to Top</a> </p>
 <p>
-<H3><a name="familiar">Familiar with Kerberos tickets but new to Kerberos for Windows?</a></H3>
+<H3><a name="familiar">Familiar with Kerberos tickets but new to MIT Kerberos?</a></H3>
 <p>
-Kerberos for Windows is an easy to use interface for managing your Kerberos tickets. The main window shows all of your tickets. All available commands and options are in the ribbon menu at the top of the window.</p>
+MIT Kerberos is an easy to use interface for managing your Kerberos tickets. The main window shows all of your tickets. The ribbon menu at the top of the window contains command buttons in the Home tab. Click the Options tab to reach checkboxes that control what ticket information is displayed and checkboxes that control MIT Kerberos's automatic behaviour.</p>
 <p>
 Browse the table below to see where to find the commands and options you need.
 </p>
 <table>
 <tr><th colspan="2">How to...</th>
-<tr><th id="th2"> Get new tickets</th> <td>Click the Get Ticket button. <br>
+<tr><th id="th2"> Get new MIT Kerberos tickets</th> <td>Click the Get Ticket button. <br>
  <a href="HTML/Get_Tickets.htm">Click for details</a> </td></tr>
+<tr><th id="th2"> Change ticket flags and settings (e.g., flag a ticket as renewable)</th> <td>In the Get Ticket window, click the Advanced button to reach ticket settings and flags. <br>
+ <a href="HTML/Ticket_Settings.htm">Click for details</a> </td></tr>
 <tr><th id="th2">Import Windows domain tickets after you've started a Windows Logon session</th> <td>In most installations, Keberos automatically imports existing tickets when possible. Look in the main window for the Import Status column. 
 <ul id="tableul">
 <li>If the Import Status column is hidden, you do not have a Windows domain ticket. </li>
@@ -62,13 +64,13 @@ Browse the table below to see where to find the commands and options you need.
 <a href="HTML/Export_Tickets.htm">Click for details</a> </td></tr>
 <tr><th id="th2">  Change your password</th> <td>Click the Change Password button. <br>
  <a href="HTML/Change_Password.htm">Click for details</a> </td></tr>
-<tr><th id="th2">Change what ticket information is displayed </th> <td>Select or deselect checkboxes in the View panel. <br>
+<tr><th id="th2">Change what ticket information is displayed </th> <td>In the Options tab, select or deselect checkboxes in the View Options panel. <br>
  <a href="HTML/View_Menu.htm">Click for details</a> </td></tr>
-<tr><th id="th2">Set Kerberos's automatic functions (auto renew, auto destroy, audible ticket expiration alarm).</th> <td>Select or deselect checkboxes in the Options panel.  <br>
+<tr><th id="th2">Set Kerberos's automatic functions (auto renew, auto destroy, audible ticket expiration alarm)</th> <td>In the Options tab, select or deselect checkboxes in the Ticket Options panel.  <br>
 <a href="HTML/Options_Menu.htm">Click for details</a> </td></tr>
-<tr><th id="th2">Renew your tickets</th> <td>Click the Renew Tickets button or turn on Automatic Ticket Renewal in the Options panel.  <br>
+<tr><th id="th2">Renew your tickets</th> <td>Click the Renew Tickets button. Or, go to the Options tab and select  Automatic Ticket Renewal in the Ticket Options panel. <br>
 <a href="HTML/Renew_Tickets.htm">Click for details</a> </td></tr>
-<tr><th id="th2"> Destroy your Kerberos for Windows tickets </th> <td>Click the Destroy Tickets button. <br>
+<tr><th id="th2"> Destroy your MIT Kerberos tickets </th> <td>Click the Destroy Tickets button. <br>
  <a href="HTML/Destroy_Tickets.htm">Click for details</a> </td></tr>
 <tr><th id="th2">Manage multiple principals </th> <td>
 When you get tickets for a principal, Kerberos offers to remember the principal for you. You can then select saved principals from a list when getting tickets or changing your password. 
@@ -77,7 +79,7 @@ When you get tickets for a principal, Kerberos offers to remember the principal 
 In the main window, click a principal to select it. The Renew Ticket, Change Password, and Make Default buttons then apply to the selected principal.<br>
 <br> <a href="HTML/Manage_Multiple_Principals.htm">Click for details</a>
  </td></tr>
-<tr><th id="th2">Change Kerberos properties</th> <td>Most properties are set by modifying the appropriate configuration file. You can allow realm names that use lower case letters by selecting Allow Mixed Case Realm in the More panel. <br>
+<tr><th id="th2">Change Kerberos properties</th> <td>Most properties are set by modifying the appropriate configuration file. You can allow realm names that use lower case letters by selecting Allow Mixed Case Realm in the Ticket Options panel in the Options tab. <br>
 <a href="HTML/More_Menu.htm">Click for details</a> </td></tr>
 </table>
 <p>

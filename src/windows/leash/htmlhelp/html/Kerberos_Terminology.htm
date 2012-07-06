@@ -45,8 +45,8 @@ Realms are usually named after the DNS domain they correspond to, but using all 
 <tr>
 <td>  
 Kerberos uses the concept of <i>tickets </i> to keep passwords from being transmitted in the clear and to provide users the convenience of a single log-on to access multiple services and hosts.  <p></p>
-Once a you provide a valid principal and password, Kerberos  issues you a ticket with a limited lifetime. This ticket is an encrypted block of data authenticates you.   In most cases the ticket allows you to access all of the appropriate network resources in the realm you use, for the lifetime of the ticket, without having to take any further action. <p></p>
- When you access one of these resources, Kerberos for Windows passes your initial, Ticket Granting Ticket (TGT)  to the service. Kerberos verifies the ticket and then issues a separate ticket that allows access to that service.  You don't have to worry about obtaining or managing these new service tickets; they are automatically issued. Service tickets can be viewed with Kerberos for Windows but cannot be directly obtained or destroyed through it.
+Once a you provide a valid principal and password, Kerberos  issues you a ticket with a limited lifetime. This ticket is an encrypted block of data that authenticates you.   In most cases the ticket allows you to access all of the appropriate network resources in the realm you use, for the lifetime of the ticket, without having to take any further action. <p></p>
+ When you access one of these resources, MIT Kerberos passes your initial Ticket Granting Ticket (TGT)  to the service. Kerberos verifies the ticket and then issues a separate ticket that allows access to that service.  You don't have to worry about obtaining or managing these new service tickets; they are automatically issued. Service tickets can be viewed with MIT Kerberos but cannot be directly obtained or destroyed through it.
 <p></p>
 Tickets contain two <a href="JavaScript:popup.TextPopup(popupEncryptionKey, popfont,9,9,-1,-1)">encryption keys</a>: the ticket key and the session key. The ticket key is shared between the Kerberos infrastructure and the service you are using. The session key is shared between you and the service, and is used to  encrypt and decrypt communication with the service. 
 <p></p>
@@ -58,6 +58,7 @@ Tickets contain two <a href="JavaScript:popup.TextPopup(popupEncryptionKey, popf
 <ul id="helpul">
 <li><a href="HTML/Kerberos.htm">What is Kerberos?</a></li>
 <li><a href="HTML/How_Kerberos_Works.htm">How does Kerberos work?</a></li>
+<li><a href="HTML/Encryption_Types.htm">Encryption types</a></li>
 </ul>
 
 <SCRIPT Language=JavaScript> 

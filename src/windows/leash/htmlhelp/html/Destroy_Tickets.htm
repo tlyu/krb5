@@ -28,7 +28,7 @@ Destroying your tickets when you no longer need them increases security.  Once t
 <H2><a name="destroy-once">Destroy obtained with the Get Ticket window</a></H2>
 <p>To immediately destroy all of the tickets obtained with the Get Ticket window:</p>
 <ol>
-<li>Click the Destroy Ticket button or use the <a href="JavaScript:popup.TextPopup(popupKeyboardShortcut, popfont,9,9,-1,-1)">keyboard shortcut</a>  [Ctrl + d].</li> </li>
+<li>Click the Destroy Ticket button in the Home tab or use the <a href="JavaScript:popup.TextPopup(popupKeyboardShortcut, popfont,9,9,-1,-1)">keyboard shortcut</a>  [Ctrl + d].</li> </li>
 <li>Click Okay to confirm that you want to destroy the tickets. </li>
 </ol>
 <p>
@@ -37,24 +37,25 @@ Destroying your tickets when you no longer need them increases security.  Once t
 <a href=#top>Back to Top</a> </p>
 <H2><a name="imported">Destroy tickets obtained with a Windows Logon session</a></H2>
 <p>
-Kerberos for Windows displays all of your tickets, including those obtained when you logged on to a Windows domain with a Windows Logon session. Tickets obtained with a Windows Logon session show an Import Status of <em>imported</em>, <em>importable</em>, or <em>protected.</em><br>
+MIT Kerberos displays all of your tickets, including those obtained when you logged on to a Windows domain with a Windows Logon session. Tickets obtained with a Windows Logon session show an Import Status of <em>imported</em>, <em>importable</em>, or <em>protected.</em><br>
  <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>
 </p>
 
 <H3>Destoy imported tickets</H3>
 <p>
-Imported tickets cannot be destroyed in Kerberos for Windows if the Automatic Import option is selected, because Kerberos would immediately re-import the destroyed ticket. However, they are automatically destroyed when you exit your Windows Logon session.  
+Imported tickets cannot be destroyed in MIT Kerberos if the Automatic Import option is selected, because Kerberos would immediately re-import the destroyed ticket. However, they are automatically destroyed when you exit your Windows Logon session.  
 </p><p>
 If you do want  to immediately destroy only the imported copy:</p>
 <ol>
-<li>Unselect the Automatic Import option. <a href="HTML/Options_Menu.htm"> Using the OptionPanel </a></li>
+<li>Open the Options tab.</li>
+<li>Unselect the Automatic Import Tickets checkbox in the Ticket Options panel. <a href="HTML/Options_Menu.htm"> Using the Option Panel </a></li>
 <li>Click the Destroy Ticket button. </li>
 </ol>
 
 
 <H3>Destoy importable or protected tickets</H3>
 <p>
-Importable and protected tickets are not controlled by Kerberos for Windows so you cannot use Kerberos for Windows to destroy them. They are  destroyed when you log out of your Windows session.</p>
+Importable and protected tickets are not controlled by MIT Kerberos so you cannot use MIT Kerberos to destroy them. They are  destroyed when you log out of your Windows session.</p>
 
 <p>
 <a href=#top>Back to Top</a> </p>
@@ -62,15 +63,15 @@ Importable and protected tickets are not controlled by Kerberos for Windows so y
 
 <H2><a name="destroy-automatically">Destroy tickets automatically</a></H2>
 <p>
-To automatically destroy your tickets when you exit Kerberos for Windows:</p>
+To automatically destroy your tickets when you exit MIT Kerberos:</p>
 <ol>
-<li>Find the Option panel. Click the Options button if the options checkboxes are not visible. </li>
-<li>Find the Destroy Tickets on Exit checkbox. If it is not already selected, click it to turn the option on. </li>
+<li>Open the Options tab. </li>
+<li>Find the Destroy Tickets on Exit checkbox in the Ticket Options panel. If it is not already selected, click it to turn the option on. </li>
 </ol>
 <p>
-Your tickets are not affected immediately, but they  will be automatically destroyed as soon as you exit Kerberos for Windows. </p>
+Your tickets are not affected immediately, but they  will be automatically destroyed as soon as you exit MIT Kerberos. </p>
 <p>
-<b>Note: </b> Tickets that were obtained when you logged on to a Windows domain though a Windows Logon session are not affected by the Destroy Tickets on Exit option. They are destroyed when you exit your Windows Logon session. However, when you exit Kerberos for Windows, these tickets can no longer be used with applications that require the Kerberos for Windows interface.
+<b>Note: </b> Tickets that were obtained when you logged on to a Windows domain though a Windows Logon session are not affected by the Destroy Tickets on Exit option. They are destroyed when you exit your Windows Logon session. However, when you exit MIT Kerberos, these tickets can no longer be used with applications that require the MIT Kerberos interface.
 <p>
 <a href=#top>Back to Top</a> </p>
 
