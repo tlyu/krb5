@@ -3,17 +3,18 @@ BUILDTOP=..\..\..
 TARGETTYPE=NONE
 
 HHCOUT=LeashHelp.chm
-TARGET=leash.chm
+TARGET=..\$(OUTPRE)"MIT Kerberos.chm"
 HHP=LeashHelp.hhp
 ERR=leash.log
 
-all:: $(TARGET)
+all:: $(HHCOUT)
 
 clean::
+	@if exist $(HHCOUT) del $(HHCOUT)
 	@if exist $(TARGET) del $(TARGET)
 	@if exist $(ERR) del $(ERR)
 
-$(TARGET): $(HHP)
+$(HHCOUT): $(HHP)
    - hhc $(HHP)
    @if exist $(TARGET) del $(TARGET)
-   @ren $(HHCOUT) $(TARGET)
+   @copy $(HHCOUT) $(TARGET)
