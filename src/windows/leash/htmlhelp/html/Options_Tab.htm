@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html><head>
+<meta name="GENERATOR" content="Microsoft® HTML Help Workshop 4.1">
+<link rel="stylesheet" type="text/css" href="Leash.css">
+<title>Options Tab</title></head>
+
+<body>
+<h1><a name="top">Using the Options Tab </a> </h1>
+<p>
+Click the Options tab to reach the checkboxes that control ticket and
+view options. The Options tab has two panels. Use the View Options
+panel to choose which information is displayed for your tickets. Use
+the Ticket Options panel to turn MIT Kerberos's automatic features on
+or off. </p>
+<p>
+Scroll down to browse information about both panels, or jump to a section by clicking a link below.</p>
+<table>
+<tbody><tr>
+<th id="th2">Learn about....</th><th id="th2">How to....</th></tr>
+<tr><td>
+<ul id="helpul">
+<li><a href="#view-options">View Options </a></li>
+<li><a href="#ticket-options">Ticket Options </a></li>
+</ul></td>
+<td>
+<ul id="helpul">
+<li><a href="#using-view-options">Use the View Options Panel</a></li>
+<li><a href="#using-ticket-options">Use the Ticket Options Panel</a></li>
+
+</ul></td>
+</tr>
+</tbody></table>
+
+<h2> <a name="using-view-options">Using the View Options Panel</a></h2>
+<p>
+Click the Options tab at the top of the ribbon menu and look to the
+left to find the View Options panel. The View Options are a list of all
+of the ticket information columns that can be displayed in the main
+window.</p>
+<p>
+Select a checkbox to show the information column in the main window.
+Deselect it to hide the column. Some options are selected by default.
+For example, "Valid Until" is selected by default, so the main window
+shows the Valid Until column showing when your tickets will expire. <br>
+<a href="HTML/View_Tickets.htm">View Tickets help</a> </p>
+
+<h2><a name="#view-options">View Options </a></h2>
+
+<table>
+<tbody><tr>
+<th>
+Checkbox Name </th>
+<th>
+Select this checkbox to...</th>
+<th>
+Details</th>
+</tr>
+<tr>
+<th id="th2"><a name="issued">Issued  </a></th>
+<td> See the date and time your ticket was originally obtained. </td>
+<td>If the ticket is imported, this is the time it was originally
+obtained when you logged on to a Windows domain with a Windows Logon
+session.</td> </tr>
+<tr> 
+<th id="th2">
+ Renewable Until</th>
+<td>See the date and time that your renewable tickets cannot be renewed
+any more. After this time you must get a new ticket to access services
+authenticated by Kerberos.</td>
+<td>
+ <a name="renewable-until">If this column shows <em>Not Renewable</em>, the ticket was not flagged as renewable when you obtained it.</a> 
+
+<b>Related Help:</b><ul id="helpul">
+<li> <a href="HTML/Tickets.htm#renewable"> About renewable tickets</a> </li>
+<li><a href="HTML/Renew_Tickets.htm"> Renew tickets</a></li>
+<li><a href="HTML/Ticket_Settings.htm"> Ticket settings and flags</a></li>
+</ul>
+</td></tr>
+<tr>
+<th id="th2"> Valid Until  </th>
+<td>
+See when your ticket will expire. Note that you cannot renew a ticket if you let it expire. </td>
+<td>
+ <a name="valid-until">Kerberos alerts you to expiring tickets with a warning in a pop up window. </a>
+To add an audible warning, select the Expiration Alarm checkbox in the Ticket Options panel. <br><a href="#using-ticket-options">Using the Ticket Options Panel</a>
+ </td></tr>
+<tr>
+<th id="th2">  Encryption Type  </th>
+<td>See the encryption type used to encrypt each session key and ticket. This can be useful when troubleshooting.</td>
+<td> <a name="encryption-type">Kerberos supports multiple  types of encryption.</a> The type used for a particular  ticket or session key is automatically negotiated when you request a ticket or a service. <br>
+<a href="HTML/Encryption_Types.htm#supported-types">More About Encryption Types</a> </td></tr>
+<tr>
+<th id="th2"> Flags</th> 
+<td>See how the tickets were flagged (renewable and/or fowardable) when you obtained them. 
+</td><td> <a name="flags"> You cannot change how an existing flag is set. If you need a ticket with different flags, you must get a new ticket. <br></a> 
+<a href="HTML/Ticket_Settings.htm">About ticket settings and flags </a>
+</td>
+</tr>
+<tr><th id="th2"> Import Status <p></p>Note: this option is not always available.</th> 
+<td> See which of your tickets have been imported (or can be imported),
+from a Windows Logon session, and which have been exported (or can be
+exported) into a Windows Logon session. <p></p>
+<b>Note: </b>This column is only available when you have obtained Kerberos
+tickets for a Windows domain by logging into a Windows Logon session. <p></p>
+<a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>
+</td>
+<td><a name="import-status">The import status tells you what  application was used to obtain the ticket, and what application can fully use it now.</a>  Tickets originally obtained by starting  a Windows Logon session in a domain are <em> imported</em> or <em>importable</em> to MIT Kerberos, or they are <em>protected</em> from being imported. <p></p> Tickets obtained with the Get Ticket window are either <em>exportable</em> or <em>exported</em> to the Windows Logon session. <a href="HTML/Import_Status.htm">Import Status meanings</a>
+ </td>
+
+</tr>
+</tbody></table>
+<p>
+<a href="#top">Back to Top</a> </p>
+
+
+<h2> <a name="using-ticket-options">Using the Ticket Options Panel</a></h2>
+<p>
+Click the Options tab at the top of the ribbon menu and look to the
+right to find the Ticket Options panel. The Ticket Options control MIT
+Kerberos's automatic features.</p>
+<p>
+Select a Ticket Option checkbox to turn that feature on. Deselect it to turn the feature off. </p>
+ 
+<h2><a name="#ticket-options">Ticket Options </a></h2>
+<table>
+<tbody><tr>
+<th>
+Option</th>
+<th>
+Turn this on to...</th>
+<th>
+Details</th>
+</tr>
+<tr>
+<th id="th2">Automatic Ticket Renewal</th>
+<td>
+Automatically renew tickets flagged as renewable, without promptings or
+requiring a password, until the renewal lifetime is reached. </td>
+<td>
+<a name="automatic-renewal">Renewing your tickets allows you to run
+batch jobs without interruption and to work through a long session
+without continually reentering your
+password. </a> <a href="HTML/Tickets.htm#renewable">About renewable tickets</a>
+<p></p>
+<b>Note: </b>Automatic ticket renewal will not work if you exit MIT Kerberos or if your machine is in hibernation mode. 
+ </td></tr>
+<tr>
+<th id="th2">Automatic Ticket Import </th>
+<td>
+Automatically import tickets you have already obtained for a Windows domain through a Windows Logon session. </td>
+<td>
+<a name="automatic-import">Importing your Windows domain tickets allows
+them to be fully used by applications that require the MIT Kerberos
+interface. Imported tickets are marked as <em>imported</em> in the Import Status column, and cannot be destroyed with the Destroy Ticket button. </a> <a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>
+<p></p>
+<b>Note: </b>When tickets are imported, any tickets you already have in MIT Kerberos are destroyed. 
+ </td></tr>
+<tr>
+<th id="th2">Expiration Alarm</th>
+<td>Have Kerberos provide an audible alarm 15, 10, and 5 minutes before your tickets expire.</td>
+<td><a name="expiration-alarm">Regardless of whether this option is on, Kerberos alerts you to expiring tickets at the same intervals with pop up window. </a>However, the pop up
+window will not always be visible on a busy desktop.  <a href="HTML/Tickets.htm#expiration">About ticket expiration</a></td></tr>
+<tr>
+<th id="th2">Destroy Tickets on Exit </th>
+<td> <a name="destroy-tickets">Have MIT Kerberos destroy your tickets when you exit the program. </a>
+<p></p>
+<b>Note: </b>MIT Kerberos cannot permanently destroy tickets you've
+obtained by logging into a Windows domain, even if you've imported
+them. Those tickets are destroyed when you log out of the domain.</td>
+<td>Turning this option on provides greater security. However, you will
+need to turn this off if you want to exit MIT Kerberos but leave
+processes running which require your valid tickets. </td></tr>
+
+
+<tr>
+<th id="th2">
+Allow Mixed Case Realm Name</th>
+<td>Use a Kerberos realm with lower case letters in its name.</td>
+<td>
+<a name="mixed-case-realm">Kerberos <em>realms</em> are a way of logically grouping resources and identities that use Kerberos. </a>
+By convention, realm names use all upper case letters. This helps
+distinguish a realm from the DNS domain it corresponds to. Realm names
+are case sensitive. So for convenience, anything you enter in the realm
+field of the Get Ticket window is converted to upper case, unless you
+turn this option on. </td></tr>
+</tbody></table>
+<p>
+<a href="#top">Back to Top</a> </p>
+
+
+</body></html>

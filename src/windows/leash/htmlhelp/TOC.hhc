@@ -70,7 +70,7 @@
 			<param name="Local" value="Html\Destroy_Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Windows Domain Tickets">
+			<param name="Name" value="Windows Logon Session Tickets">
 			<param name="Local" value="HTML\Windows_Logon_Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -160,6 +160,10 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Encryption Types">
 			<param name="Local" value="HTML\Encryption_Types.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Import Status">
+			<param name="Local" value="HTML\Import_Status.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
