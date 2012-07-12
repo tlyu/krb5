@@ -2,9 +2,9 @@ BUILDTOP=..\..\..
 
 TARGETTYPE=NONE
 
-HHCOUT=LeashHelp.chm
+HHCOUT=MITKerberosHelp.chm
 TARGET=..\$(OUTPRE)"MIT Kerberos.chm"
-HHP=LeashHelp.hhp
+HHP=MITKerberosHelp.hhp
 ERR=leash.log
 
 all:: $(HHCOUT)

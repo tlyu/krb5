@@ -20,11 +20,6 @@
 			<param name="Name" value="Report Bugs">
 			<param name="Local" value="HTML\Report_Bugs.htm">
 			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="use debugging window">
-			<param name="Name" value="Debugging">
-			<param name="Local" value="HTML\Debugging.htm">
-			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="command line">
@@ -125,6 +120,18 @@
 		<param name="Name" value="Encryption_Types">
 		<param name="Local" value="HTML\Encryption_Types.htm">
 		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="learn about">
+			<param name="Name" value="Encryption_Types">
+			<param name="Local" value="HTML\Encryption_Types.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="view">
+			<param name="Name" value="View Encryption Type">
+			<param name="Local" value="Html\View_Tickets.htm#encryption-type">
+			</OBJECT>
+	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="expiration">
 		<param name="See Also" value="expiration">
@@ -132,18 +139,18 @@
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="alarm option">
-			<param name="Name" value="Options Menu">
-			<param name="Local" value="HTML\Options_Menu.htm">
+			<param name="Name" value="Options Tab">
+			<param name="Local" value="HTML\Options_Tab.htm#expiration-alarm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="of renewable ticket">
 			<param name="Name" value="Tickets">
-			<param name="Local" value="Html\Tickets.htm#renewable">
+			<param name="Local" value="Html\Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="of ticket">
 			<param name="Name" value="Tickets">
-			<param name="Local" value="Html\Tickets.htm#expiration">
+			<param name="Local" value="Html\Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="see also: ticket">
@@ -206,7 +213,7 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="how to view">
 			<param name="Name" value="View Menu">
-			<param name="Local" value="HTML\View_Menu.htm">
+			<param name="Local" value="HTML\Option_Tab.htm#import-status">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="meaning of each">
@@ -284,6 +291,11 @@
 			<param name="Local" value="HTML\Forget_Principals.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="clear history">
+			<param name="Name" value="Forget Saved Principals ">
+			<param name="Local" value="HTML\Forget_Principals.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="default, about">
 			<param name="Name" value="About default principals">
 			<param name="Local" value="HTML\Principals.htm#default-principal">
@@ -292,11 +304,6 @@
 			<param name="Name" value="definition">
 			<param name="Name" value="Kerberos Terminology">
 			<param name="Local" value="HTML\Kerberos_Terminology.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="forget">
-			<param name="Name" value="Forget Saved Principals ">
-			<param name="Local" value="HTML\Forget_Principals.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="make default">
@@ -322,7 +329,7 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="allow mixed case name option">
 			<param name="Name" value="Options Menu">
-			<param name="Local" value="HTML\Options_Menu.htm">
+			<param name="Local" value="HTML\Options_Tab.htm#mixed-case-realm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="definition">
@@ -358,7 +365,7 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="renew automatically">
 			<param name="Name" value="Renew_Tickets">
-			<param name="Local" value="Html\Renew_Tickets.htm#automatically">
+			<param name="Local" value="Html\Renew_Tickets.htm#renew-automatically">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="see also:  ticket">
@@ -372,26 +379,14 @@
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="renewable until">
-		<param name="Name" value="View Tickets">
-		<param name="Local" value="Html\View_Tickets.htm#renewable_until">
+		<param name="Name" value="Glossar: renewable until">
+		<param name="Local" value="Html\Glossary.htm#renewable_until">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="shortcut keys">
 		<param name="Name" value="Keyboard Shortcuts  ">
 		<param name="Local" value="HTML\Keyboard_Shortcuts.htm">
 		</OBJECT>
-	<UL>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="learn about">
-			<param name="Name" value="Encryption_Types">
-			<param name="Local" value="HTML\Encryption_Types.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="view">
-			<param name="Name" value="View Encryption Type">
-			<param name="Local" value="Html\View_Tickets.htm#encryption-type">
-			</OBJECT>
-	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="ticket">
 		<param name="Name" value="Tickets">
@@ -419,9 +414,12 @@
 			<param name="Local" value="HTML\Export_Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="flags">
+			<param name="Name" value="flags, set">
 			<param name="Name" value="Ticket Settings">
 			<param name="Local" value="Html\Ticket_Settings.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="flags, view">
 			<param name="Name" value="View Tickets">
 			<param name="Local" value="Html\View_Tickets.htm">
 			</OBJECT>
@@ -473,9 +471,9 @@
 			<param name="Local" value="Html\View_Tickets.htm#valid-until">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="show/hide in View Menu">
-			<param name="Name" value="View Menu">
-			<param name="Local" value="HTML\View_Menu.htm">
+			<param name="Name" value="show/hide column">
+			<param name="Name" value="View Options Panel">
+			<param name="Local" value="HTML\Options_Tab.htm#view-options">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">

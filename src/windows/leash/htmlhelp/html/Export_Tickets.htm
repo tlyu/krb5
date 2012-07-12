@@ -8,9 +8,9 @@
 <BODY>
 <H1>Export Tickets</H1>
 <p>
-You can export tickets into your Windows Logon session so they can be used in your Windows domain.   (In Windows, <a href="JavaScript:popup.TextPopup(popupRealm, popfont,9,9,-1,-1)"> realms</a>  are called <em>domains.</em>) This is useful when you want to you use a computer that is not part of a Kerberos realm to access that realm.    </p>
+You can export tickets into your Windows Logon session so they can be used with  Windows services.   This is useful when you want to you use a computer that is not part of a Kerberos <a href="JavaScript:popup.TextPopup(popupRealm, popfont,9,9,-1,-1)"> realm</a> (or Windows domain)  to access that realm (or domain).    </p>
 <p>
-<b>Note: </b>Exporting tickets will destroy any tickets you already have for your Windows Logon session. If you have unexpired tickets when you run the Export Ticket command, Kerberos will warn you and give you the option to cancel the command.</p>
+<b>Note: </b>Exporting tickets will destroy any tickets you already have for your Windows Logon session. If you have unexpired tickets when you run the Export Ticket command, MIT Kerberos will warn you and give you the option to cancel the command.</p>
 <p>
 To export  tickets you have already obtained with the Get Ticket window into your Windows Logon session:</p>
 <ol>
