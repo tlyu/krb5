@@ -315,6 +315,255 @@ one_addr(krb5_address *a)
     return(retstr);
 }
 
+static int
+CredToTicketList(
+    krb5_context ctx,
+    krb5_creds KRBv5Credentials,
+    krb5_principal KRBv5Principal,
+    TICKETINFO * ticketinfo,
+    TicketList** ticketListTail)
+{
+    krb5_error_code code = 0;
+    krb5_ticket    *tkt=NULL;
+    int				StartMonth;
+    int				EndMonth;
+    int             RenewMonth;
+    int				StartDay;
+    int				EndDay;
+    int             RenewDay;
+    char			StartTimeString[256];
+    char			EndTimeString[256];
+    char            RenewTimeString[256];
+    char			fill;
+    char			*ClientName = NULL;
+    char			*PrincipalName = NULL;
+    char			*sServerName = NULL;
+    char			Buffer[256];
+    static const char Months[12][4] = {"Jan\0", "Feb\0", "Mar\0", "Apr\0", "May\0", "Jun\0", "Jul\0", "Aug\0", "Sep\0", "Oct\0", "Nov\0", "Dec\0"};
+    char			StartTime[16];
+    char			EndTime[16];
+    char            RenewTime[16];
+    char			temp[128];
+    char			*sPtr;
+    char            *ticketFlag;
+    char            *functionName = NULL;
+    TicketList      *list = NULL;
+
+    if ((code = (*pkrb5_unparse_name)(ctx, KRBv5Principal,
+                                      &PrincipalName))) {
+        goto cleanup;
+    }
+
+    if (!strcspn(PrincipalName, "@" )) {
+        code = "somecodetoindicateno'@'inprincipalname?";
+        goto cleanup;
+    }
+
+    if ( strcmp(ticketinfo->principal, PrincipalName) )
+        wsprintf(ticketinfo->principal, "%s", PrincipalName);
+
+    functionName = "krb5_unparse_name()";
+    if ((code = (*pkrb5_unparse_name)(ctx, KRBv5Credentials.client, &ClientName)))
+        goto cleanup;
+
+    if ((code = (*pkrb5_unparse_name)(ctx, KRBv5Credentials.server, &sServerName)))
+        goto cleanup;
+
+    if (!KRBv5Credentials.times.starttime)
+        KRBv5Credentials.times.starttime = KRBv5Credentials.times.authtime;
+
+    fill = ' ';
+    memset(StartTimeString, '\0', sizeof(StartTimeString));
+    memset(EndTimeString, '\0', sizeof(EndTimeString));
+    memset(RenewTimeString, '\0', sizeof(RenewTimeString));
+    (*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.starttime, StartTimeString, 17, &fill);
+    (*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.endtime, EndTimeString, 17, &fill);
+	if (KRBv5Credentials.times.renew_till >= 0)
+		(*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.renew_till, RenewTimeString, 17, &fill);
+    memset(temp, '\0', sizeof(temp));
+    memcpy(temp, StartTimeString, 2);
+    StartDay = atoi(temp);
+    memset(temp, (int)'\0', (size_t)sizeof(temp));
+    memcpy(temp, EndTimeString, 2);
+    EndDay = atoi(temp);
+    memset(temp, (int)'\0', (size_t)sizeof(temp));
+    memcpy(temp, RenewTimeString, 2);
+    RenewDay = atoi(temp);
+
+    memset(temp, '\0', sizeof(temp));
+    memcpy(temp, &StartTimeString[3], 2);
+    StartMonth = atoi(temp);
+    memset(temp, '\0', sizeof(temp));
+    memcpy(temp, &EndTimeString[3], 2);
+    EndMonth = atoi(temp);
+    memset(temp, '\0', sizeof(temp));
+    memcpy(temp, &RenewTimeString[3], 2);
+    RenewMonth = atoi(temp);
+
+    while (1)
+    {
+        if ((sPtr = strrchr(StartTimeString, ' ')) == NULL)
+            break;
+
+        if (strlen(sPtr) != 1)
+            break;
+
+        (*sPtr) = 0;
+    }
+
+    while (1)
+    {
+        if ((sPtr = strrchr(EndTimeString, ' ')) == NULL)
+            break;
+
+        if (strlen(sPtr) != 1)
+            break;
+
+        (*sPtr) = 0;
+    }
+
+    while (1)
+    {
+        if ((sPtr = strrchr(RenewTimeString, ' ')) == NULL)
+            break;
+
+        if (strlen(sPtr) != 1)
+            break;
+
+        (*sPtr) = 0;
+    }
+
+    memset(StartTime, '\0', sizeof(StartTime));
+    memcpy(StartTime, &StartTimeString[strlen(StartTimeString) - 5], 5);
+    memset(EndTime, '\0', sizeof(EndTime));
+    memcpy(EndTime, &EndTimeString[strlen(EndTimeString) - 5], 5);
+    memset(RenewTime, '\0', sizeof(RenewTime));
+    memcpy(RenewTime, &RenewTimeString[strlen(RenewTimeString) - 5], 5);
+
+    memset(temp, '\0', sizeof(temp));
+    strcpy(temp, ClientName);
+
+    if (!strcmp(ClientName, PrincipalName))
+        memset(temp, '\0', sizeof(temp));
+
+    memset(Buffer, '\0', sizeof(Buffer));
+
+    ticketFlag = GetTicketFlag(&KRBv5Credentials);
+
+    if (KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE) {
+        wsprintf(Buffer,"%s %02d %s     %s %02d %s     [%s %02d %s]     %s %s       %s",
+                    Months[StartMonth - 1], StartDay, StartTime,
+                    Months[EndMonth - 1], EndDay, EndTime,
+                    Months[RenewMonth - 1], RenewDay, RenewTime,
+                    sServerName,
+                    temp, ticketFlag);
+    } else {
+        wsprintf(Buffer,"%s %02d %s     %s %02d %s     %s %s       %s",
+                Months[StartMonth - 1], StartDay, StartTime,
+                Months[EndMonth - 1], EndDay, EndTime,
+                sServerName,
+                temp, ticketFlag);
+    }
+    list = calloc(1, sizeof(TicketList));
+    if (!list) {
+        code = ENOMEM;
+        functionName = "calloc()";
+        goto cleanup;
+    }
+    list->theTicket = (char*) calloc(1, strlen(Buffer)+1);
+    if (!list->theTicket) {
+        code = ENOMEM;
+        functionName = "calloc()";
+        goto cleanup;
+    }
+    strcpy(list->theTicket, Buffer);
+    list->name = NULL;
+    list->inst = NULL;
+    list->realm = NULL;
+
+    if ( !pkrb5_decode_ticket(&KRBv5Credentials.ticket, &tkt)) {
+        wsprintf(Buffer, "Ticket Encryption Type: %s", etype_string(tkt->enc_part.enctype));
+        list->tktEncType = (char*) calloc(1, strlen(Buffer)+1);
+        if (!list->tktEncType) {
+            functionName = "calloc()";
+            code = ENOMEM;
+            goto cleanup;
+        }
+        strcpy(list->tktEncType, Buffer);
+
+        pkrb5_free_ticket(ctx, tkt);
+        tkt = NULL;
+    } else {
+        list->tktEncType = NULL;
+    }
+
+    wsprintf(Buffer, "Session Key Type: %s", etype_string(KRBv5Credentials.keyblock.enctype));
+    list->keyEncType = (char*) calloc(1, strlen(Buffer)+1);
+    if (!list->keyEncType) {
+        functionName = "calloc()";
+        code = ENOMEM;
+        goto cleanup;
+    }
+    strcpy(list->keyEncType, Buffer);
+
+    if ( KRBv5Credentials.addresses && KRBv5Credentials.addresses[0] ) {
+        int n = 0;
+        while ( KRBv5Credentials.addresses[n] )
+			n++;
+        list->addrList = calloc(1, n * sizeof(char *));
+        if (!list->addrList) {
+            functionName = "calloc()";
+            code = ENOMEM;
+            goto cleanup;
+        }
+        list->addrCount = n;
+        for ( n=0; n<list->addrCount; n++ ) {
+            wsprintf(Buffer, "Address: %s", one_addr(KRBv5Credentials.addresses[n]));
+            list->addrList[n] = (char*) calloc(1, strlen(Buffer)+1);
+            if (!list->addrList[n])
+            {
+                functionName = "calloc()";
+                code = ENOMEM;
+                goto cleanup;
+            }
+            strcpy(list->addrList[n], Buffer);
+        }
+    }
+
+    ticketinfo->issue_date = KRBv5Credentials.times.starttime;
+    ticketinfo->lifetime = KRBv5Credentials.times.endtime - KRBv5Credentials.times.starttime;
+    ticketinfo->renew_till = KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE ?
+        KRBv5Credentials.times.renew_till : 0;
+    _tzset();
+    if ( ticketinfo->issue_date + ticketinfo->lifetime - time(0) <= 0L )
+        ticketinfo->btickets = EXPD_TICKETS;
+    else
+        ticketinfo->btickets = GOOD_TICKETS;
+
+cleanup:
+    if (code) {
+        Leash_krb5_error(code, functionName, 0, &ctx, NULL);
+        if (list) {
+            if (list->theTicket)
+                free(list->theTicket);
+            free(list);
+        }
+    } else {
+        *ticketListTail = list;
+    }
+        
+    if (ClientName != NULL)
+        (*pkrb5_free_unparsed_name)(ctx, ClientName);
+
+    if (sServerName != NULL)
+        (*pkrb5_free_unparsed_name)(ctx, sServerName);
+
+    if (PrincipalName)
+        (*pkrb5_free_unparsed_name)(ctx, PrincipalName);
+
+    return code;
+}
+
 /*
  * LeashKRB5GetTickets() treats krbv5Context as an in/out variable.
  * If the caller does not provide a krb5_context, one will be allocated.
@@ -335,42 +584,23 @@ not_an_API_LeashKRB5GetTickets(
     krb5_context	ctx = 0;
     krb5_ccache		cache = 0;
     krb5_error_code	code;
-    krb5_principal	KRBv5Principal;
+    krb5_principal	KRBv5Principal = NULL;
     krb5_flags		flags = 0;
     krb5_cc_cursor	KRBv5Cursor;
     krb5_creds		KRBv5Credentials;
-    krb5_ticket    *tkt=NULL;
-    int				StartMonth;
-    int				EndMonth;
-    int             RenewMonth;
-    int				StartDay;
-    int				EndDay;
-    int             RenewDay;
-    char			StartTimeString[256];
-    char			EndTimeString[256];
-    char            RenewTimeString[256];
-    char			fill;
-    char			*ClientName;
-    char			*PrincipalName;
-    char			*sServerName;
-    char			Buffer[256];
-    char			Months[12][4] = {"Jan\0", "Feb\0", "Mar\0", "Apr\0", "May\0", "Jun\0", "Jul\0", "Aug\0", "Sep\0", "Oct\0", "Nov\0", "Dec\0"};
-    char			StartTime[16];
-    char			EndTime[16];
-    char            RenewTime[16];
-    char			temp[128];
-    char			*sPtr;
-    char            *ticketFlag;
-    LPCSTR          functionName;
-    TicketList         *list = NULL;
+    char *          functionName;
+    TicketList      **ticketListTail = ticketList;
 
     if ( ticketinfo ) {
         ticketinfo->btickets = NO_TICKETS;
         ticketinfo->principal[0] = '\0';
     }
 
-    if ((code = Leash_krb5_initialize(&(*krbv5Context), &cache)))
+    if ((code = Leash_krb5_initialize(krbv5Context)))
         return(code);
+
+    if ((code = Leash_krb5_cc_default(krbv5Context, &cache)))
+        return code;
 
     ctx = (*krbv5Context);
 
@@ -402,44 +632,6 @@ not_an_API_LeashKRB5GetTickets(
         return code;
     }
 
-    PrincipalName = NULL;
-    ClientName = NULL;
-    sServerName = NULL;
-    if ((code = (*pkrb5_unparse_name)(ctx, KRBv5Principal,
-                                      (char **)&PrincipalName)))
-    {
-        if (PrincipalName != NULL)
-            (*pkrb5_free_unparsed_name)(ctx, PrincipalName);
-
-        (*pkrb5_free_principal)(ctx, KRBv5Principal);
-        if (ctx != NULL)
-        {
-            if (cache != NULL)
-                pkrb5_cc_close(ctx, cache);
-        }
-
-        return(code);
-    }
-
-    if (!strcspn(PrincipalName, "@" ))
-    {
-        if (PrincipalName != NULL)
-            (*pkrb5_free_unparsed_name)(ctx, PrincipalName);
-
-        (*pkrb5_free_principal)(ctx, KRBv5Principal);
-        if (ctx != NULL)
-        {
-            if (cache != NULL)
-                pkrb5_cc_close(ctx, cache);
-        }
-
-        return(code);
-    }
-
-    if ( strcmp(ticketinfo->principal, PrincipalName) )
-        wsprintf(ticketinfo->principal, "%s", PrincipalName);
-
-    (*pkrb5_free_principal)(ctx, KRBv5Principal);
     if ((code = pkrb5_cc_start_seq_get(ctx, cache, &KRBv5Cursor)))
     {
         functionName = "krb5_cc_start_seq_get()";
@@ -448,247 +640,18 @@ not_an_API_LeashKRB5GetTickets(
 
     memset(&KRBv5Credentials, '\0', sizeof(KRBv5Credentials));
 
-    while (!(code = pkrb5_cc_next_cred(ctx, cache, &KRBv5Cursor, &KRBv5Credentials)))
-    {
-        if ((*pkrb5_is_config_principal)(ctx, KRBv5Credentials.server))
-        { /* skip configuration credentials */
-            (*pkrb5_free_cred_contents)(ctx, &KRBv5Credentials);
-            continue;
-        }
-        if (!list)
-        {
-            list = (TicketList*) calloc(1, sizeof(TicketList));
-            (*ticketList) = list;
-        }
-        else
-        {
-            list->next = (struct TicketList*) calloc(1, sizeof(TicketList));
-            list = (TicketList*) list->next;
-        }
+    while (!(code = pkrb5_cc_next_cred(ctx, cache, &KRBv5Cursor,
+                                       &KRBv5Credentials))) {
+        if (!(*pkrb5_is_config_principal)(ctx, KRBv5Credentials.server) &&
+            !CredToTicketList(ctx, KRBv5Credentials, KRBv5Principal,
+                ticketinfo, ticketListTail))
+            ticketListTail = &(*ticketListTail)->next;
 
-        if ((*pkrb5_unparse_name)(ctx, KRBv5Credentials.client, &ClientName))
-        {
-            (*pkrb5_free_cred_contents)(ctx, &KRBv5Credentials);
-            Leash_krb5_error(code, "krb5_free_cred_contents()", 0, &ctx, &cache);
-
-            if (ClientName != NULL)
-                (*pkrb5_free_unparsed_name)(ctx, ClientName);
-
-            ClientName = NULL;
-            sServerName = NULL;
-            continue;
-        }
-
-        if ((*pkrb5_unparse_name)(ctx, KRBv5Credentials.server, &sServerName))
-        {
-            (*pkrb5_free_cred_contents)(ctx, &KRBv5Credentials);
-            Leash_krb5_error(code, "krb5_free_cred_contents()", 0, &ctx, &cache);
-
-            if (ClientName != NULL)
-                (*pkrb5_free_unparsed_name)(ctx, ClientName);
-
-            ClientName = NULL;
-            sServerName = NULL;
-            continue;
-        }
-
-        if (!KRBv5Credentials.times.starttime)
-            KRBv5Credentials.times.starttime = KRBv5Credentials.times.authtime;
-
-        fill = ' ';
-        memset(StartTimeString, '\0', sizeof(StartTimeString));
-        memset(EndTimeString, '\0', sizeof(EndTimeString));
-        memset(RenewTimeString, '\0', sizeof(RenewTimeString));
-        (*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.starttime, StartTimeString, 17, &fill);
-        (*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.endtime, EndTimeString, 17, &fill);
-		if (KRBv5Credentials.times.renew_till >= 0)
-			(*pkrb5_timestamp_to_sfstring)((krb5_timestamp)KRBv5Credentials.times.renew_till, RenewTimeString, 17, &fill);
-        memset(temp, '\0', sizeof(temp));
-        memcpy(temp, StartTimeString, 2);
-        StartDay = atoi(temp);
-        memset(temp, (int)'\0', (size_t)sizeof(temp));
-        memcpy(temp, EndTimeString, 2);
-        EndDay = atoi(temp);
-        memset(temp, (int)'\0', (size_t)sizeof(temp));
-        memcpy(temp, RenewTimeString, 2);
-        RenewDay = atoi(temp);
-
-        memset(temp, '\0', sizeof(temp));
-        memcpy(temp, &StartTimeString[3], 2);
-        StartMonth = atoi(temp);
-        memset(temp, '\0', sizeof(temp));
-        memcpy(temp, &EndTimeString[3], 2);
-        EndMonth = atoi(temp);
-        memset(temp, '\0', sizeof(temp));
-        memcpy(temp, &RenewTimeString[3], 2);
-        RenewMonth = atoi(temp);
-
-        while (1)
-        {
-            if ((sPtr = strrchr(StartTimeString, ' ')) == NULL)
-                break;
-
-            if (strlen(sPtr) != 1)
-                break;
-
-            (*sPtr) = 0;
-        }
-
-        while (1)
-        {
-            if ((sPtr = strrchr(EndTimeString, ' ')) == NULL)
-                break;
-
-            if (strlen(sPtr) != 1)
-                break;
-
-            (*sPtr) = 0;
-        }
-
-        while (1)
-        {
-            if ((sPtr = strrchr(RenewTimeString, ' ')) == NULL)
-                break;
-
-            if (strlen(sPtr) != 1)
-                break;
-
-            (*sPtr) = 0;
-        }
-
-        memset(StartTime, '\0', sizeof(StartTime));
-        memcpy(StartTime, &StartTimeString[strlen(StartTimeString) - 5], 5);
-        memset(EndTime, '\0', sizeof(EndTime));
-        memcpy(EndTime, &EndTimeString[strlen(EndTimeString) - 5], 5);
-        memset(RenewTime, '\0', sizeof(RenewTime));
-        memcpy(RenewTime, &RenewTimeString[strlen(RenewTimeString) - 5], 5);
-
-        memset(temp, '\0', sizeof(temp));
-        strcpy(temp, ClientName);
-
-        if (!strcmp(ClientName, PrincipalName))
-            memset(temp, '\0', sizeof(temp));
-
-        memset(Buffer, '\0', sizeof(Buffer));
-
-        ticketFlag = GetTicketFlag(&KRBv5Credentials);
-
-        if (KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE) {
-            wsprintf(Buffer,"%s %02d %s     %s %02d %s     [%s %02d %s]     %s %s       %s",
-                      Months[StartMonth - 1], StartDay, StartTime,
-                      Months[EndMonth - 1], EndDay, EndTime,
-                      Months[RenewMonth - 1], RenewDay, RenewTime,
-                      sServerName,
-                      temp, ticketFlag);
-        } else {
-            wsprintf(Buffer,"%s %02d %s     %s %02d %s     %s %s       %s",
-                 Months[StartMonth - 1], StartDay, StartTime,
-                 Months[EndMonth - 1], EndDay, EndTime,
-                 sServerName,
-                 temp, ticketFlag);
-        }
-        list->theTicket = (char*) calloc(1, strlen(Buffer)+1);
-        if (!list->theTicket)
-        {
-#ifdef USE_MESSAGE_BOX
-            MessageBox(NULL, "Memory Error", "Error", MB_OK);
-#endif /* USE_MESSAGE_BOX */
-            return ENOMEM;
-        }
-        strcpy(list->theTicket, Buffer);
-        list->name = NULL;
-        list->inst = NULL;
-        list->realm = NULL;
-
-        if ( !pkrb5_decode_ticket(&KRBv5Credentials.ticket, &tkt)) {
-            wsprintf(Buffer, "Ticket Encryption Type: %s", etype_string(tkt->enc_part.enctype));
-            list->tktEncType = (char*) calloc(1, strlen(Buffer)+1);
-            if (!list->tktEncType)
-            {
-#ifdef USE_MESSAGE_BOX
-                MessageBox(NULL, "Memory Error", "Error", MB_OK);
-#endif /* USE_MESSAGE_BOX */
-                return ENOMEM;
-            }
-            strcpy(list->tktEncType, Buffer);
-
-            pkrb5_free_ticket(ctx, tkt);
-            tkt = NULL;
-        } else {
-            list->tktEncType = NULL;
-        }
-
-        wsprintf(Buffer, "Session Key Type: %s", etype_string(KRBv5Credentials.keyblock.enctype));
-        list->keyEncType = (char*) calloc(1, strlen(Buffer)+1);
-        if (!list->keyEncType)
-        {
-#ifdef USE_MESSAGE_BOX
-            MessageBox(NULL, "Memory Error", "Error", MB_OK);
-#endif /* USE_MESSAGE_BOX */
-            return ENOMEM;
-        }
-        strcpy(list->keyEncType, Buffer);
-
-        if ( KRBv5Credentials.addresses && KRBv5Credentials.addresses[0] ) {
-            int n = 0;
-            while ( KRBv5Credentials.addresses[n] )
-				n++;
-            list->addrList = calloc(1, n * sizeof(char *));
-            if (!list->addrList) {
-#ifdef USE_MESSAGE_BOX
-                MessageBox(NULL, "Memory Error", "Error", MB_OK);
-#endif /* USE_MESSAGE_BOX */
-                return ENOMEM;
-            }
-            list->addrCount = n;
-            for ( n=0; n<list->addrCount; n++ ) {
-                wsprintf(Buffer, "Address: %s", one_addr(KRBv5Credentials.addresses[n]));
-                list->addrList[n] = (char*) calloc(1, strlen(Buffer)+1);
-                if (!list->addrList[n])
-                {
-#ifdef USE_MESSAGE_BOX
-                    MessageBox(NULL, "Memory Error", "Error", MB_OK);
-#endif /* USE_MESSAGE_BOX */
-                    return ENOMEM;
-                }
-                strcpy(list->addrList[n], Buffer);
-            }
-        }
-
-        ticketinfo->issue_date = KRBv5Credentials.times.starttime;
-        ticketinfo->lifetime = KRBv5Credentials.times.endtime - KRBv5Credentials.times.starttime;
-        ticketinfo->renew_till = KRBv5Credentials.ticket_flags & TKT_FLG_RENEWABLE ?
-            KRBv5Credentials.times.renew_till : 0;
-        _tzset();
-        if ( ticketinfo->issue_date + ticketinfo->lifetime - time(0) <= 0L )
-            ticketinfo->btickets = EXPD_TICKETS;
-        else
-            ticketinfo->btickets = GOOD_TICKETS;
-
-	if (ClientName != NULL)
-            (*pkrb5_free_unparsed_name)(ctx, ClientName);
-
-        if (sServerName != NULL)
-            (*pkrb5_free_unparsed_name)(ctx, sServerName);
-
-        ClientName = NULL;
-        sServerName = NULL;
         (*pkrb5_free_cred_contents)(ctx, &KRBv5Credentials);
     }
 
-    if (PrincipalName != NULL)
-        (*pkrb5_free_unparsed_name)(ctx, PrincipalName);
-
-    if (ClientName != NULL)
-        (*pkrb5_free_unparsed_name)(ctx, ClientName);
-
-    if (sServerName != NULL)
-        (*pkrb5_free_unparsed_name)(ctx, sServerName);
-
-    if ((code == KRB5_CC_END) || (code == KRB5_CC_NOTFOUND))
-    {
-        if ((code = pkrb5_cc_end_seq_get(ctx, cache, &KRBv5Cursor)))
-        {
+    if ((code == KRB5_CC_END) || (code == KRB5_CC_NOTFOUND)) {
+        if ((code = pkrb5_cc_end_seq_get(ctx, cache, &KRBv5Cursor))) {
             functionName = "krb5_cc_end_seq_get()";
             goto on_error;
         }
@@ -697,28 +660,23 @@ not_an_API_LeashKRB5GetTickets(
 #ifdef KRB5_TC_NOTICKET
         flags |= KRB5_TC_NOTICKET;
 #endif
-        if ((code = pkrb5_cc_set_flags(ctx, cache, flags)))
-        {
+        if ((code = pkrb5_cc_set_flags(ctx, cache, flags))) {
             functionName = "krb5_cc_set_flags()";
             goto on_error;
         }
-    }
-    else
-    {
+    } else {
         functionName = "krb5_cc_next_cred()";
         goto on_error;
     }
 
-    if (ctx != NULL)
-    {
-        if (cache != NULL)
-            pkrb5_cc_close(ctx, cache);
-    }
+    if ((ctx != NULL) && (cache != NULL))
+        pkrb5_cc_close(ctx, cache);
 
-    return(code);
+on_error:
+    if (code)
+        Leash_krb5_error(code, functionName, 0, &(*krbv5Context), &cache);
 
- on_error:
-    Leash_krb5_error(code, functionName, 0, &(*krbv5Context), &cache);
+    (*pkrb5_free_principal)(ctx, KRBv5Principal);
     return(code);
 #endif //!NO_KER5
 }
@@ -1002,9 +960,10 @@ Leash_krb5_kdestroy(
 
     ctx = NULL;
     cache = NULL;
-    if (rc = Leash_krb5_initialize(&ctx, &cache))
+    if ((rc = Leash_krb5_initialize(&ctx)))
         return(rc);
 
+    /* get default credential cache here */
     rc = pkrb5_cc_destroy(ctx, cache);
 
     if (ctx != NULL)
@@ -1015,32 +974,13 @@ Leash_krb5_kdestroy(
 #endif //!NO_KRB5
 }
 
-/**************************************/
-/* Leash_krb5_initialize():             */
-/**************************************/
-int Leash_krb5_initialize(krb5_context *ctx, krb5_ccache *cache)
+krb5_error_code
+Leash_krb5_cc_default(krb5_context *ctx, krb5_ccache *cache)
 {
-#ifdef NO_KRB5
-    return(0);
-#else
+    krb5_error_code rc;
+    krb5_flags flags;
 
-    LPCSTR          functionName = NULL;
-    int             freeContextFlag = 0;
-    krb5_error_code	rc;
-    krb5_flags          flags;
-
-    if (pkrb5_init_context == NULL)
-        return 1;
-
-    if (*ctx == 0) {
-        if (rc = (*pkrb5_init_context)(ctx))
-    {
-        functionName = "krb5_init_context()";
-        goto on_error;
-    }
-        freeContextFlag = 1;
-    }
-
+    char *functionName = NULL;
     if (*cache == 0 && (rc = pkrb5_cc_default(*ctx, cache)))
     {
         functionName = "krb5_cc_default()";
@@ -1049,22 +989,44 @@ int Leash_krb5_initialize(krb5_context *ctx, krb5_ccache *cache)
 #ifdef KRB5_TC_NOTICKET
     flags = KRB5_TC_NOTICKET;
 #endif
-    if ((rc = pkrb5_cc_set_flags(*ctx, *cache, flags)))
-    {
-        if (rc != KRB5_FCC_NOFILE && rc != KRB5_CC_NOTFOUND)
-            Leash_krb5_error(rc, "krb5_cc_set_flags()", 0, ctx,
-                                  cache);
-        else if ((rc == KRB5_FCC_NOFILE || rc == KRB5_CC_NOTFOUND) && *ctx != NULL)
-        {
-            if (*cache != NULL)
+    if ((rc = pkrb5_cc_set_flags(*ctx, *cache, flags))) {
+        if ((rc == KRB5_FCC_NOFILE || rc == KRB5_CC_NOTFOUND)) {
+            if ((*cache != NULL) && (*ctx != NULL))
                 pkrb5_cc_close(*ctx, *cache);
+        } else {
+            functionName = "krb5_cc_set_flags()";
+            goto on_error;
         }
-        return rc;
     }
-	return 0;
+on_error:
+    if (rc && functionName) {
+        Leash_krb5_error(rc, functionName, 0, ctx, cache);
+    }
+    return rc;
+}
 
-  on_error:
-    return Leash_krb5_error(rc, functionName, freeContextFlag, ctx, cache);
+/**************************************/
+/* Leash_krb5_initialize():             */
+/**************************************/
+int Leash_krb5_initialize(krb5_context *ctx)
+{
+#ifdef NO_KRB5
+    return(0);
+#else
+
+    LPCSTR          functionName = NULL;
+    krb5_error_code	rc;
+
+    if (pkrb5_init_context == NULL)
+        return 1;
+
+    if (*ctx == 0) {
+        if (rc = (*pkrb5_init_context)(ctx)) {
+            functionName = "krb5_init_context()";
+            return Leash_krb5_error(rc, functionName, 0, ctx, NULL);
+        }
+    }
+    return 0;
 #endif //!NO_KRB5
 }
 
@@ -1083,36 +1045,25 @@ Leash_krb5_error(krb5_error_code rc, LPCSTR FailedFunctionName,
 #ifdef USE_MESSAGE_BOX
     char message[256];
     const char *errText;
-    int krb5Error = ((int)(rc & 255));
-
-    /*
-    switch (krb5Error)
-    {
-        // Wrong password
-        case 31:
-        case 8:
-            return;
-    }
-    */
 
     errText = perror_message(rc);
     _snprintf(message, sizeof(message),
               "%s\n(Kerberos error %ld)\n\n%s failed",
               errText,
-              krb5Error,
+              rc,
               FailedFunctionName);
+    message[sizeof(message)-1] = 0;
 
     MessageBox(NULL, message, "Kerberos Five", MB_OK | MB_ICONERROR |
                MB_TASKMODAL |
                MB_SETFOREGROUND);
 #endif /* USE_MESSAGE_BOX */
 
-        if (*ctx != NULL)
-        {
-            if (*cache != NULL) {
-                pkrb5_cc_close(*ctx, *cache);
-                *cache = NULL;
-            }
+    if (*ctx != NULL) {
+        if (cache && (*cache)) {
+            pkrb5_cc_close(*ctx, *cache);
+            *cache = NULL;
+        }
 
         if (FreeContextFlag) {
             pkrb5_free_context(*ctx);
