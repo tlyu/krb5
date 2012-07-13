@@ -172,11 +172,14 @@ is_windows_vista (void)
     return fIsVista;
 }
 
+/* uac-limited processes are not allowed to obtain a copy of the MSTGT
+   session key.  We used to check for uac-limited processes and refuse all
+   access to the TGT, but this makes the MSLSA ccache completely unusable.
+   Instead we ought to just flag that the tgt session key is not valid. */
+#if 0
 static BOOL
 is_process_uac_limited (void)
 {
-    return FALSE;
-#if 0
     static BOOL fChecked = FALSE;
     static BOOL fIsUAC = FALSE;
 
@@ -202,8 +205,8 @@ is_process_uac_limited (void)
         fChecked = TRUE;
     }
     return fIsUAC;
-#endif
 }
+#endif
 
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 
@@ -446,9 +449,6 @@ static BOOL
 IsMSSessionKeyNull(KERB_CRYPTO_KEY *mskey)
 {
     DWORD i;
-
-    if (is_process_uac_limited())
-        return TRUE;
 
     if (mskey->KeyType == KERB_ETYPE_NULL)
         return TRUE;
@@ -1280,11 +1280,6 @@ GetMSTGT(krb5_context context, HANDLE LogonHandle, ULONG PackageId, KERB_EXTERNA
 #endif /* ENABLE_PURGING */
     int    ignore_cache = 0;
     krb5_enctype *etype_list = NULL, *ptr = NULL, etype = 0;
-
-    if (is_process_uac_limited()) {
-        Status = STATUS_ACCESS_DENIED;
-        goto cleanup;
-    }
 
     memset(&CacheRequest, 0, sizeof(KERB_QUERY_TKT_CACHE_REQUEST));
     CacheRequest.MessageType = KerbRetrieveTicketMessage;
