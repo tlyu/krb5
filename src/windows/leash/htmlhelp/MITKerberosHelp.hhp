@@ -4,7 +4,7 @@ Compatibility=1.1 or later
 Compiled file=MITKerberosHelp.chm
 Contents file=TOC.hhc
 Default Window=Leash Help
-Default topic=Html\Getting_Started.htm
+Default topic=HTML\Getting_Started.htm
 Display compile progress=No
 Full text search stop list file=stoplist.stp
 Full-text search=Yes
@@ -18,24 +18,9 @@ MIT Kerberos Help="MIT Kerberos Help","TOC.hhc","Index.hhk","Html\Getting_Starte
 
 
 [FILES]
-Html\Getting_Started.htm
-Html\Change_Password.htm
-Html\Forget_Password.htm
-Html\Kerberos.htm
-Html\Password_Tips.htm
-Html\Passwords.htm
-Html\Using_Leash_Menus.htm
-Html\Tickets.htm
-Html\Destroy_Tickets.htm
-Html\Get_Tickets.htm
-Html\Import_Tickets.htm
-Html\Renew_Tickets.htm
-Html\Ticket_Settings.htm
-Html\View_Tickets.htm
 Leash.css
 HTML\FAQ.htm
 HTML\Command_Line.htm
-HTML\MS2MIT.htm
 HTML\KDESTROY.htm
 HTML\KLIST.htm
 HTML\KINIT.htm
@@ -47,12 +32,9 @@ HTML\KCPYTKT.htm
 HTML\KVNO.htm
 HTML\KSWITCH.htm
 HTML\KPASSWD.htm
-HTML\Export_Tickets.htm
 HTML\Glossary.htm
-HTML\Import_Status.htm
 HTML\Debugging.htm
 HTML\Keyboard_Shortcuts.htm
-HTML\Windows_Logon_Tickets.htm
 HTML\How_Kerberos_Works.htm
 HTML\Principals.htm
 HTML\Make_Default.htm
@@ -60,6 +42,19 @@ HTML\Manage_Multiple_Principals.htm
 HTML\Forget_Principals.htm
 HTML\Home_Tab.htm
 HTML\Options_Tab.htm
+HTML\Getting_Started.htm
+HTML\Change_Password.htm
+HTML\Forget_Password.htm
+HTML\Kerberos.htm
+HTML\Password_Tips.htm
+HTML\Using_Leash_Menus.htm
+HTML\Passwords.htm
+HTML\Tickets.htm
+HTML\Destroy_Tickets.htm
+HTML\Get_Tickets.htm
+HTML\Renew_Tickets.htm
+HTML\Ticket_Settings.htm
+HTML\View_Tickets.htm
 
 [ALIAS]
 HID_ABOUT_KERBEROS = html\How_Kerberos_Works.htm
@@ -181,5 +176,4 @@ hid_sc_restore = html\hid_sc_restore.htm
 #define LSH_INVINSTANCE 	            40591875
 
 [INFOTYPES]
-
 

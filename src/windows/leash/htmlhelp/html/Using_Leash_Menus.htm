@@ -35,55 +35,106 @@ Browse the tables below to see what each button and option does. Or click <a hre
 </ul></td>
 </tr>
 </table>
-<H1><a name="home">Home Tab</a> </H1>
+<H1><a name="home">Home Tab</a>   </H1>
+<img src="Images/Home_Tab.PNG" alt="Home Tab "   width="341" height="116" />
 <p>
 MIT Kerberos opens with the Home tab visible. Use the buttons in the Home tab to work with tickets and passwords and to change your default principal. Depending on your installation and your needs, you might not need every button.</p>
 <p>The table below gives a quick explanation of each of the buttons. To jump to a detailed How To page for a  button, click the button name.   </p>
 <table>
- <tr><th id="th2"> <a href="HTML/Get_Tickets.htm"> Get Ticket </a> </th> <td>Get a new Kerberos ticket.</td></tr>
- <tr><th id="th2"><a href="HTML/Renew_Tickets.htm"> Renew Ticket</a></th> <td>Renew tickets for the selected principal(s). Renewing a ticket extends its valid lifetime,  resetting it to the length of the original ticket.</td></tr>
- <tr><th id="th2"><a href="HTML/Destroy_Tickets.htm"> Destroy Ticket</a></th> <td>Destroy all tickets. Not available if  the Automatic Import Tickets option is selected and  you have imported tickets. </td></tr>
- <tr><th id="th2"><a href="HTML/Make_Default.htm">Make Default</a></th> <td>Make the selected principal the default principal. Not necessary if you have only one principal.</td></tr>
- <tr><th id="th2"><a href="HTML/Export_Tickets.htm"> Export Ticket</a></th> <td> Export your tickets to your Windows Logon session for use with Windows services. This will destroy any tickets you already have in your Windows Logon session.</td></tr>
- <tr><th id="th2"><a href="HTML/Import_Tickets.htm"> Import Tickets</th> <td> Import Windows domain tickets (obtained through a Windows Logon session) into MIT Kerberos. This will destroy any tickets you already have in MIT Kerberos.</td></tr>
- <tr><th id="th2"><a href="HTML/Change_Password.htm"> Change Password</a></th> <td> Change your password.</td></tr>
+<tr><th>Button </th> <th>Function</th></tr>
+ <tr><th id="th2">  <img src="Images/Get_Ticket.PNG" alt="Get Tickets"   width="47" height="77" /> </th> <td>Get a new MIT Kerberos ticket. <p></p> <a href="HTML/Get_Tickets.htm">How to: Get Tickets</a> </td></tr>
+ <tr><th id="th2"> <img src="Images/Renew_Ticket.PNG" alt="Renew Tickets"   width="47" height="77" /> </th> <td>Renew tickets for the selected principal(s). Renewing a ticket extends its valid lifetime,  resetting it to the length of the original ticket. <p></p> <a href="HTML/Renew_Tickets.htm">How to: Renew Tickets</a> </td></tr>
+ <tr><th id="th2"><img src="Images/Destroy_Ticket.PNG" alt="Destroy Tickets"   width="47" height="77" /> </th> <td>Destroy all of your MIT Kerberos tickets.<p></p> 
+<a href="HTML/Destroy_Tickets.htm">How to: Destroy Tickets</a></td></tr>
+ <tr><th id="th2"> <img src="Images/Make_Default.PNG" alt="Make Default "   width="47" height="77" />  </th> <td>Make the selected principal the default principal. Not necessary if you have only one principal. <p></p> <a href="HTML/Make_Default.htm">How to: Make Default</a></td></tr>
+ <tr><th id="th2">  <img src="Images/Change_Password.PNG" alt="Change Password "   width="47" height="77" /> </th> <td> Change your MIT Kerberos  password. <p></p> <a href="HTML/Change_Password.htm">How to: Change Password</a></td></tr>
 </table>
 <p>
 <a href=#top>Back to Top</a> </p>
 <H1> <a name="options">Options Tab</a></H1>
+<img src="Images/Options_Tab.PNG" alt="Home Tab "   width="585" height="116" />
 <p>
 Click the Options tab to reach the checkboxes that control ticket and view options.  The Options tab has two panels. Use the View Options panel to choose which information is displayed for your tickets. Use the Ticket Options panel to turn MIT Kerberos's automatic features on or off. </p>
 
 <H2><a name="view-options">View Options Panel</a> </H2>
+<img src="Images/View_Options.PNG" alt="Home Tab "   width="228" height="87" />
 <p>The View Options checkboxes control what ticket information is displayed. Select a checkbox to see the information column it controls, or deselect the checkbox to hide it.</p>
-<p>The table below gives a quick explanation of each of the View options. To jump to a more detailed explanation of an option, click an option name.   </p>
+<p>The table below gives a quick explanation of each of the View options.  </p>
 <p></p>
 <table>
 
-<tr><th>Option  </th><th>Description</th></tr>
- <tr><th id="th2"> <a href="HTML/Options_Tab.htm#issued"> Issued </a> </th> <td>The date and time that your tickets were issued.</td> </tr> 
-<tr><th id="th2"><a href="HTML/Options_Tab.htm#renewable-until"> Renewable Until</a></th> <td>The date and time when you will no longer be able to renew your current tickets.</td> </tr> 
-<tr><th id="th2"><a href="HTML/Options_Tab.htm#valid-until"> Valid Until</a></th><td>When your ticket will expire.</td></tr> 
- <tr><th id="th2"><a href="HTML/Options_Tab.htm#encryption-type"> Encryption Type</a></th> <td>The type of encryption used to encrypt your tickets and session keys.</td> </tr> 
-<tr><th id="th2"><a href="HTML/Options_Tab.htm#flags"> Flags</a> </th> <td>How the tickets were flagged (renewable and/or fowardable) when you obtained them.  </td></tr>
-<tr><th id="th2"> <a href="HTML/Options_Tab.htm#import-status">  Import Status</a> </th> <td>This column is available when you have obtained a Kerberos ticket  by logging into a Windows domain with a Windows Logon session. It shows whether those tickets have been or can be imported, and whether tickets obtained with the Get Ticket window are exportable or exported.</td></tr>
+<tr><th>Checkbox</th><th>Information Displayed When Checked</th></tr>
+ <tr><th id="th2">
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Issued  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </td> </th> </tr>
+</table> 
+ <td>The date and time that your tickets were issued.</td> </tr> 
+<tr><th id="th2">
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Renewable Until </td> </th> </tr>
+</table> 
+<td>The date and time when you will no longer be able to renew your current tickets. <p></p>
+<a href="HTML/Options_Tab.htm#renewable-until"> About: Renewable Until</a> </td> </tr> 
+<tr><th id="th2"> 
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Valid Until </td> </th> </tr>
+</table> 
+ <td>When your ticket will expire.<p></p>
+<a href="HTML/Options_Tab.htm#valid-until"> About: Valid Until</a></td></tr> 
+ <tr><th id="th2"> 
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Encryption Type </td> </th> </tr>
+</table> 
+<td>The type of encryption used to encrypt your tickets and session keys. <p></p>
+<a href="HTML/Options_Tab.htm#encryption-type"> About: Encryption Type</a></td> </tr> 
+<tr><th id="th2">
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Flags   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </td> </th> </tr>
+</table> 
+ <td>How the tickets were flagged (renewable and/or fowardable) when you obtained them. <p></p>
+<a href="HTML/Options_Tab.htm#flags"> About: Flags</a> </td></tr>
 </table>
 <p>
 <a href=#top>Back to Top</a> </p>
 <H2><a name="ticket-options">  Ticket Options Panel</a></H2>
+<img src="Images/Ticket_Options.PNG" alt="Home Tab "   width="344" height="85" />
 <p>
 The Ticket Options checkboxes control MIT Kerberos's automatic features. Select a checkbox to turn a feature on, or deselect a checkbox to turn the feature off.
 </p>
-<p>The table below gives a quick explanation of each of the Ticket options. To jump to a more detailed explanation of an option, click an option name.   </p>
-<table>
-<tr><th>Option  </th><th>Description</th></tr>
- <tr><th id="th2"> <a href="HTML./Options_Tab.htm#destroy-tickets"> Destroy Tickets on Exit  </a> </th> <td>Have MIT Kerberos destroy your tickets when you exit the program. </td></tr>
+<p>The table below gives a quick explanation of each of the Ticket options.   </p>
 
-<tr><th id="th2"><a href="HTML./Options_Tab.htm#automatic-renewal"> Automatic Ticket Renewal</a></th> <td>Automatically renew your Kerberos tickets for their entire renewable lifetime, without promptings or requiring a password, when possible.</td></tr> 
-<tr><th id="th2"><a href="HTML./Options_Tab.htm#expiration-alarm"> Expiration Alarm</a></th> <td>Have MIT Kerberos provide an audible alarm 15, 10, and 5 minutes before your tickets expire. </td></tr>
-<tr><th id="th2"><a href="HTML./Options_Tab.htm#mixed-case-realm"> Allow Mixed Case Realm Name</a></th> <td>Allow you to get tickets for a realm that has a name that includes lower case letters. </td></tr>
+
+<table>
+<tr><th>Checkbox </th><th>Select This Option to:</th></tr>
+
+<tr><th id="th2">
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+ <img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Automatic Ticket Renewal </td> </th> </tr>
+</table>
+<td>Automatically renew your Kerberos tickets for their entire renewable lifetime, without promptings or requiring a password, when possible. <p></p>
+<a href="HTML./Options_Tab.htm#automatic-renewal"> About: Automatic Ticket Renewal</a></td></tr> 
+
+<tr><th id="th2">
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Expiration Alarm</td> </th> </tr>
+</table>
+<td>Have MIT Kerberos provide an audible alarm 15, 10, and 5 minutes before your tickets expire. <p></p>
+<a href="HTML./Options_Tab.htm#expiration-alarm"> About: Expiration Alarm</a> </td></tr>
+
+ <tr><th id="th2"> 
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner"> Destroy Tickets on Exit  </td> </th> </tr>
+</table>
+ <td>Have MIT Kerberos destroy your tickets when you exit the program. <p></p>
+<a href="HTML./Options_Tab.htm#destroy-tickets"> About: Destroy Tickets on Exit  </a> </td></tr>
+
+<tr><th id="th2">
+<table id="table-inner"><tr id="table-inner"><td id="table-inner">
+<img src="Images/checkbox.PNG" alt="checkbox image"   width="20" height="20" /> </td> <td id="table-inner">Allow Mixed Case Realm Name</td> </th> </tr>
+</table>
+ <td>Allow you to get tickets for a realm that has a name that includes lower case letters. <p></p>
+<a href="HTML./Options_Tab.htm#mixed-case-realm"> About: Allow Mixed Case Realm Name</a></td></tr>
 </table>
 <p>
 <a href=#top>Back to Top</a> </p>
-
 </body></html>

@@ -44,6 +44,32 @@ border: 1 solid black;
 border-collapse:collapse;
 }
 
+#table-inner
+{
+border: 0;
+border-collapse:collapse;
+}
+
+#th-inner
+{
+border: 0;
+border-collapse:collapse;
+}
+
+#th-title
+{
+border: 0;
+border-collapse:collapse;
+background-color:#F0F8FF;
+}
+
+#td-inner
+{
+border: 0;
+border-collapse:collapse;
+align-left;
+}
+
 table {
 padding-top: 10px;
 text-align: left; 
@@ -187,10 +213,3 @@ dt
  A:visited { color : purple; }
 
  A:active { color : navy; }
-
-
-
-
-
-
-
