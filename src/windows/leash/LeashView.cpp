@@ -229,7 +229,6 @@ CLeashView::CLeashView()
 #ifndef NO_KRB4
     m_listKrb4 = NULL;
 #endif
-    m_listKrb5 = NULL;
     m_listAfs = NULL;
     m_startup = TRUE;
     m_warningOfTicketTimeLeftKrb4 = 0;
@@ -513,7 +512,7 @@ UINT CLeashView::InitTicket(void * hWnd)
     if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
         throw("Unable to lock ticketinfo");
     }
-    pLeashKRB5GetTickets(&ticketinfo.Krb5, &CLeashApp::m_krbv5_context);
+    LeashKRB5ListDefaultTickets(&ticketinfo.Krb5);
     char * principal = ticketinfo.Krb5.principal;
     if (principal)
         for (; principal[i] && principal[i] != '@'; i++)
@@ -526,7 +525,7 @@ UINT CLeashView::InitTicket(void * hWnd)
         }
     }
     realm[j] = '\0';
-    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
+    LeashKRB5FreeTicketInfo(&ticketinfo.Krb5);
     ReleaseMutex(ticketinfo.lockObj);
 
     ldi.size = sizeof(ldi);
@@ -585,14 +584,10 @@ UINT CLeashView::ImportTicket(void * hWnd)
     if ( !CLeashApp::m_hKrb5DLL )
         return 0;
 
-    int import = 0;
-    int warning = 0;
-
     krb5_error_code code;
     krb5_ccache mslsa_ccache=0;
     krb5_principal princ = 0;
     char * pname = 0;
-    LONG krb5Error = 0;
 
     if (code = pkrb5_cc_resolve(CLeashApp::m_krbv5_context, "MSLSA:", &mslsa_ccache))
         goto cleanup;
@@ -603,18 +598,7 @@ UINT CLeashView::ImportTicket(void * hWnd)
     if (code = pkrb5_unparse_name(CLeashApp::m_krbv5_context, princ, &pname))
         goto cleanup;
 
-    if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
-        throw("Unable to lock ticketinfo");
-    }
-    krb5Error = pLeashKRB5GetTickets( &ticketinfo.Krb5,
-                                      &CLeashApp::m_krbv5_context);
-
-    // @TODO: fixme: importing should no longer destroy existing tickets
-    warning = (ticketinfo.Krb5.principal != NULL) &&
-              strcmp(ticketinfo.Krb5.principal, pname) && ticketinfo.Krb5.btickets;
-    ReleaseMutex(ticketinfo.lockObj);
-
-  cleanup:
+cleanup:
     if (pname)
         pkrb5_free_unparsed_name(CLeashApp::m_krbv5_context, pname);
 
@@ -625,65 +609,38 @@ UINT CLeashView::ImportTicket(void * hWnd)
         pkrb5_cc_close(CLeashApp::m_krbv5_context, mslsa_ccache);
 
     if ( code == 0 ) {
-        if (warning)
+        int result = pLeash_import();
+        if (-1 == result)
         {
-            INT whatToDo;
-            if (!CLeashApp::m_hAfsDLL
-////@#+Need to rework this logic. I am confused what !m_hKrb4DLL means in this case!
-#ifndef NO_KRB4
-		|| !CLeashApp::m_hKrb4DLL
-#endif
-		)
-                whatToDo = AfxMessageBox("You are about to replace your existing ticket(s)\n"
-                                          "with a ticket imported from the Windows credential cache!",
-                                          MB_OKCANCEL, 0);
-            else
-                whatToDo = AfxMessageBox("You are about to replace your existing ticket(s)/token(s)"
-                                          "with ticket imported from the Windows credential cache!",
-                                          MB_OKCANCEL, 0);
-            if (whatToDo == IDOK)
-            {
-                pLeash_kdestroy();
-                import = 1;
-            }
-        } else {
-            import = 1;
+            AfxMessageBox("There is a problem importing tickets!",
+                            MB_OK|MB_ICONSTOP);
+            ::SendMessage((HWND)hWnd,WM_COMMAND, ID_UPDATE_DISPLAY, 0);
+            m_importedTickets = 0;
         }
-
-        if ( import ) {
-            int result = pLeash_import();
-            if (-1 == result)
-            {
-                AfxMessageBox("There is a problem importing tickets!",
-                               MB_OK|MB_ICONSTOP);
-                ::SendMessage((HWND)hWnd,WM_COMMAND, ID_UPDATE_DISPLAY, 0);
-                m_importedTickets = 0;
+        else
+        {
+            if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
+                throw("Unable to lock ticketinfo");
             }
-            else
-            {
-                if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
-                    throw("Unable to lock ticketinfo");
-                }
-                ticketinfo.Krb5.btickets = GOOD_TICKETS;
-                m_warningOfTicketTimeLeftKrb4 = 0;
-                m_warningOfTicketTimeLeftKrb5 = 0;
-                m_ticketStatusKrb4 = 0;
-                m_ticketStatusKrb5 = 0;
+            ticketinfo.Krb5.btickets = GOOD_TICKETS;
+            m_warningOfTicketTimeLeftKrb4 = 0;
+            m_warningOfTicketTimeLeftKrb5 = 0;
+            m_ticketStatusKrb4 = 0;
+            m_ticketStatusKrb5 = 0;
+            ReleaseMutex(ticketinfo.lockObj);
+            ::SendMessage((HWND)hWnd, WM_COMMAND, ID_UPDATE_DISPLAY, 0);
+
+            if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
+                throw("Unable to lock ticketinfo");
+            }
+
+            if (ticketinfo.Krb5.btickets != GOOD_TICKETS) {
                 ReleaseMutex(ticketinfo.lockObj);
-                ::SendMessage((HWND)hWnd, WM_COMMAND, ID_UPDATE_DISPLAY, 0);
-
-                if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
-                    throw("Unable to lock ticketinfo");
-                }
-
-                if (ticketinfo.Krb5.btickets != GOOD_TICKETS) {
-                    ReleaseMutex(ticketinfo.lockObj);
-                    AfxBeginThread(InitTicket,hWnd);
-                } else {
-                    ReleaseMutex(ticketinfo.lockObj);
-                    m_importedTickets = 1;
-                    m_autoRenewalAttempted = 0;
-                }
+                AfxBeginThread(InitTicket,hWnd);
+            } else {
+                ReleaseMutex(ticketinfo.lockObj);
+                m_importedTickets = 1;
+                m_autoRenewalAttempted = 0;
             }
         }
     }
@@ -710,23 +667,15 @@ UINT CLeashView::RenewTicket(void * hWnd)
 
     // Try to renew
     BOOL b_renewed = pLeash_renew();
-    if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
-        throw("Unable to lock ticketinfo");
-    }
-    LONG krb5Error = pLeashKRB5GetTickets(&ticketinfo.Krb5,
-                                           &CLeashApp::m_krbv5_context);
     if ( b_renewed ) {
-        if (!krb5Error && ticketinfo.Krb5.btickets == GOOD_TICKETS) {
-            m_warningOfTicketTimeLeftKrb4 = 0;
-            m_warningOfTicketTimeLeftKrb5 = 0;
-            m_ticketStatusKrb4 = 0;
-            m_ticketStatusKrb5 = 0;
-            m_autoRenewalAttempted = 0;
-            pLeashKRB5FreeTickets(&ticketinfo.Krb5);
-            ReleaseMutex(ticketinfo.lockObj);
-            ::SendMessage((HWND)hWnd, WM_COMMAND, ID_UPDATE_DISPLAY, 0);
-            return 0;
-        }
+        m_warningOfTicketTimeLeftKrb4 = 0;
+        m_warningOfTicketTimeLeftKrb5 = 0;
+        m_ticketStatusKrb4 = 0;
+        m_ticketStatusKrb5 = 0;
+        m_autoRenewalAttempted = 0;
+        ReleaseMutex(ticketinfo.lockObj);
+        ::SendMessage((HWND)hWnd, WM_COMMAND, ID_UPDATE_DISPLAY, 0);
+        return 0;
     }
 
     krb5_error_code code;
@@ -747,9 +696,6 @@ UINT CLeashView::RenewTicket(void * hWnd)
         m_importedTickets = 1;
 
   cleanup:
-    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
-    ReleaseMutex(ticketinfo.lockObj);
-
     if (pname)
         pkrb5_free_unparsed_name(CLeashApp::m_krbv5_context, pname);
 
@@ -997,7 +943,6 @@ VOID CLeashView::OnUpdateDisplay()
 #ifndef NO_KRB4
     LONG krb4Error;
 #endif
-    LONG krb5Error;
     LONG afsError;
 
     if (WaitForSingleObject( ticketinfo.lockObj, 100 ) != WAIT_OBJECT_0)
@@ -1009,24 +954,20 @@ VOID CLeashView::OnUpdateDisplay()
 #endif
 
     // Get Kerb 5 tickets in list
-    krb5Error = pLeashKRB5GetTickets(&ticketinfo.Krb5,
-                                     &CLeashApp::m_krbv5_context);
-    if (!krb5Error || krb5Error == KRB5_FCC_NOFILE)
+    LeashKRB5ListDefaultTickets(&ticketinfo.Krb5);
+    if (CLeashApp::m_hKrb5DLL && !CLeashApp::m_krbv5_profile)
     {
-        if (CLeashApp::m_hKrb5DLL && !CLeashApp::m_krbv5_profile)
+        CHAR confname[MAX_PATH];
+        if (CLeashApp::GetProfileFile(confname, sizeof(confname)))
         {
-            CHAR confname[MAX_PATH];
-            if (CLeashApp::GetProfileFile(confname, sizeof(confname)))
-            {
-                AfxMessageBox("Can't locate Kerberos Five Config. file!",
-                           MB_OK|MB_ICONSTOP);
-            }
-
-            const char *filenames[2];
-            filenames[0] = confname;
-            filenames[1] = NULL;
-            pprofile_init(filenames, &CLeashApp::m_krbv5_profile);
+            AfxMessageBox("Can't locate Kerberos Five Config. file!",
+                        MB_OK|MB_ICONSTOP);
         }
+
+        const char *filenames[2];
+        filenames[0] = confname;
+        filenames[1] = NULL;
+        pprofile_init(filenames, &CLeashApp::m_krbv5_profile);
     }
 
     // Get AFS Tokens in list
@@ -1081,8 +1022,9 @@ VOID CLeashView::OnUpdateDisplay()
     /* Krb5 */
     UpdateTicketTime(ticketinfo.Krb5);
     m_ticketStatusKrb5 = GetLowTicketStatus(5);
-    if (!m_listKrb5 || EXPIRED_TICKETS == ticketinfo.Krb5.btickets ||
-         m_ticketStatusKrb5 == ZERO_MINUTES_LEFT)
+    if ((!ticketinfo.Krb5.btickets) ||
+        EXPIRED_TICKETS == ticketinfo.Krb5.btickets ||
+        m_ticketStatusKrb5 == ZERO_MINUTES_LEFT)
     {
         ticketIconStatusKrb5 = EXPIRED_CLOCK;
         ticketIconStatus_SelectedKrb5 = EXPIRED_CLOCK;
@@ -1141,7 +1083,7 @@ VOID CLeashView::OnUpdateDisplay()
     }
 
     int trayIcon = NONE_PARENT_NODE;
-    if (CLeashApp::m_hKrb5DLL && m_listKrb5) {
+    if (CLeashApp::m_hKrb5DLL && ticketinfo.Krb5.btickets) {
         switch ( iconStatusKrb5 ) {
         case ACTIVE_TICKET:
             trayIcon = ACTIVE_PARENT_NODE;
@@ -1160,7 +1102,8 @@ VOID CLeashView::OnUpdateDisplay()
     m_ccacheDisplay = NULL;
 
     const char *def_ccache_name = ticketinfo.Krb5.ccache_name;
-    TICKETINFO *principallist = ticketinfo.Krb5.next;
+    TICKETINFO *principallist = NULL;
+    LeashKRB5ListAllTickets(&principallist);
     int iItem = 0;
     TicketList* tempList;
     while (principallist) {
@@ -1173,7 +1116,8 @@ VOID CLeashView::OnUpdateDisplay()
         } else {
             elem = new CCacheDisplayData(principallist->ccache_name);
         }
-        elem->m_isDefault = (strcmp(def_ccache_name, elem->m_ccacheName) == 0);
+        elem->m_isDefault = def_ccache_name &&
+                            (strcmp(def_ccache_name, elem->m_ccacheName) == 0);
         elem->m_isRenewable = principallist->renew_until != 0;
 
         elem->m_next = m_ccacheDisplay;
@@ -1221,7 +1165,8 @@ VOID CLeashView::OnUpdateDisplay()
         prevCCacheDisplay = next;
     }
 
-    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
+    LeashKRB5FreeTicketInfo(&ticketinfo.Krb5);
+    LeashKRB5FreeTickets(&principallist);
 
     // @TODO: AFS-specific here
 #ifndef NO_AFS
@@ -1440,7 +1385,9 @@ void CLeashView::ToggleViewColumn(eViewColumn viewOption)
     info.m_enabled = !info.m_enabled;
     if (m_pApp)
         m_pApp->WriteProfileInt("Settings", info.m_name, info.m_enabled);
-    OnUpdateDisplay();
+    // Don't update display immediately; wait for next idle so our
+    // checkbox controls will be more responsive
+    CLeashApp::m_bUpdateDisplay = TRUE;
 }
 
 VOID CLeashView::OnRenewableUntil()

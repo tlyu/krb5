@@ -124,7 +124,6 @@ private:
 #ifndef NO_KRB4
     TicketList*         m_listKrb4;
 #endif
-    TicketList*         m_listKrb5;
     TicketList*         m_listAfs;
     CLeashDebugWindow*	m_pDebugWindow;
     CCacheDisplayData*  m_ccacheDisplay;
