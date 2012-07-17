@@ -779,6 +779,22 @@ VOID CLeashView::OnDestroyTicket()
 
 VOID CLeashView::OnMakeDefault()
 {
+    CCacheDisplayData *elem = m_ccacheDisplay;
+    int code = 0;
+    krb5_context ctx;
+    krb5_ccache cc;
+    while (elem) {
+        if (elem->m_selected) {
+            pkrb5_init_context(&ctx);
+            code = pkrb5_cc_resolve(ctx, elem->m_ccacheName, &cc);
+            if (!code)
+                code = pkrb5_cc_switch(ctx, cc);
+            pkrb5_free_context(ctx);
+            CLeashApp::m_bUpdateDisplay = TRUE;
+            break;
+        }
+        elem = elem->m_next;
+    }
 }
 
 VOID CLeashView::OnChangePassword()
