@@ -743,13 +743,14 @@ DWORD                       publicIP
 #else
     krb5_error_code		        code = 0;
     krb5_context		        ctx = 0;
-    krb5_ccache			        cc = 0;
+    krb5_ccache			        cc = 0, defcache = 0;
     krb5_principal		        me = 0;
     char*                       name = 0;
     krb5_creds			        my_creds;
     krb5_get_init_creds_opt *   options = NULL;
     krb5_address **             addrs = NULL;
     int                         i = 0, addr_count = 0;
+    const char *                deftype = NULL;
 
     if (!pkrb5_init_context)
         return 0;
@@ -769,11 +770,27 @@ DWORD                       publicIP
     code = pkrb5_get_init_creds_opt_alloc(ctx, &options);
     if (code) goto cleanup;
 
-    code = pkrb5_cc_default(ctx, &cc);
+    code = pkrb5_cc_default(ctx, &defcache);
     if (code) goto cleanup;
 
     code = pkrb5_parse_name(ctx, principal_name, &me);
     if (code) goto cleanup;
+
+    deftype = pkrb5_cc_get_type(ctx, defcache);
+    if (me != NULL && pkrb5_cc_support_switch(ctx, deftype)) {
+        /* Use an existing cache for the specified principal if we can. */
+        code = pkrb5_cc_cache_match(ctx, me, &cc);
+        if (code != 0 && code != KRB5_CC_NOTFOUND)
+            goto cleanup;
+        if (code == KRB5_CC_NOTFOUND) {
+            code = pkrb5_cc_new_unique(ctx, deftype, NULL, &cc);
+            if (code)
+                goto cleanup;
+        }
+        pkrb5_cc_close(ctx, defcache);
+    } else {
+        cc = defcache;
+    }
 
     code = pkrb5_unparse_name(ctx, me, &name);
     if (code) goto cleanup;
@@ -869,6 +886,9 @@ DWORD                       publicIP
                                        0, // start time
                                        0, // service name
                                        options);
+    // @TODO: make this an option
+    if (cc != defcache)
+        code = pkrb5_cc_switch(ctx, cc);
  cleanup:
     if ( addrs ) {
         for ( i=0;i<addr_count;i++ ) {
