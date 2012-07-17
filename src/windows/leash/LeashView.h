@@ -95,7 +95,9 @@ public:
       m_index(-1),
       m_focus(-1),
       m_expanded(0),
-      m_selected(0)
+      m_selected(0),
+      m_isRenewable(0),
+      m_isDefault(0)
     {
     }
 
@@ -109,8 +111,10 @@ public:
     char *m_ccacheName;
     int m_index;               // item index in list view
     int m_focus;               // sub-item with focus
-    unsigned int m_expanded; // if set, display each individual ticket
-    unsigned int m_selected;
+    unsigned int m_expanded;   // true when each individual ticket is displayed
+    unsigned int m_selected;   // true when this ccache is selected
+    unsigned int m_isRenewable; // true when tgt is renewable
+    unsigned int m_isDefault;  // true when this is the default ccache
 };
 
 class CLeashView : public CListView

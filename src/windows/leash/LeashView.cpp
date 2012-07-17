@@ -858,28 +858,61 @@ UINT CLeashView::RenewTicket(void * hWnd)
     return 0;
 }
 
+static void kdestroy(const char *ccache_name)
+{
+    krb5_context ctx;
+    krb5_ccache ccache=NULL;
+    int code = pkrb5_init_context(&ctx);
+    if (code) {
+        // TODO: spew error
+        goto cleanup;
+    }
+    code = pkrb5_cc_resolve(ctx, ccache_name, &ccache);
+    if (code) {
+        // TODO: spew error
+        goto cleanup;
+    }
+    code = pkrb5_cc_destroy(ctx, ccache);
+    if (code) {
+        goto cleanup;
+    }
+cleanup:
+    if (ctx)
+        pkrb5_free_context(ctx);
+}
+
+
 VOID CLeashView::OnDestroyTicket()
 {
-    if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
-        throw("Unable to lock ticketinfo");
-    BOOL b_destroy = ticketinfo.Krb5.btickets || ticketinfo.Afs.btickets;
-    ReleaseMutex(ticketinfo.lockObj);
+    // @TODO: grab mutex
+    BOOL destroy = FALSE;
+    CCacheDisplayData *elem = m_ccacheDisplay;
+    while (elem) {
+        if (elem->m_selected) {
+            // @TODO add princ to msg text
+            destroy = TRUE;
+        }
+        elem = elem->m_next;
+    }
+    // release mutex
 
-    if (b_destroy)
+    if (destroy)
     {
         INT whatToDo;
 
-        if (!CLeashApp::m_hAfsDLL)
-            whatToDo = AfxMessageBox("Are you sure you want to destroy these tickets?",
-                                     MB_ICONEXCLAMATION|MB_YESNO, 0);
-        else
-            whatToDo = AfxMessageBox("You are about to destroy your ticket(s)/token(s)!",
-                                     MB_ICONEXCLAMATION|MB_YESNO, 0);
+        whatToDo = AfxMessageBox("Are you sure you want to destroy these tickets?",
+                                    MB_ICONEXCLAMATION|MB_YESNO, 0);
 
         if (whatToDo == IDYES)
         {
-            pLeash_kdestroy();
-            ResetTreeNodes();
+            // grab list mutex
+            elem = m_ccacheDisplay;
+            while (elem) {
+                if (elem->m_selected)
+                    kdestroy(elem->m_ccacheName);
+                elem = elem->m_next;
+            }
+            // release list mutex
             SendMessage(WM_COMMAND, ID_UPDATE_DISPLAY, 0);
         }
     }
@@ -1215,6 +1248,7 @@ VOID CLeashView::OnUpdateDisplay()
     CCacheDisplayData* prevCCacheDisplay = m_ccacheDisplay;
     m_ccacheDisplay = NULL;
 
+    const char *def_ccache_name = ticketinfo.Krb5.ccache_name;
     TICKETINFO *principallist = ticketinfo.Krb5.next;
     int iItem = 0;
     TicketList* tempList;
@@ -1228,6 +1262,9 @@ VOID CLeashView::OnUpdateDisplay()
         } else {
             elem = new CCacheDisplayData(principallist->ccache_name);
         }
+        elem->m_isDefault = (strcmp(def_ccache_name, elem->m_ccacheName) == 0);
+        elem->m_isRenewable = principallist->renew_until != 0;
+
         elem->m_next = m_ccacheDisplay;
         m_ccacheDisplay = elem;
         elem->m_index = iItem;
@@ -1711,20 +1748,18 @@ VOID CLeashView::OnDestroy()
 
 VOID CLeashView::OnUpdateDestroyTicket(CCmdUI* pCmdUI)
 {
-    if (!CLeashApp::m_hAfsDLL)
-        pCmdUI->SetText("&Destroy Ticket(s)\tCtrl+D");
-    else
-        pCmdUI->SetText("&Destroy Ticket(s)/Token(s)\tCtrl+D");
+    // @TODO: mutex
+    BOOL enable = FALSE;
+    CCacheDisplayData *elem = m_ccacheDisplay;
+    while (elem) {
+        if (elem->m_selected) {
+            enable = TRUE;
+            break;
+        }
+        elem = elem->m_next;
+    }
 
-    if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
-        throw("Unable to lock ticketinfo");
-    BOOL b_enable = !ticketinfo.Krb5.btickets && !ticketinfo.Afs.btickets;
-    ReleaseMutex(ticketinfo.lockObj);
-
-    if (b_enable)
-        pCmdUI->Enable(FALSE);
-    else
-        pCmdUI->Enable(TRUE);
+    pCmdUI->Enable(enable);
 }
 
 VOID CLeashView::OnUpdateInitTicket(CCmdUI* pCmdUI)
@@ -1748,29 +1783,18 @@ VOID CLeashView::OnUpdateInitTicket(CCmdUI* pCmdUI)
 
 VOID CLeashView::OnUpdateRenewTicket(CCmdUI* pCmdUI)
 {
-    if (!CLeashApp::m_hAfsDLL)
-        pCmdUI->SetText("&Renew Ticket(s)\tCtrl+R");
-    else
-        pCmdUI->SetText("&Renew Ticket(s)/Token(s)\tCtrl+R");
+    // @TODO: mutex
+    BOOL enable = FALSE;
+    CCacheDisplayData *elem = m_ccacheDisplay;
+    while (elem) {
+        if (elem->m_selected) { // @TODO: && elem->m_renewable
+            enable = TRUE;
+            break;
+        }
+        elem = elem->m_next;
+    }
 
-    if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
-        throw("Unable to lock ticketinfo");
-    BOOL b_enable = !(
-#ifndef NO_KRB4
-	ticketinfo.Krb4.btickets ||
-#endif
-	ticketinfo.Krb5.btickets) ||
-////Not sure about the boolean logic here
-#ifndef NO_KRB4
-                    !CLeashApp::m_hKrb4DLL &&
-#endif
-		    !CLeashApp::m_hKrb5DLL && !CLeashApp::m_hAfsDLL;
-    ReleaseMutex(ticketinfo.lockObj);
-
-    if (b_enable)
-        pCmdUI->Enable(FALSE);
-    else
-        pCmdUI->Enable(TRUE);
+    pCmdUI->Enable(enable);
 }
 
 VOID CLeashView::OnUpdateImportTicket(CCmdUI* pCmdUI)
@@ -2483,7 +2507,24 @@ VOID CLeashView::OnUpdateAutoRenew(CCmdUI* pCmdUI)
 
 VOID CLeashView::OnUpdateMakeDefault(CCmdUI* pCmdUI)
 {
-    // @TODO: enable if exactly one identity is selected and that identity is not currently the default
+    // enable if exactly one principal is selected and that principal is not the default principal
+    BOOL enable = FALSE;
+    CCacheDisplayData *elem = m_ccacheDisplay;
+    while (elem) {
+        if (elem->m_selected) {
+            if (enable) {
+                // multiple selection; disable button
+                enable = FALSE;
+                break;
+            }
+            if (elem->m_isDefault)
+                break;
+
+            enable = TRUE;
+        }
+        elem = elem->m_next;
+    }
+    pCmdUI->Enable(enable);
 }
 
 VOID CLeashView::AlarmBeep()
