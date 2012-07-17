@@ -887,7 +887,7 @@ DWORD                       publicIP
                                        0, // service name
                                        options);
     // @TODO: make this an option
-    if (cc != defcache)
+    if ((!code) && (cc != defcache))
         code = pkrb5_cc_switch(ctx, cc);
  cleanup:
     if ( addrs ) {
