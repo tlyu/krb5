@@ -62,21 +62,11 @@
 			<param name="Name" value="KVNO">
 			<param name="Local" value="HTML\KVNO.htm">
 			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="ms2mit">
-			<param name="Name" value="MS2MIT">
-			<param name="Local" value="HTML\MS2MIT.htm">
-			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Ctrl: See keyboard shortcuts">
 		<param name="Name" value="keyboard shortcuts">
 		<param name="See Also" value="keyboard shortcuts">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="debugging window">
-		<param name="Name" value="Debugging">
-		<param name="Local" value="HTML\Debugging.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="default principal">
@@ -205,22 +195,6 @@
 		<param name="Name" value="Glossary">
 		<param name="Local" value="HTML\Glossary.htm">
 		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="import status">
-		<param name="See Also" value="import status">
-		</OBJECT>
-	<UL>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="how to view">
-			<param name="Name" value="View Menu">
-			<param name="Local" value="HTML\Option_Tab.htm#import-status">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="meaning of each">
-			<param name="Name" value="Import Status Meanings">
-			<param name="Local" value="HTML\Import_Status.htm">
-			</OBJECT>
-	</UL>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Kerberos">
 		<param name="Name" value="What is Kerberos? ">
@@ -409,11 +383,6 @@
 			<param name="Local" value="Html\Tickets.htm#expiration">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="export">
-			<param name="Name" value="Export Tickets">
-			<param name="Local" value="HTML\Export_Tickets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="flags, set">
 			<param name="Name" value="Ticket Settings">
 			<param name="Local" value="Html\Ticket_Settings.htm">
@@ -427,11 +396,6 @@
 			<param name="Name" value="get new">
 			<param name="Name" value="Get Tickets">
 			<param name="Local" value="Html\Get_Tickets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="import from Windows Logon Session">
-			<param name="Name" value="Import Tickets">
-			<param name="Local" value="Html\Import_Tickets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="renew automatically">
@@ -474,38 +438,6 @@
 			<param name="Name" value="show/hide column">
 			<param name="Name" value="View Options Panel">
 			<param name="Local" value="HTML\Options_Tab.htm#view-options">
-			</OBJECT>
-	</UL>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="Windows domain tickets">
-		<param name="Name" value="Tickets">
-		<param name="See Also" value="Windows domain tickets">
-		</OBJECT>
-	<UL>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="about">
-			<param name="Name" value="Windows Logon Tickets">
-			<param name="Local" value="HTML\Windows_Logon_Tickets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="destroy">
-			<param name="Name" value="Destroy Tickets">
-			<param name="Local" value="Html\Destroy_Tickets.htm#imported">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="how to export to">
-			<param name="Name" value="Export Tickets">
-			<param name="Local" value="HTML\Export_Tickets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="how to import">
-			<param name="Name" value="Import Tickets">
-			<param name="Local" value="Html\Import_Tickets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="import status of">
-			<param name="Name" value="Import Status">
-			<param name="Local" value="HTML\Import_Status.htm">
 			</OBJECT>
 	</UL>
 </UL>

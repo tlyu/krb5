@@ -16,7 +16,6 @@ use the table of contents to the left of this page to pick a topic.
 <li> Unfamiliar with Kerberos tickets?  <a href="#unfamiliar">Click here</a></li>
 <li> Familiar with Kerberos tickets but new to MIT Kerberos? <a href="#familiar">Click here. </a></li>
 <li> Just want a quick introduction to getting tickets?<a href="#get-tickets"> Click here</a></li>
-<li> Just want a quick introduction to exporting tickets?<a href="#export-tickets"> Click here</a></li>
 <li> Want help using this help system? <a href="#help-system"> Click here</a></li>
 </ul>
 
@@ -40,7 +39,7 @@ left to return to this page.</p>
 <td>Explanation of principals, realms, and tickets. Provides an overview of how Kerberos works.  </td></tr>
 <tr>
 <td><a href="HTML/Tickets.htm">About Tickets</a></td>
-<td> Learn about tickets, ticket expiration, renewable tickets, and importable tickets.</td></tr>
+<td> Learn about tickets, ticket expiration, renewable tickets, and forwardable tickets.</td></tr>
 </tbody></table>
 <p>
 <a href="#top">Back to Top</a> </p>
@@ -59,30 +58,20 @@ Browse the table below to see where to find the commands and options you need.
 <table>
 <tbody><tr><th colspan="2">How to...</th>
 </tr><tr><th id="th2"> Get new MIT Kerberos tickets</th> <td>Click the Get Ticket button. <br>
- <a href="HTML/Get_Tickets.htm">Click for details</a> </td></tr>
+ <a href="HTML/Get_Tickets.htm">How to: Get Tickets</a> </td></tr>
 <tr><th id="th2"> Change ticket flags and settings (e.g., flag a ticket as renewable)</th> <td>In the Get Ticket window, click the Show Advanced button to reach ticket settings and flags. <br>
- <a href="HTML/Ticket_Settings.htm">Click for details</a> </td></tr>
-<tr><th id="th2">Import Windows domain tickets after you've started a Windows Logon session</th> <td>In
-most installations, MIT Kerberos automatically imports existing tickets
-when possible. Look in the main window for the Import Status column. <ul id="tableul">
-<li>If the Import Status column is hidden, you do not have a Windows domain ticket. </li>
-<li> If a ticket is marked as <em>imported</em>, it has been automatically imported. </li>
-<li> If a  ticket is marked as <em>importable</em>, select Automatic Import in the Options panel or click Import in the More panel. </li>
-<li>If a ticket is marked as <em>protected</em>, your computer's User Access Control (UAC) feature is preventing Kerberos from importing the ticket. </li>
-</ul>
-<a href="HTML/Import_Tickets.htm">Click for details</a> </td></tr>
-<tr><th id="th2"> Export tickets to allow a computer that is not part of a Kerberos realm (or Windows domain) to access the realm (or domain) </th> <td>Click the Export Tickets button.  <br>
-<a href="HTML/Export_Tickets.htm">Click for details</a> </td></tr>
+ <a href="HTML/Ticket_Settings.htm">About: Ticket Settings and Flags</a> </td></tr>
+
 <tr><th id="th2">  Change your password</th> <td>Click the Change Password button. <br>
- <a href="HTML/Change_Password.htm">Click for details</a> </td></tr>
+ <a href="HTML/Change_Password.htm">How to: Change Password</a> </td></tr>
 <tr><th id="th2">Change what ticket information is displayed </th> <td>In the Options tab, select or deselect checkboxes in the View Options panel. <br>
- <a href="HTML/Options_Tab.htm#using-view-options">Click for details</a> </td></tr>
+ <a href="HTML/Options_Tab.htm#using-view-options">How to: Use View Options Panel</a> </td></tr>
 <tr><th id="th2">Set Kerberos's automatic functions (auto renew, auto destroy, audible ticket expiration alarm)</th> <td>In the Options tab, select or deselect checkboxes in the Ticket Options panel.  <br>
-<a href="HTML/Options_Tab.htm#using-ticket-options">Click for details</a> </td></tr>
+<a href="HTML/Options_Tab.htm#using-ticket-options">How to: Use Ticket Options Panel</a> </td></tr>
 <tr><th id="th2">Renew your tickets</th> <td>Click the Renew Tickets button to renew your tickets one time.  To have MIT Kerberos automatically renew all of your tickets, go to the Options tab and select  Automatic Ticket Renewal in the Ticket Options panel. <br>
-<a href="HTML/Renew_Tickets.htm">Click for details</a> </td></tr>
+<a href="HTML/Renew_Tickets.htm">How to: Renew Tickets</a> </td></tr>
 <tr><th id="th2"> Destroy your MIT Kerberos tickets </th> <td>Click the Destroy Tickets button. <br>
- <a href="HTML/Destroy_Tickets.htm">Click for details</a> </td></tr>
+ <a href="HTML/Destroy_Tickets.htm">How to: Destroy Tickets</a> </td></tr>
 <tr><th id="th2">Manage multiple principals </th> <td>
 When you get tickets for a principal, Kerberos offers to remember the
 principal for you. You can then select saved principals from a list
@@ -90,12 +79,12 @@ when getting tickets or changing your password. <p></p>
 In the main window, click a principal to select it. The Renew Ticket,
 Change Password, and Make Default buttons then apply to the selected
 principal.<br>
-<br> <a href="HTML/Manage_Multiple_Principals.htm">Click for details</a>
+<br> <a href="HTML/Manage_Multiple_Principals.htm">How to: Manage Multiple Principals</a>
  </td></tr>
 <tr><th id="th2">Change Kerberos properties</th> <td> You can allow
 realm names that use lower case letters by selecting Allow Mixed Case
 Realm in the Ticket Options panel in the Options tab. <br>
-<a href="HTML/Options_Tab.htm#using-ticket-options">Click for details</a> 
+<a href="HTML/Options_Tab.htm#using-ticket-options">How to: Use Ticket Options Panel</a> 
 <p></p>
 However, most properties are set by modifying the appropriate configuration file.</td></tr>
 </tbody></table>
@@ -110,25 +99,9 @@ identity) and password to obtain a ticket. The ticket allows you to
 securely access all of the computers and services set up to
 authenticate you through Kerberos, until the ticket expires, without
 requiring you to enter your password again. <br>
-<a href="HTML/Get_Tickets.htm">How to get tickets</a>
+<a href="HTML/Get_Tickets.htm">How to: Get Tickets</a>
  </p>
-<p> If you have logged on to a Windows domain through a Windows Logon
-session, you already have a Kerberos ticket. This ticket is marked in
-the main window with an Import Status of <em>imported,</em> <em>importable,</em> or <em>protected.</em>
-<br>
-<a href="HTML/Tickets.htm#importable">About importable (Windows domain) tickets</a>
-</p>
-<p>
-<a href="#top">Back to Top</a> </p>
-<h2><a name="export-tickets">Introduction to Exporting Tickets</a></h2>
-<p>
-Once you have obtained tickets with the Get Ticket window, click the
-Export button to export your tickets into your Windows Logon session.
-The tickets can then be used with Windows services. This is useful when
-you want to use a computer that is not part of a Kerberos realm (or
-Windows domain) to access that realm (or domain). </p>
-<p>
-<a href="#top">Back to Top</a> </p>
+
 
 <h2><a name="help-system">Using This Help System</a></h2>
 <p>

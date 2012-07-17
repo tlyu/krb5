@@ -9,7 +9,7 @@
 <p>
  MIT Kerberos displays your tickets in the main window. The tickets (if any) are organized by the <a href="JavaScript:popup.TextPopup(popupPrincipal, popfont,9,9,-1,-1)">principal</a> who owns them.  To the right of the principal are columns with information about the tickets.
 </p><ul>
-<li>To show or hide information columns,  use the View Options panel in the Options tab. <a href="HTML/Options_Tab.htm#using-view-options">Using the View Options panel </a> </li>
+<li>To show or hide information columns,  use the View Options panel in the Options tab. <a href="HTML/Options_Tab.htm#using-view-options">How to: Use View Options Panel </a> </li>
 <li>To make a column wider or narrower, click and drag the line separating two column headings. </li>
 <li>To see information for all of a principal's tickets, click the 
 arrow next to the principal name. Otherwise the information displayed
@@ -29,7 +29,7 @@ applies only to the initial Ticket Granting Ticket (TGT). </li>
 <li><a href="#valid-until"> Valid Until</a></li>
 <li><a href="#encryption-type"> Encryption Type</a></li>
 <li><a href="#flags"> Flags (renewable and forwardable)</a></li>
-<li><a href="#import-status"> Import Status</a></li>
+
 
 </ul>
 </td>
@@ -46,14 +46,14 @@ applies only to the initial Ticket Granting Ticket (TGT). </li>
 
 <td> <a name="principal"> The identity that has obtained the ticket. </a>This is your user name (e.g.,  <tt>Jsmith</tt>) plus the Kerberos <a href="JavaScript:popup.TextPopup(popupRealm, popfont,9,9,-1,-1)"> realm</a> (or Windows domain) you belong to  (e.g.,<tt> @SERVER.MEGACORP.COM</tt>).  If like many users you have only one Kerberos name and belong to only one realm, you will have only one principal.
 <p></p>
-The principal that is currently the default principal appears in bold. <a href="HTML/Principals.htm#default-principal">About default principals</a>
+The principal that is currently the default principal appears in bold. <a href="HTML/Principals.htm#default-principal">About: Default Principals</a>
 <p></p>
 The information displayed in the columns to the right of the principal
 applies only to the principal's initial Ticket Granting Ticket (TGT).
 Click the arrow in front of the principal name to expand the view.
 The expanded view shows all of the tickets and session keys issued to
 the principal. The TGT is listed with a prefix of <em>krbtgt</em>. Any other tickets and session keys were automatically issued when you accessed a service through Kerberos. <br>
-<a href="HTML/Kerberos_Terminology.htm#ticket">More about tickets and session keys</a></td>
+<a href="HTML/Kerberos_Terminology.htm#ticket">About: Kerberos Terminology (Tickets)</a></td>
 </tr>
 
  <tr>
@@ -84,7 +84,7 @@ you will also see the number of hours and minutes remaining before the
 ticket expires. Kerberos alerts you to expiring tickets with a warning
 in a pop up window. <p></p>
 To add an audible warning, open the Options tab and select <b>Expiration Alarm</b> in the Ticket Options panel. <br>
-<a href="HTML/Options_Tab.htm#using-ticket-options">Using the Ticket Options Panel</a>
+<a href="HTML/Options_Tab.htm#using-ticket-options">How to: Use Ticket Options Panel</a>
 </td>
 </tr>
  <tr> 
@@ -94,7 +94,7 @@ To add an audible warning, open the Options tab and select <b>Expiration Alarm</
 Kerberos supports multiple types of encryption. The type used for a
 particular ticket or session key is automatically negotiated when you
 request a ticket or a service.<br> 
-<a href="HTML/Encryption_Types.htm#supported-types">Learn more about Encryption Types</a> </td>
+<a href="HTML/Encryption_Types.htm#supported-types">About: Encryption Types</a> </td>
 </tr>
 <tr> 
 <th id="th2">   Flags </th> 
@@ -106,16 +106,8 @@ request a ticket or a service.<br>
 in the Renewable Until column. Each time a ticket is renewed, its
 lifetime is extended by the length of the original ticket. </td>
 </tr>
-<tr><th id="th2"> Import Status  </th> 
-<td>
-<a name="import-status">This column is only available when you have obtained Kerberos tickets for a Windows domain through a Windows Logon session. </a>
-<p></p>
-Tickets originally obtained through a Windows Logon session  are <em>imported</em> or <em>importable</em> to MIT Kerberos, or they are <em>protected</em> from being imported. <p></p> Tickets obtained with the Get Ticket window are either <em>exported</em> or <em>exportable</em> to your  Windows Logon session. 
-<p></p>
- <a href="HTML/Import_Status.htm">More about Import Status meanings</a>
 
- </td>
-</tr></tbody></table>
+</tbody></table>
 <p>
 
 
