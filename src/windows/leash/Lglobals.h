@@ -262,6 +262,17 @@ extern BOOL SetRegistryVariable(const CString& regVariable,
 extern VOID LeashErrorBox(LPCSTR errorMsg, LPCSTR insertedString,
                           LPCSTR errorFlag = "Error");
 
+// Get ticket info for the default ccache only
+extern void LeashKRB5ListDefaultTickets(TICKETINFO *ticketinfo);
+// clean up ticket info
+extern void LeashKRB5FreeTicketInfo(TICKETINFO *ticketinfo);
+
+// Allocate TICKETINFO for each ccache that contain tickets
+extern void LeashKRB5ListAllTickets(TICKETINFO **ticketinfolist);
+// clean up ticket info list
+extern void LeashKRB5FreeTickets(TICKETINFO **ticketinfolist);
+
+
 
 class Directory
 {

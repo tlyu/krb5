@@ -66,6 +66,7 @@ krb5_context CLeashApp::m_krbv5_context = 0;
 profile_t CLeashApp::m_krbv5_profile = 0;
 HINSTANCE CLeashApp::m_hKrbLSA = 0;
 int CLeashApp::m_useRibbon = TRUE;
+BOOL CLeashApp::m_bUpdateDisplay = FALSE;
 
 /////////////////////////////////////////////////////////////////////////////
 // CLeashApp
@@ -1631,3 +1632,15 @@ CLeashApp::WinHelp(DWORD dwData, UINT nCmd)
 }
 #endif
 #endif
+
+
+BOOL CLeashApp::OnIdle(LONG lCount)
+{
+    // TODO: Add your specialized code here and/or call the base class
+    BOOL retval = CWinAppEx::OnIdle(lCount);
+    if ((lCount == 0) && m_bUpdateDisplay) {
+        m_bUpdateDisplay = FALSE;
+        m_pMainWnd->SendMessage(WM_COMMAND, ID_UPDATE_DISPLAY, 0);
+    }
+    return retval;
+}
