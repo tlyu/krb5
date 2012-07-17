@@ -891,8 +891,17 @@ DWORD                       publicIP
                                        0, // service name
                                        options);
     // @TODO: make this an option
-    if ((!code) && (cc != defcache))
+    if ((!code) && (cc != defcache)) {
         code = pkrb5_cc_switch(ctx, cc);
+        if (!code) {
+            const char *cctype = pkrb5_cc_get_type(ctx, cc);
+            if (cctype) {
+                char defname[20];
+                sprintf_s(defname, sizeof(defname), "%s:", cctype);
+                pkrb5int_cc_user_set_default_name(ctx, defname);
+            }
+        }
+    }
  cleanup:
     if (code && cc_new) {
         // don't leave newly-generated empty ccache lying around on failure
