@@ -4,7 +4,7 @@ Compatibility=1.1 or later
 Compiled file=MITKerberosHelp.chm
 Contents file=TOC.hhc
 Default Window=Leash Help
-Default topic=HTML\Getting_Started.htm
+Default topic=HTML\Using_Leash_Menus.htm
 Display compile progress=No
 Full text search stop list file=stoplist.stp
 Full-text search=Yes
@@ -57,7 +57,7 @@ HTML\Ticket_Settings.htm
 HTML\View_Tickets.htm
 
 [ALIAS]
-HID_ABOUT_KERBEROS = html\How_Kerberos_Works.htm
+HID_ABOUT_KERBEROS = html\Getting_Started.htm
 HID_CHANGE_PASSWORD_COMMAND = html\Change_Password.htm
 HID_DESTROY_TICKETS_COMMAND = html\Destroy_Tickets.htm
 HID_DESTROY_TICKETS_ON_EXIT = html\Options_Tab.htm
