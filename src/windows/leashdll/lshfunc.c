@@ -2871,8 +2871,7 @@ acquire_tkt_no_princ(krb5_context context, char * ccname, int cclen)
 	GetEnvironmentVariable("KRB5CCNAME", ccachename, sizeof(ccachename));
     }
 
-    not_an_API_LeashKRB5GetTickets(&ticketinfo,&list,&ctx);
-    not_an_API_LeashFreeTicketList(&list);
+    not_an_API_LeashKRB5GetTickets(&ticketinfo,&ctx);
 
     if ( ticketinfo.btickets != GOOD_TICKETS &&
          dwMsLsaImport && Leash_importable() ) {
@@ -2937,8 +2936,8 @@ acquire_tkt_no_princ(krb5_context context, char * ccname, int cclen)
         if ( import ) {
             Leash_import();
 
-            not_an_API_LeashKRB5GetTickets(&ticketinfo,&list,&ctx);
-            not_an_API_LeashFreeTicketList(&list);
+            not_an_API_LeashKRB5FreeTickets(&ticketinfo);
+            not_an_API_LeashKRB5GetTickets(&ticketinfo,&ctx);
         }
     }
 
@@ -2956,7 +2955,7 @@ acquire_tkt_no_princ(krb5_context context, char * ccname, int cclen)
 	strncpy(ccname, ccachename, cclen);
 	ccname[cclen-1] = '\0';
     }
-
+    not_an_API_LeashKRB5FreeTickets(&ticketinfo);
     if ( !context )
         pkrb5_free_context(ctx);
 }
@@ -2966,7 +2965,6 @@ static void
 acquire_tkt_for_princ(krb5_context context, krb5_principal desiredPrincipal,
 		      char * ccname, int cclen)
 {
-    TicketList 		*list = NULL;
     TICKETINFO   	ticketinfo;
     krb5_context        ctx;
     DWORD 		dwMsLsaImport = Leash_get_default_mslsa_import();
@@ -2990,8 +2988,7 @@ acquire_tkt_for_princ(krb5_context context, krb5_principal desiredPrincipal,
 	GetEnvironmentVariable("KRB5CCNAME", ccachename, sizeof(ccachename));
     }
 
-    not_an_API_LeashKRB5GetTickets(&ticketinfo,&list,&ctx);
-    not_an_API_LeashFreeTicketList(&list);
+    not_an_API_LeashKRB5GetTickets(&ticketinfo,&ctx);
 
     pkrb5_unparse_name(ctx, desiredPrincipal, &name);
 
@@ -3030,14 +3027,14 @@ acquire_tkt_for_princ(krb5_context context, krb5_principal desiredPrincipal,
 
 	    SetEnvironmentVariable("KRB5CCNAME", ccachename);
 
-            not_an_API_LeashKRB5GetTickets(&ticketinfo,&list,&ctx);
-            not_an_API_LeashFreeTicketList(&list);
+        not_an_API_LeashKRB5FreeTickets(&ticketinfo);
+        not_an_API_LeashKRB5GetTickets(&ticketinfo,&ctx);
 
 	    if (ticketinfo.btickets != GOOD_TICKETS) {
 		Leash_import();
 
-		not_an_API_LeashKRB5GetTickets(&ticketinfo,&list,&ctx);
-		not_an_API_LeashFreeTicketList(&list);
+        not_an_API_LeashKRB5FreeTickets(&ticketinfo);
+		not_an_API_LeashKRB5GetTickets(&ticketinfo,&ctx);
 	    }
 	}
     }
@@ -3057,6 +3054,7 @@ acquire_tkt_for_princ(krb5_context context, krb5_principal desiredPrincipal,
 	    ccname[cclen-1] = '\0';
 	}
     }
+    not_an_API_LeashKRB5FreeTickets(&ticketinfo);
 
     if (name)
 	pkrb5_free_unparsed_name(ctx, name);

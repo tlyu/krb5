@@ -103,8 +103,13 @@ typedef struct {
         2 * NETID_CCACHE_NAME_SZ))
 #endif /* NETIDMGR */
 
-typedef struct {
-    char    principal[MAX_K_NAME_SZ]; /* Principal name/instance/realm */
+typedef struct TicketList TicketList;
+typedef struct TICKETINFO TICKETINFO;
+typedef struct TICKETINFO {
+    TICKETINFO *next;
+    char   *principal;                /* Principal name/instance/realm */
+    char   *ccache_name;
+    TicketList *ticket_list;
     int     btickets;                 /* Do we have tickets? */
     long    lifetime;                 /* Lifetime -- needs to have
                                          room for 255 5-minute

@@ -365,8 +365,7 @@ time_t CLeashView::LeashTime()
 // Call while possessing a lock to ticketinfo.lockObj
 INT CLeashView::GetLowTicketStatus(int ver)
 {
-    BOOL b_notix = (ver == 4 && !ticketinfo.Krb4.btickets) ||
-                   (ver == 5 && !ticketinfo.Krb5.btickets) ||
+    BOOL b_notix = (ver == 5 && !ticketinfo.Krb5.btickets) ||
                    (ver == 1 && !ticketinfo.Afs.btickets);
 
     if (b_notix)
@@ -526,22 +525,20 @@ UINT CLeashView::InitTicket(void * hWnd)
 #endif
         throw("Unable to lock ticketinfo");
     }
-
+    pLeashKRB5GetTickets(&ticketinfo.Krb5, &CLeashApp::m_krbv5_context);
     char * principal = ticketinfo.Krb5.principal;
-    if (!*principal)
-        principal = ticketinfo.Krb4.principal;
-    for (; principal[i] && principal[i] != '@'; i++)
-    {
-        username[i] = principal[i];
-    }
+    if (principal)
+        for (; principal[i] && principal[i] != '@'; i++)
+            username[i] = principal[i];
     username[i] = '\0';
-    if (principal[i]) {
+    if (principal && principal[i]) {
         for (i++ ; principal[i] ; i++, j++)
         {
             realm[j] = principal[i];
         }
     }
     realm[j] = '\0';
+    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
     ReleaseMutex(ticketinfo.lockObj);
 
     ldi.size = sizeof(ldi);
@@ -587,7 +584,6 @@ UINT CLeashView::InitTicket(void * hWnd)
 #endif
             throw("Unable to lock ticketinfo");
         }
-        ticketinfo.Krb4.btickets = GOOD_TICKETS;
         m_warningOfTicketTimeLeftKrb4 = 0;
         m_warningOfTicketTimeLeftKrb5 = 0;
         m_ticketStatusKrb4 = 0;
@@ -629,7 +625,6 @@ UINT CLeashView::ImportTicket(void * hWnd)
     krb5_principal princ = 0;
     char * pname = 0;
     LONG krb5Error = 0;
-    TicketList * tlist = NULL;
 
     if (code = pkrb5_cc_resolve(CLeashApp::m_krbv5_context, "MSLSA:", &mslsa_ccache))
         goto cleanup;
@@ -646,12 +641,12 @@ UINT CLeashView::ImportTicket(void * hWnd)
 #endif
         throw("Unable to lock ticketinfo");
     }
-    krb5Error = pLeashKRB5GetTickets( &ticketinfo.Krb5, &tlist,
+    krb5Error = pLeashKRB5GetTickets( &ticketinfo.Krb5,
                                       &CLeashApp::m_krbv5_context);
-    if ( tlist )
-        pLeashFreeTicketList(&tlist);
 
-    warning = strcmp(ticketinfo.Krb5.principal, pname) && ticketinfo.Krb5.btickets;
+    // @TODO: fixme: importing should no longer destroy existing tickets
+    warning = (ticketinfo.Krb5.principal != NULL) &&
+              strcmp(ticketinfo.Krb5.principal, pname) && ticketinfo.Krb5.btickets;
     ReleaseMutex(ticketinfo.lockObj);
 
   cleanup:
@@ -717,7 +712,6 @@ UINT CLeashView::ImportTicket(void * hWnd)
 #endif
                     throw("Unable to lock ticketinfo");
                 }
-                ticketinfo.Krb4.btickets = GOOD_TICKETS;
                 ticketinfo.Krb5.btickets = GOOD_TICKETS;
                 m_warningOfTicketTimeLeftKrb4 = 0;
                 m_warningOfTicketTimeLeftKrb5 = 0;
@@ -792,24 +786,22 @@ UINT CLeashView::RenewTicket(void * hWnd)
 
     // Try to renew
     BOOL b_renewed = pLeash_renew();
-    TicketList * tlist = NULL;
     if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0) {
 #ifndef KRB5_TC_NOTICKET
         ReleaseMutex(m_tgsReqMutex);
 #endif
         throw("Unable to lock ticketinfo");
     }
-    LONG krb5Error = pLeashKRB5GetTickets(&ticketinfo.Krb5, &tlist,
+    LONG krb5Error = pLeashKRB5GetTickets(&ticketinfo.Krb5,
                                            &CLeashApp::m_krbv5_context);
-    pLeashFreeTicketList(&tlist);
     if ( b_renewed ) {
         if (!krb5Error && ticketinfo.Krb5.btickets == GOOD_TICKETS) {
-            ticketinfo.Krb4.btickets = GOOD_TICKETS;
             m_warningOfTicketTimeLeftKrb4 = 0;
             m_warningOfTicketTimeLeftKrb5 = 0;
             m_ticketStatusKrb4 = 0;
             m_ticketStatusKrb5 = 0;
             m_autoRenewalAttempted = 0;
+            pLeashKRB5FreeTickets(&ticketinfo.Krb5);
             ReleaseMutex(ticketinfo.lockObj);
 #ifndef KRB5_TC_NOTICKET
             ReleaseMutex(m_tgsReqMutex);
@@ -837,6 +829,7 @@ UINT CLeashView::RenewTicket(void * hWnd)
         m_importedTickets = 1;
 
   cleanup:
+    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
     ReleaseMutex(ticketinfo.lockObj);
 
     if (pname)
@@ -865,7 +858,7 @@ VOID CLeashView::OnDestroyTicket()
 {
     if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
         throw("Unable to lock ticketinfo");
-    BOOL b_destroy =ticketinfo.Krb4.btickets || ticketinfo.Krb5.btickets || ticketinfo.Afs.btickets;
+    BOOL b_destroy = ticketinfo.Krb5.btickets || ticketinfo.Afs.btickets;
     ReleaseMutex(ticketinfo.lockObj);
 
     if (b_destroy)
@@ -906,8 +899,6 @@ VOID CLeashView::OnChangePassword()
     char username[64];
     char realm[192];
     char * principal = ticketinfo.Krb5.principal;
-    if (!*principal)
-	principal = ticketinfo.Krb4.principal;
     int i=0, j=0;
     for (; principal[i] && principal[i] != '@'; i++)
     {
@@ -997,7 +988,7 @@ VOID CLeashView::OnUpdateDisplay()
 #endif
 
     // Get Kerb 5 tickets in list
-    krb5Error = pLeashKRB5GetTickets(&ticketinfo.Krb5, &m_listKrb5,
+    krb5Error = pLeashKRB5GetTickets(&ticketinfo.Krb5,
                                      &CLeashApp::m_krbv5_context);
     if (!krb5Error || krb5Error == KRB5_FCC_NOFILE)
     {
@@ -1022,15 +1013,13 @@ VOID CLeashView::OnUpdateDisplay()
         char * principal;
         if ( ticketinfo.Krb5.principal[0] )
             principal = ticketinfo.Krb5.principal;
-        else if ( ticketinfo.Krb4.principal[0] )
-            principal = ticketinfo.Krb4.principal;
         else
             principal = "";
         afsError = pLeashAFSGetToken(&ticketinfo.Afs, &m_listAfs, principal);
     }
 
     /*
-     * Update Ticket Status for Krb4 and Krb5 so that we may use their state
+     * Update Ticket Status for Krb5 so that we may use their state
      * to select the appropriate Icon for the Parent Node
      */
 
@@ -1146,43 +1135,48 @@ VOID CLeashView::OnUpdateDisplay()
     }
     SetTrayIcon(NIM_MODIFY, trayIcon);
 
-    TicketList* tempList = m_listKrb5;
+    TICKETINFO *principallist = ticketinfo.Krb5.next;
     int iItem = 0;
+    TicketList* tempList;
     TCHAR* localTimeStr=NULL;
-    while (tempList)
-    {
-        list.InsertItem(iItem, tempList->theTicket, 0);
+    while (principallist) {
+        tempList = principallist->ticket_list;
+        principallist = principallist->next;
+        while (tempList)
+        {
+            list.InsertItem(iItem, tempList->theTicket, 0);
 
-        int iSubItem = 1;
-        if (sm_viewColumns[TIME_ISSUED].m_enabled) {
-            krb5TimestampToLocalizedString(tempList->issued, &localTimeStr);
-            list.SetItemText(iItem, iSubItem++, localTimeStr);
-        }
-        if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
-            if (tempList->renew_until) {
-                krb5TimestampToLocalizedString(tempList->renew_until, &localTimeStr);
+            int iSubItem = 1;
+            if (sm_viewColumns[TIME_ISSUED].m_enabled) {
+                krb5TimestampToLocalizedString(tempList->issued, &localTimeStr);
                 list.SetItemText(iItem, iSubItem++, localTimeStr);
-            } else {
-                list.SetItemText(iItem, iSubItem++, "not renewable");
             }
-        }
-        if (sm_viewColumns[VALID_UNTIL].m_enabled) {
-            krb5TimestampToLocalizedString(tempList->valid_until, &localTimeStr);
-            list.SetItemText(iItem, iSubItem++, localTimeStr);
-        }
-        if (sm_viewColumns[ENCRYPTION_TYPE].m_enabled) {
-            list.SetItemText(iItem, iSubItem++, tempList->encTypes);
-        }
-        if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
-            list.SetItemText(iItem, iSubItem++, "ticket flags here");
-        }
+            if (sm_viewColumns[RENEWABLE_UNTIL].m_enabled) {
+                if (tempList->renew_until) {
+                    krb5TimestampToLocalizedString(tempList->renew_until, &localTimeStr);
+                    list.SetItemText(iItem, iSubItem++, localTimeStr);
+                } else {
+                    list.SetItemText(iItem, iSubItem++, "not renewable");
+                }
+            }
+            if (sm_viewColumns[VALID_UNTIL].m_enabled) {
+                krb5TimestampToLocalizedString(tempList->valid_until, &localTimeStr);
+                list.SetItemText(iItem, iSubItem++, localTimeStr);
+            }
+            if (sm_viewColumns[ENCRYPTION_TYPE].m_enabled) {
+                list.SetItemText(iItem, iSubItem++, tempList->encTypes);
+            }
+            if (sm_viewColumns[TICKET_FLAGS].m_enabled) {
+                list.SetItemText(iItem, iSubItem++, "ticket flags here");
+            }
 
-        tempList = tempList->next;
+            tempList = tempList->next;
+        }
     }
     if (localTimeStr)
         free(localTimeStr);
 
-    pLeashFreeTicketList(&m_listKrb5);
+    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
 
     // @TODO: AFS-specific here
     if (!afsError && CLeashApp::m_hAfsDLL)
@@ -1198,12 +1192,6 @@ VOID CLeashView::OnUpdateDisplay()
         pLeashFreeTicketList(&m_listAfs);
     }
 
-    // KILL THIS?!
-    if (m_startup)
-    {
-        //m_startup = FALSE;
-        UpdateTicketTime(ticketinfo.Krb4);
-    }
     ReleaseMutex(ticketinfo.lockObj);
 }
 
@@ -1609,7 +1597,7 @@ VOID CLeashView::OnDestroy()
     CListView::OnDestroy();
     if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
         throw("Unable to lock ticketinfo");
-    BOOL b_destroy = m_destroyTicketsOnExit && (ticketinfo.Krb4.btickets || ticketinfo.Krb5.btickets);
+    BOOL b_destroy = m_destroyTicketsOnExit && ticketinfo.Krb5.btickets;
     ReleaseMutex(ticketinfo.lockObj);
 
     if (b_destroy)
@@ -1631,7 +1619,7 @@ VOID CLeashView::OnUpdateDestroyTicket(CCmdUI* pCmdUI)
 
     if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
         throw("Unable to lock ticketinfo");
-    BOOL b_enable =!ticketinfo.Krb4.btickets && !ticketinfo.Krb5.btickets && !ticketinfo.Afs.btickets;
+    BOOL b_enable = !ticketinfo.Krb5.btickets && !ticketinfo.Afs.btickets;
     ReleaseMutex(ticketinfo.lockObj);
 
     if (b_enable)
@@ -1782,7 +1770,7 @@ LRESULT CLeashView::OnTrayIcon(WPARAM wParam, LPARAM lParam)
             else
                 nFlags = MF_STRING;
             menu->AppendMenu(MF_STRING, ID_IMPORT_TICKET, "&Import Tickets");
-            if (!ticketinfo.Krb4.btickets && !ticketinfo.Krb5.btickets && !ticketinfo.Afs.btickets)
+            if (!ticketinfo.Krb5.btickets && !ticketinfo.Afs.btickets)
                 nFlags = MF_STRING | MF_GRAYED;
             else
                 nFlags = MF_STRING;
@@ -2175,35 +2163,6 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
                     m_warningOfTicketTimeLeftLockKrb4 = ZERO_MINUTES_LEFT;
                     m_ticketTimeLeft = 0;
                 }
-                else if ( pLeash_get_default_use_krb4() )
-                {
-                    m_ticketStatusKrb4 = GetLowTicketStatus(4);
-                    switch (m_ticketStatusKrb4)
-                    {
-                    case FIFTEEN_MINUTES_LEFT:
-                        ticketinfo.Krb4.btickets = TICKETS_LOW;
-                        lowTicketWarningKrb4 = "Less then 15 minutes left on your Kerberos Four ticket(s)";
-                        break;
-                    case TEN_MINUTES_LEFT:
-                        ticketinfo.Krb4.btickets = TICKETS_LOW;
-                        lowTicketWarningKrb4 = "Less then 10 minutes left on your Kerberos Four ticket(s)";
-                        if (!m_warningOfTicketTimeLeftLockKrb4)
-                            m_warningOfTicketTimeLeftKrb4 = 0;
-                        m_warningOfTicketTimeLeftLockKrb4 = TEN_MINUTES_LEFT;
-                        break;
-                    case FIVE_MINUTES_LEFT:
-                        ticketinfo.Krb4.btickets = TICKETS_LOW;
-                        if (m_warningOfTicketTimeLeftLockKrb4 == TEN_MINUTES_LEFT)
-                            m_warningOfTicketTimeLeftKrb4 = 0;
-                        m_warningOfTicketTimeLeftLockKrb4 = FIVE_MINUTES_LEFT;
-                        lowTicketWarningKrb4 = "Less then 5 minutes left on your Kerberos Four ticket(s)";
-                        break;
-                    default:
-                        m_ticketStatusKrb4 = 0;
-                        break;
-                    }
-
-                }
 
                 if (CMainFrame::m_isMinimum)
                 {
@@ -2455,13 +2414,6 @@ BOOL CLeashView::PreTranslateMessage(MSG* pMsg)
                                     " - [" + ticketinfo.Krb5.principal + "]");
                 else
                     strTimeDate = "Leash: Kerb-5 No Tickets";
-            } else {
-                if ( ticketinfo.Krb4.btickets )
-                    strTimeDate = ( "Leash: "
-                                    "[" + ticketStatusKrb4 + "]" +
-                                    " - [" + ticketinfo.Krb4.principal + "]");
-                else
-                    strTimeDate = "Leash: Kerb-4 No Tickets";
             }
             ReleaseMutex(ticketinfo.lockObj);
 
