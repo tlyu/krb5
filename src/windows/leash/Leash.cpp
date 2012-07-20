@@ -207,17 +207,13 @@ BOOL CLeashApp::InitInstance()
 		char username[64]="";
 		char realm[192]="";
 		int i=0, j=0;
-                TicketList* ticketList = NULL;
                 if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
                     throw("Unable to lock ticketinfo");
 
-                pLeashKRB5GetTickets(&ticketinfo.Krb5, &ticketList,
+                pLeashKRB5GetTickets(&ticketinfo.Krb5,
                                       &CLeashApp::m_krbv5_context);
-                pLeashFreeTicketList(&ticketList);
-                pLeashKRB4GetTickets(&ticketinfo.Krb4, &ticketList);
-                pLeashFreeTicketList(&ticketList);
 
-                if ( ticketinfo.Krb5.btickets && ticketinfo.Krb5.principal[0] ) {
+                if ( ticketinfo.Krb5.btickets && ticketinfo.Krb5.principal ) {
                     for (; ticketinfo.Krb5.principal[i] && ticketinfo.Krb5.principal[i] != '@'; i++)
                     {
                         username[i] = ticketinfo.Krb5.principal[i];
@@ -230,20 +226,10 @@ BOOL CLeashApp::InitInstance()
                         }
                     }
                     realm[j] = '\0';
-                } else if ( ticketinfo.Krb4.btickets && ticketinfo.Krb4.principal[0] ) {
-                    for (; ticketinfo.Krb4.principal[i] && ticketinfo.Krb4.principal[i] != '@'; i++)
-                    {
-                        username[i] = ticketinfo.Krb4.principal[i];
-                    }
-                    username[i] = '\0';
-                    if (ticketinfo.Krb4.principal[i]) {
-                        for (i++ ; ticketinfo.Krb4.principal[i] ; i++, j++)
-                        {
-                            realm[j] = ticketinfo.Krb4.principal[i];
-                        }
-                    }
-                    realm[j] = '\0';
                 }
+
+                pLeashKRB5FreeTickets(&ticketinfo.Krb5);
+
                 ReleaseMutex(ticketinfo.lockObj);
 
 				ldi.size = LSH_DLGINFO_EX_V1_SZ;
@@ -415,14 +401,11 @@ BOOL CLeashApp::InitInstance()
     // Check to see if there are any tickets in the cache
     // If not and the Windows Logon Session is Kerberos authenticated attempt an import
     {
-        TicketList* ticketList = NULL;
         if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
             throw("Unable to lock ticketinfo");
-        pLeashKRB5GetTickets(&ticketinfo.Krb5, &ticketList, &CLeashApp::m_krbv5_context);
-        pLeashFreeTicketList(&ticketList);
-        pLeashKRB4GetTickets(&ticketinfo.Krb4, &ticketList);
-        pLeashFreeTicketList(&ticketList);
-        BOOL b_autoinit = !ticketinfo.Krb4.btickets && !ticketinfo.Krb5.btickets;
+        pLeashKRB5GetTickets(&ticketinfo.Krb5, &CLeashApp::m_krbv5_context);
+        BOOL b_autoinit = !ticketinfo.Krb5.btickets;
+        pLeashKRB5FreeTickets(&ticketinfo.Krb5);
         ReleaseMutex(ticketinfo.lockObj);
 
         DWORD dwMsLsaImport = pLeash_get_default_mslsa_import();
@@ -507,6 +490,7 @@ DECL_FUNC_PTR(not_an_API_LeashKRB5GetTickets);
 DECL_FUNC_PTR(not_an_API_LeashAFSGetToken);
 DECL_FUNC_PTR(not_an_API_LeashFreeTicketList);
 DECL_FUNC_PTR(not_an_API_LeashGetTimeServerName);
+DECL_FUNC_PTR(not_an_API_LeashKRB5FreeTickets);
 DECL_FUNC_PTR(Leash_kdestroy);
 DECL_FUNC_PTR(Leash_changepwd_dlg);
 DECL_FUNC_PTR(Leash_changepwd_dlg_ex);
@@ -556,6 +540,7 @@ FUNC_INFO leash_fi[] = {
     MAKE_FUNC_INFO(not_an_API_LeashAFSGetToken),
     MAKE_FUNC_INFO(not_an_API_LeashFreeTicketList),
     MAKE_FUNC_INFO(not_an_API_LeashGetTimeServerName),
+    MAKE_FUNC_INFO(not_an_API_LeashKRB5FreeTickets),
     MAKE_FUNC_INFO(Leash_kdestroy),
     MAKE_FUNC_INFO(Leash_changepwd_dlg),
     MAKE_FUNC_INFO(Leash_changepwd_dlg_ex),
@@ -1504,16 +1489,14 @@ CLeashApp::ProbeKDC(void)
 VOID
 CLeashApp::ObtainTicketsViaUserIfNeeded(HWND hWnd)
 {
-    TicketList* ticketList = NULL;
     if (WaitForSingleObject( ticketinfo.lockObj, INFINITE ) != WAIT_OBJECT_0)
         throw("Unable to lock ticketinfo");
-    pLeashKRB5GetTickets(&ticketinfo.Krb5, &ticketList, &CLeashApp::m_krbv5_context);
-    pLeashFreeTicketList(&ticketList);
-    pLeashKRB4GetTickets(&ticketinfo.Krb4, &ticketList);
-    pLeashFreeTicketList(&ticketList);
+    pLeashKRB5GetTickets(&ticketinfo.Krb5, &CLeashApp::m_krbv5_context);
+    int btickets = ticketinfo.Krb5.btickets;
+    pLeashKRB5FreeTickets(&ticketinfo.Krb5);
+    ReleaseMutex(ticketinfo.lockObj);
 
-    if ( !ticketinfo.Krb4.btickets && !ticketinfo.Krb5.btickets ) {
-        ReleaseMutex(ticketinfo.lockObj);
+    if ( !btickets ) {
 #ifndef KRB5_TC_NOTICKET
         if (WaitForSingleObject( m_tgsReqMutex, INFINITE ) != WAIT_OBJECT_0)
             throw("Unable to lock TGS mutex");
@@ -1545,8 +1528,7 @@ CLeashApp::ObtainTicketsViaUserIfNeeded(HWND hWnd)
             ReleaseMutex(m_tgsReqMutex);
         }
 #endif
-    } else if ( ticketinfo.Krb5.btickets ) {
-        ReleaseMutex(ticketinfo.lockObj);
+    } else {
 #ifndef KRB5_TC_NOTICKET
         if (WaitForSingleObject( m_tgsReqMutex, INFINITE ) != WAIT_OBJECT_0)
             throw("Unable to TGS mutex");
@@ -1578,35 +1560,6 @@ CLeashApp::ObtainTicketsViaUserIfNeeded(HWND hWnd)
             ReleaseMutex(m_tgsReqMutex);
         }
 #endif
-    } else if ( ticketinfo.Krb4.btickets ) {
-        ReleaseMutex(ticketinfo.lockObj);
-#ifndef KRB5_TC_NOTICKET
-        if (WaitForSingleObject( m_tgsReqMutex, INFINITE ) != WAIT_OBJECT_0)
-            throw("Unable to lock TGS mutex");
-#endif
-        if ( ProbeKDC() ) {
-#ifndef KRB5_TC_NOTICKET
-            ReleaseMutex(m_tgsReqMutex);
-#endif
-            LSH_DLGINFO_EX ldi;
-            ldi.size = LSH_DLGINFO_EX_V1_SZ;
-            ldi.dlgtype = DLGTYPE_PASSWD;
-            ldi.title = "Get Ticket";
-            ldi.username = NULL;
-            ldi.realm = NULL;
-            ldi.dlgtype = DLGTYPE_PASSWD;
-            ldi.use_defaults = 1;
-
-            pLeash_kinit_dlg_ex(hWnd, &ldi);
-        }
-#ifndef KRB5_TC_NOTICKET
-        else {
-            ReleaseMutex(m_tgsReqMutex);
-        }
-#endif
-    } else {
-        ReleaseMutex(ticketinfo.lockObj);
-        // Do nothing ...
     }
     return;
 }

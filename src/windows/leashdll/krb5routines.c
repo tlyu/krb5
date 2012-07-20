@@ -315,7 +315,7 @@ one_addr(krb5_address *a)
     return(retstr);
 }
 
-static int
+static void
 CredToTicketInfo(
     krb5_creds KRBv5Credentials,
     TICKETINFO *ticketinfo
@@ -454,8 +454,7 @@ cleanup:
 int
 do_ccache(krb5_context ctx,
           krb5_ccache cache,
-          TicketList ***ticketListTail,
-          TICKETINFO *ticketinfo)
+          TICKETINFO ***ticketInfoTail)
 {
     krb5_cc_cursor cur;
     krb5_creds creds;
@@ -464,6 +463,8 @@ do_ccache(krb5_context ctx,
     krb5_error_code code;
     char *defname;
     char *functionName = NULL;
+    TicketList **ticketListTail;
+    TICKETINFO *ticketinfo;
 
     flags = 0;                          /* turns off OPENCLOSE mode */
     if ((code = pkrb5_cc_set_flags(ctx, cache, flags))) {
@@ -482,10 +483,29 @@ do_ccache(krb5_context ctx,
         functionName = "krb5_cc_start_seq_get";
         goto cleanup;
     }
+
+    ticketinfo = (TICKETINFO *)calloc(1, sizeof(TICKETINFO));
+    if (ticketinfo == NULL) {
+        functionName = "calloc";
+        code = ENOMEM;
+        goto cleanup;
+    }
+    ticketinfo->next = NULL;
+    ticketinfo->ticket_list = NULL;
+    ticketinfo->principal = strdup(defname);
+    if (ticketinfo->principal == NULL) {
+        functionName = "strdup";
+        code = ENOMEM;
+        goto cleanup;
+    }
+    ticketinfo->ccache_name = strdup(pkrb5_cc_get_name(ctx, cache));
+    **ticketInfoTail = ticketinfo;
+    *ticketInfoTail = &ticketinfo->next;
+    ticketListTail = &ticketinfo->ticket_list;
     while (!(code = pkrb5_cc_next_cred(ctx, cache, &cur, &creds))) {
         if (pkrb5_is_config_principal(ctx, creds.server))
             continue;
-        CredToTicketList(ctx, creds, defname, ticketListTail);
+        CredToTicketList(ctx, creds, defname, &ticketListTail);
         CredToTicketInfo(creds, ticketinfo);
         pkrb5_free_cred_contents(ctx, &creds);
     }
@@ -507,6 +527,8 @@ cleanup:
     if (code) {
         Leash_krb5_error(code, functionName, 0, NULL, NULL);
     }
+    if (defname)
+        pkrb5_free_unparsed_name(ctx, defname);
     return code ? 1 : 0;
 }
 
@@ -515,7 +537,7 @@ cleanup:
 // Returns 0 for success, 1 for failure
 //
 int
-do_all_ccaches(krb5_context ctx, TicketList **ticketList, TICKETINFO *ticketinfo)
+do_all_ccaches(krb5_context ctx, TICKETINFO **ticketinfotail)
 {
     krb5_error_code code;
     krb5_ccache cache;
@@ -534,7 +556,7 @@ do_all_ccaches(krb5_context ctx, TicketList **ticketList, TICKETINFO *ticketinfo
         // Note that ticketList will be updated here to point to the tail
         // of the list but the caller of this function will remain with a
         // pointer to the head.
-        do_ccache(ctx, cache, &ticketList, ticketinfo);
+        do_ccache(ctx, cache, &ticketinfotail);
         pkrb5_cc_close(ctx, cache);
     }
     if (code)
@@ -547,6 +569,40 @@ cleanup:
     return retval;
 }
 
+static void FreeTicketInfo(TICKETINFO *ticketinfo)
+{
+    if (ticketinfo->principal) {
+        free(ticketinfo->principal);
+        ticketinfo->principal = NULL;
+    }
+    if (ticketinfo->ccache_name) {
+        free(ticketinfo->ccache_name);
+        ticketinfo->ccache_name = NULL;
+    }
+    if (ticketinfo->ticket_list)
+        not_an_API_LeashFreeTicketList(&ticketinfo->ticket_list);
+}
+
+long
+not_an_API_LeashKRB5FreeTickets(
+    TICKETINFO *ticketinfo
+    )
+{
+    TICKETINFO *initial = ticketinfo; // @TEMP fixme
+    TICKETINFO *next;
+    while (ticketinfo) {
+        next = ticketinfo->next;
+        FreeTicketInfo(ticketinfo);
+        // @TEMP fixme
+        if (ticketinfo != initial) {
+            free(ticketinfo);
+        }
+        ticketinfo = next;
+    }
+    return 0;
+}
+
+
 /*
  * LeashKRB5GetTickets() treats krbv5Context as an in/out variable.
  * If the caller does not provide a krb5_context, one will be allocated.
@@ -556,8 +612,7 @@ cleanup:
 
 long
 not_an_API_LeashKRB5GetTickets(
-    TICKETINFO * ticketinfo,
-    TicketList** ticketList,
+    TICKETINFO *ticketinfo,
     krb5_context *krbv5Context
     )
 {
@@ -572,10 +627,11 @@ not_an_API_LeashKRB5GetTickets(
 
     ctx = *krbv5Context;
 
+    // @TEMP fixme; shouldn't be necessary
     // save default principal name in ticketinfo
     if ( ticketinfo ) {
         ticketinfo->btickets = NO_TICKETS;
-        ticketinfo->principal[0] = '\0';
+        ticketinfo->principal = NULL;
 
         if ((code = pkrb5_cc_default(ctx, &cache)))
             goto cleanup;
@@ -584,12 +640,13 @@ not_an_API_LeashKRB5GetTickets(
         if ((code = (*pkrb5_unparse_name)(ctx, me, &PrincipalName)))
             goto cleanup;
         if (PrincipalName) {
-            wsprintf(ticketinfo->principal, "%s", PrincipalName);
+            ticketinfo->principal = strdup(PrincipalName);
             pkrb5_free_unparsed_name(ctx, PrincipalName);
         }
     }
 
-    do_all_ccaches(*krbv5Context, ticketList, ticketinfo);
+    do_all_ccaches(*krbv5Context, &ticketinfo->next);
+    // @TEMP aggregate ticket info here?
 
 cleanup:
     if (cache)
@@ -1010,7 +1067,6 @@ Leash_ms2mit(BOOL save_creds)
     krb5_creds creds;
     krb5_cc_cursor cursor=0;
     krb5_principal princ = 0;
-    char *cache_name=NULL;
     BOOL rc = FALSE;
 
     if ( !pkrb5_init_context )
