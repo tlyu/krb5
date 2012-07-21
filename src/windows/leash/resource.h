@@ -336,6 +336,8 @@
 #define ID_BUTTON4                      32818
 #define ID_ENCRYPTION_TYPE              32826
 #define ID_VALID_UNTIL                  32828
+#define ID_BUTTON3                      32835
+#define ID_MAKE_DEFAULT                 32835
 
 // Next default values for new objects
 // 
@@ -343,7 +345,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        269
-#define _APS_NEXT_COMMAND_VALUE         32835
+#define _APS_NEXT_COMMAND_VALUE         32836
 #define _APS_NEXT_CONTROL_VALUE         1209
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
