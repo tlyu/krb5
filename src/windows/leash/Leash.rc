@@ -108,7 +108,7 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
-        MENUITEM "&Get Ticket(s)\tCtrl+T", ID_INIT_TICKET
+        MENUITEM "&Get Ticket(s)\tCtrl+T",      ID_INIT_TICKET
         MENUITEM "&Renew Ticket(s)\tCtrl+R",    ID_RENEW_TICKET
         MENUITEM "&Import Ticket(s)\tCtrl+I",   ID_IMPORT_TICKET
         MENUITEM "&Destroy Ticket(s)\tCtrl+D",  ID_DESTROY_TICKET
