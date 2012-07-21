@@ -275,6 +275,7 @@ protected:
 	afx_msg VOID OnRenewTicket();
 	afx_msg VOID OnImportTicket();
 	afx_msg VOID OnDestroyTicket();
+	afx_msg VOID OnMakeDefault();
 	afx_msg VOID OnChangePassword();
 	afx_msg VOID OnUpdateDisplay();
 	afx_msg VOID OnSynTime();
@@ -301,6 +302,7 @@ protected:
 	afx_msg VOID OnUpdateKillTixOnExit(CCmdUI* pCmdUI);
     afx_msg VOID OnUpdateLowTicketAlarm(CCmdUI* pCmdUI);
     afx_msg VOID OnUpdateAutoRenew(CCmdUI* pCmdUI);
+    afx_msg VOID OnUpdateMakeDefault(CCmdUI* pCmdUI);
 	afx_msg VOID OnAppAbout();
 	afx_msg VOID OnAfsControlPanel();
 	afx_msg VOID OnUpdateDebugMode(CCmdUI* pCmdUI);
