@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(CLeashView, CListView)
     ON_COMMAND(ID_IMPORT_TICKET, OnImportTicket)
 	ON_COMMAND(ID_DESTROY_TICKET, OnDestroyTicket)
 	ON_COMMAND(ID_CHANGE_PASSWORD, OnChangePassword)
+    ON_COMMAND(ID_MAKE_DEFAULT, OnMakeDefault)
 	ON_COMMAND(ID_UPDATE_DISPLAY, OnUpdateDisplay)
 	ON_COMMAND(ID_SYN_TIME, OnSynTime)
 	ON_COMMAND(ID_DEBUG_MODE, OnDebugMode)
@@ -94,6 +95,7 @@ BEGIN_MESSAGE_MAP(CLeashView, CListView)
 	ON_UPDATE_COMMAND_UI(ID_KRB4_PROPERTIES, OnUpdateKrb4Properties)
 	ON_UPDATE_COMMAND_UI(ID_KRB5_PROPERTIES, OnUpdateKrb5Properties)
 	ON_UPDATE_COMMAND_UI(ID_AFS_CONTROL_PANEL, OnUpdateAfsControlPanel)
+    ON_UPDATE_COMMAND_UI(ID_MAKE_DEFAULT, OnUpdateMakeDefault)
 	ON_COMMAND(ID_PROPERTIES, OnKrbProperties)
 	ON_UPDATE_COMMAND_UI(ID_PROPERTIES, OnUpdateProperties)
 	ON_COMMAND(ID_HELP_KERBEROS_, OnHelpKerberos)
@@ -883,6 +885,10 @@ VOID CLeashView::OnDestroyTicket()
     }
     m_importedTickets = 0;
     m_autoRenewalAttempted = 0;
+}
+
+VOID CLeashView::OnMakeDefault()
+{
 }
 
 VOID CLeashView::OnChangePassword()
@@ -2477,6 +2483,11 @@ VOID CLeashView::OnAutoRenew()
 VOID CLeashView::OnUpdateAutoRenew(CCmdUI* pCmdUI)
 {
     pCmdUI->SetCheck(m_autoRenewTickets);
+}
+
+VOID CLeashView::OnUpdateMakeDefault(CCmdUI* pCmdUI)
+{
+    // @TODO: enable if exactly one identity is selected and that identity is not currently the default
 }
 
 VOID CLeashView::AlarmBeep()
