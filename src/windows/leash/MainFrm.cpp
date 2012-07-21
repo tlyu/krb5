@@ -33,7 +33,9 @@ static char THIS_FILE[] = __FILE__;
 #define MIN_RIGHT	  530
 #define MIN_BOTTOM	  280
 
+#ifndef NO_STATUS_BAR
 CMFCStatusBar CMainFrame::m_wndStatusBar;
+#endif
 CMFCToolBar   CMainFrame::m_wndToolBar;
 CImageList CMainFrame::m_imageList;
 CImageList CMainFrame::m_disabledImageList;
@@ -201,6 +203,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
     }
     toolBar.SetDisabledImageList(&m_disabledImageList);
 */
+#ifndef NO_STATUS_BAR 
 	if (!m_wndStatusBar.Create(this) ||
 		!m_wndStatusBar.SetIndicators(indicators,
 		  (CLeashApp::m_hAfsDLL ? 4 : 3)))
@@ -210,6 +213,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
         TRACE0("Failed to create status bar\n");
 		return -1;      // fail to create
 	}
+#endif
+
 
 	// TODO: Remove this if you don't want tool tips or a resizeable toolbar
 //	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() |
@@ -444,7 +449,7 @@ void CMainFrame::OnClose(void)
 LRESULT CMainFrame::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
     BOOL oldMin = m_isMinimum;
-    printf("CMainFrame::WindowProc() Msg: %x, WPARAM: %x, LPARAM: %x\n", message, wParam, lParam);
+    //printf("CMainFrame::WindowProc() Msg: %x, WPARAM: %x, LPARAM: %x\n", message, wParam, lParam);
 	switch(message)
 	{
     case WM_CLOSE:
