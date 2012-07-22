@@ -908,17 +908,13 @@ VOID CLeashView::OnChangePassword()
     char realm[192];
     char * principal = ticketinfo.Krb5.principal;
     int i=0, j=0;
-    for (; principal[i] && principal[i] != '@'; i++)
-    {
-	username[i] = principal[i];
-    }
+    if (principal)
+        for (; principal[i] && principal[i] != '@'; i++)
+	        username[i] = principal[i];
     username[i] = '\0';
-    if (principal[i]) {
-	for (i++ ; principal[i] ; i++, j++)
-	{
-	    realm[j] = principal[i];
-	}
-    }
+    if (principal && principal[i])
+	    for (i++ ; principal[i] ; i++, j++)
+	        realm[j] = principal[i];
     realm[j] = '\0';
     ReleaseMutex(ticketinfo.lockObj);
 
