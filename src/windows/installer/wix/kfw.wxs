@@ -199,7 +199,6 @@
 
         <!-- KfW 64-bit MSI -->
         <Upgrade Id="6DA9CD86-6028-4852-8C94-452CAC229244">
-        <?define UpgradeCode="6DA9CD86-6028-4852-8C94-452CAC229244"?>
             <UpgradeVersion IgnoreRemoveFailure="no" IncludeMinimum="no" Maximum="$(var.VersionString)" IncludeMaximum="yes" MigrateFeatures="yes" Property="UPGRADEKFW" />
         </Upgrade>
 
