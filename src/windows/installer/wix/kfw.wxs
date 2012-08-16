@@ -238,6 +238,11 @@
                 <Data Column="Desc">Kerberos Credential Cache</Data>
             </Row>
             <Row>
+                <Data Column="Id">kpKrbcc64</Data>
+                <Data Column="Image">krbcc64s.exe</Data>
+                <Data Column="Desc">Kerberos Credential Cache</Data>
+            </Row>
+            <Row>
                 <Data Column="Id">kpK95</Data>
                 <Data Column="Image">k95.exe</Data>
                 <Data Column="Desc">Kermit 95</Data>
