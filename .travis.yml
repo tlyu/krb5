@@ -1,15 +1,25 @@
 language: c
 
-sudo: required
+sudo: false
 
-dist: trusty
+addons:
+  apt:
+    packages:
+      - bison
+      - dejagnu
+      - dnsutils
+      - gettext
+      - keyutils
+      - ldap-utils
+      - libldap2-dev
+      - libkeyutils-dev
+      - libssl-dev
+      - slapd
+      - tcl-dev
+      - tcsh
 
 compiler:
   - clang
   - gcc
-
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y bison dejagnu gettext keyutils ldap-utils libldap2-dev libkeyutils-dev libssl-dev python-cjson python-paste python-pyrad slapd tcl-dev tcsh
 
 script: cd src && autoreconf && ./configure --with-ldap && make && make check
