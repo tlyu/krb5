@@ -1,3 +1,7 @@
+addons:
+  artifacts:
+    debug: true
+
 language: c
 
 sudo: required
